@@ -9,9 +9,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
+import com.example.nathan.loadtracker.DatabaseOpenHelper
 
-import com.example.nathan.loadtracker.DatabaseHandler
 import com.example.nathan.loadtracker.load.Load
 import com.example.nathan.loadtracker.R
 import kotlinx.android.synthetic.main.tracking_activity.*
@@ -22,7 +21,7 @@ import java.util.HashMap
 
 class TrackingActivity : AppCompatActivity() {
 
-    private lateinit var db: DatabaseHandler
+    private var db = DatabaseOpenHelper.getInstance(this)
 
     private lateinit var sessionTitle: String
 
@@ -37,25 +36,25 @@ class TrackingActivity : AppCompatActivity() {
         ab!!.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_arrow_back_black_36px))
         ab.setDisplayHomeAsUpEnabled(true)
 
-        db = DatabaseHandler(this)
+        //db = DatabaseHandler(this)
 
         sessionTitle = intent.getStringExtra("session_title_index")
 
         Log.d("Session Title: ", sessionTitle)
         title = sessionTitle
 
-        val js = db.getAllLoadsForSession(title.toString())
+        //val js = db.getAllLoadsForSession(title.toString())
 
-        if (js.size != 0) {
-            materialInput.setText(js[js.size - 1].material)
-            unitIDInput.setText(js[js.size - 1].unitId)
-            driverNameInput.setText(js[js.size - 1].driver)
-            companyNameInput.setText(js[js.size - 1].companyName)
-        } else {
-            val sharedPrefs = getSharedPreferences("com.example.nathan.loadtracker", Context.MODE_PRIVATE)
-            driverNameInput.setText(sharedPrefs.getString("name", ""))
-            companyNameInput.setText(sharedPrefs.getString("company", ""))
-        }
+//        if (js.size != 0) {
+//            materialInput.setText(js[js.size - 1].material)
+//            unitIDInput.setText(js[js.size - 1].unitId)
+//            driverNameInput.setText(js[js.size - 1].driver)
+//            companyNameInput.setText(js[js.size - 1].companyName)
+//        } else {
+//            val sharedPrefs = getSharedPreferences("com.example.nathan.loadtracker", Context.MODE_PRIVATE)
+//            driverNameInput.setText(sharedPrefs.getString("name", ""))
+//            companyNameInput.setText(sharedPrefs.getString("company", ""))
+//        }
 
         history_breakdown.text = updateTotalLoadsTracked()
         average_load_time.text = updateAverageRunTime()
@@ -99,7 +98,7 @@ class TrackingActivity : AppCompatActivity() {
         load.title = title.toString()
         load.timeLoaded = time.format(c.time)
         load.dateLoaded = date.format(c.time)
-        db.addLoadToSession(load)
+        //db.addLoadToSession(load)
 
         history_breakdown.text = updateTotalLoadsTracked()
         average_load_time.text = updateAverageRunTime()
@@ -107,15 +106,15 @@ class TrackingActivity : AppCompatActivity() {
     }
 
     private fun updateTotalLoadsTracked(): String {
-        val loads = db.getAllLoadsForSession(title.toString())
+        //val loads = db.getAllLoadsForSession(title.toString())
         val materials = HashMap<String, Int>()
 
-        for (l in loads) {
-            if (!materials.containsKey(l.material))
-                materials[l.material] = 1
-            else if (materials.containsKey(l.material))
-                materials[l.material] = materials[l.material]!! + 1
-        }
+//        for (l in loads) {
+//            if (!materials.containsKey(l.material))
+//                materials[l.material] = 1
+//            else if (materials.containsKey(l.material))
+//                materials[l.material] = materials[l.material]!! + 1
+//        }
 
         var formattedOutput = materials.toString()
         formattedOutput = formattedOutput.replace("=", ": ")
@@ -127,29 +126,29 @@ class TrackingActivity : AppCompatActivity() {
     }
 
     private fun updateAverageRunTime(): String {
-        val loads = db.getAllLoadsForSession(title.toString())
-        if (loads.size == 0) {
-            return "00:00:00.000"
-        }
+        //val loads = db.getAllLoadsForSession(title.toString())
+//        if (loads.size == 0) {
+//            return "00:00:00.000"
+//        }
         var hours = 0
         var minutes = 0
         var seconds = 0
         var milliseconds = 0
-        for (l in loads) {
-            var timeLoaded = l.timeLoaded
-            timeLoaded = timeLoaded.replace(":", " ")
-            timeLoaded = timeLoaded.replace(".", " ")
-            Log.d("Time Loaded: ", timeLoaded)
-            val components = timeLoaded.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            hours += Integer.parseInt(components[0])
-            minutes += Integer.parseInt(components[1])
-            seconds += Integer.parseInt(components[2])
-            milliseconds += Integer.parseInt(components[3])
-        }
-        hours /= loads.size
-        minutes /= loads.size
-        seconds /= loads.size
-        milliseconds /= loads.size
+//        for (l in loads) {
+//            var timeLoaded = l.timeLoaded
+//            timeLoaded = timeLoaded.replace(":", " ")
+//            timeLoaded = timeLoaded.replace(".", " ")
+//            Log.d("Time Loaded: ", timeLoaded)
+//            val components = timeLoaded.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+//            hours += Integer.parseInt(components[0])
+//            minutes += Integer.parseInt(components[1])
+//            seconds += Integer.parseInt(components[2])
+//            milliseconds += Integer.parseInt(components[3])
+//        }
+//        hours /= loads.size
+//        minutes /= loads.size
+//        seconds /= loads.size
+//        milliseconds /= loads.size
 
         return hours.toString() + ":" + minutes + ":" + seconds + "." + milliseconds
     }

@@ -2,19 +2,16 @@ package com.example.nathan.loadtracker.activities
 
 import android.content.Intent
 import android.support.v4.app.NavUtils
-import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.ContextMenu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ListView
 
-import com.example.nathan.loadtracker.DatabaseHandler
 import com.example.nathan.loadtracker.Item
 import com.example.nathan.loadtracker.load.Load
 import com.example.nathan.loadtracker.load.LoadListItem
@@ -49,8 +46,8 @@ class TrackingHistoryActivity : AppCompatActivity() {
         trackedLoadsHistory = findViewById(R.id.trackedLoadHistory) as ListView
         registerForContextMenu(trackedLoadsHistory)
         trackedLoadsHistory!!.isLongClickable = true
-        val db = DatabaseHandler(this)
-        loads = db.getAllLoadsForSession(intent.extras!!.getString("session_title_index"))
+        //val db = DatabaseHandler(this)
+        //loads = db.getAllLoadsForSession(intent.extras!!.getString("session_title_index"))
 
         val loadsList = ArrayList<Item>()
 
@@ -76,7 +73,7 @@ class TrackingHistoryActivity : AppCompatActivity() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
-        val db = DatabaseHandler(this)
+        //val db = DatabaseHandler(this)
         val temp = listAdapter!!.getItem(info.position) as LoadListItem
         if (listAdapter!!.getItemViewType(info.position) == 1) {
             return super.onContextItemSelected(item)
@@ -86,7 +83,7 @@ class TrackingHistoryActivity : AppCompatActivity() {
 
             R.id.remove_session_entry -> {
                 //Log.d("Load:", String.valueOf(info.id));
-                db.deleteLoadFromSession(temp.id)
+                //db.deleteLoadFromSession(temp.id)
                 listAdapter!!.remove(listAdapter!!.getItem(info.position))
             }
         }

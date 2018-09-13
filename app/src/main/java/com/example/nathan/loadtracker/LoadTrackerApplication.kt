@@ -6,7 +6,5 @@ class LoadTrackerApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
-
     }
 }

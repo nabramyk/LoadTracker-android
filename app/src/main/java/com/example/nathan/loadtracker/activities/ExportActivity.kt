@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
-import com.example.nathan.loadtracker.DatabaseHandler
+import com.example.nathan.loadtracker.DatabaseOpenHelper
 import com.example.nathan.loadtracker.R
 import java.io.File
 import java.util.ArrayList
@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_export.*
 
 class ExportActivity : AppCompatActivity() {
 
-    internal lateinit var db: DatabaseHandler
+    private var db = DatabaseOpenHelper.getInstance(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,12 +28,13 @@ class ExportActivity : AppCompatActivity() {
 
         title = "Export"
 
-        db = DatabaseHandler(this)
-        val jobs = db.allJobSessions
-        val jobTitles = ArrayList<CharSequence>()
-        for (js in jobs) {
-            jobTitles.add(js.jobTitle)
+        val jobs = db.use {
+
         }
+        val jobTitles = ArrayList<CharSequence>()
+//        for (js in jobs) {
+//            jobTitles.add(js.jobTitle)
+//        }
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {}
@@ -64,7 +65,7 @@ class ExportActivity : AppCompatActivity() {
         }
 
         override fun doInBackground(vararg strings: String): Boolean? {
-            val loads = db.getAllLoadsForSession(spinner.selectedItem.toString())
+            //val loads = db.getAllLoadsForSession(spinner.selectedItem.toString())
             val file = File(getExternalFilesDir(null), "output.csv")
 
             return true

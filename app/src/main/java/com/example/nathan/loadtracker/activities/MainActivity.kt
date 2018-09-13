@@ -9,7 +9,6 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.Menu
-import com.example.nathan.loadtracker.DatabaseHandler
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.jobsession.JobSession
 import kotlinx.android.synthetic.main.activity_main.*
@@ -46,11 +45,9 @@ class MainActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .setPositiveButton("Create") { _,_ ->
                     if (!TextUtils.isEmpty(promptView.sessionTitleEditText.text)) {
-                        val handler = DatabaseHandler(baseContext)
                         val js = JobSession()
                         js.jobTitle = promptView.sessionTitleEditText.text.toString()
-                        handler.addJobSession(js)
-                        showStartImmediateDialog(js.jobTitle)
+                        //showStartImmediateDialog(js.jobTitle)
                     }
                 }
                 .setNegativeButton("Cancel"
