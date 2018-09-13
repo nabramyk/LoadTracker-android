@@ -47,8 +47,8 @@ class TrackingActivity : AppCompatActivity() {
             companyNameInput.setText(sharedPrefs.getString("company", ""))
         }
 
-        history_breakdown.text = updateTotalLoadsTracked()
-        average_load_time.text = updateAverageRunTime()
+        //history_breakdown.text = updateTotalLoadsTracked()
+        //average_load_time.text = updateAverageRunTime()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -93,8 +93,8 @@ class TrackingActivity : AppCompatActivity() {
                 )
         )
 
-        history_breakdown.text = updateTotalLoadsTracked()
-        average_load_time.text = updateAverageRunTime()
+        //history_breakdown.text = updateTotalLoadsTracked()
+        //average_load_time.text = updateAverageRunTime()
 
     }
 
