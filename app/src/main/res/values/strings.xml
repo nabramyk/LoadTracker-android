@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">LoadTracker</string>
+    <string name="title_activity_create_new_job_session">CreateNewJobSession</string>
+    <string name="company_name">Company Name</string>
+    <string name="driver_name">Driver Name</string>
+    <string name="material">Material</string>
+    <string name="track">Track!</string>
+    <string name="unit_id">Unit ID</string>
+    <string name="cancel">Cancel</string>
+    <string name="export">Export Load Sheet</string>
+    <string name="create_session">Create New Session</string>
+    <string name="continue_session">Continue A Session</string>
+    <string name="previous_session">Reopen Last Session</string>
+    <string name="job_description">Job Description:</string>
+    <string name="session_title">Title:</string>
+    <string name="open_job_sessions">Open Job Sessions</string>
+    <string name="textview">TextView</string>
+    <string name="session">Session</string>
+    <string name="action">Action</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string-array name="actions">
+        <item>Export CSV</item>
+        <item>Export PDF</item>
+        <item>Synchronize Database</item>
+    </string-array>
+    <string name="file_provider_authority" translatable="false">com.example.nathan.fileprovider</string>
+</resources>
