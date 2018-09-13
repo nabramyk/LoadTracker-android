@@ -8,7 +8,7 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
     companion object {
         const val jobSessionsTable = "job_sessions"
         const val loadsTable = "loads"
-        const val columnId = "id"
+        const val columnId = "_id"
         const val columnTitle = "title"
         const val columnCreated = "created"
 
@@ -27,11 +27,10 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
         db.createTable(jobSessionsTable, true,
                 columnId to INTEGER + PRIMARY_KEY + UNIQUE,
                 columnTitle to TEXT,
-                "description" to TEXT,
+                "start_date" to TEXT,
+                "closed_date" to TEXT,
                 columnCreated to TEXT,
-                "modified" to TEXT,
-                "closed" to TEXT,
-                "total_loads" to TEXT)
+                "total_loads" to INTEGER)
 
         db.createTable(loadsTable, true,
                 columnId to INTEGER + PRIMARY_KEY + UNIQUE,
@@ -47,8 +46,8 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.dropTable("job_sessions", true)
-        db.dropTable("loads", true)
+        db.dropTable(jobSessionsTable, true)
+        db.dropTable(loadsTable, true)
     }
 }
 

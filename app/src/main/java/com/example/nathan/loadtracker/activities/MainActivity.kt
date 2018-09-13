@@ -9,12 +9,15 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.Menu
+import com.example.nathan.loadtracker.DatabaseOpenHelper
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.jobsession.JobSession
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.create_session_dialog.view.*
+import org.jetbrains.anko.db.*
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var db : DatabaseOpenHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +25,8 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
         title = ""
+
+        db = DatabaseOpenHelper.getInstance(this)
 
         button_create_session.setOnClickListener { showCreateDialog() }
         button_continue_session.setOnClickListener { startActivity(Intent(this, JobSessionsActivity::class.java)) }
@@ -45,8 +50,8 @@ class MainActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .setPositiveButton("Create") { _,_ ->
                     if (!TextUtils.isEmpty(promptView.sessionTitleEditText.text)) {
-                        val js = JobSession()
-                        js.jobTitle = promptView.sessionTitleEditText.text.toString()
+                        db.use { insert(DatabaseOpenHelper.jobSessionsTable,
+                                DatabaseOpenHelper.columnTitle to promptView.sessionTitleEditText.text.toString()) }
                         //showStartImmediateDialog(js.jobTitle)
                     }
                 }

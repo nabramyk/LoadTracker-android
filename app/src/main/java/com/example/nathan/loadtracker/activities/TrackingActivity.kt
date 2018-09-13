@@ -1,6 +1,5 @@
 package com.example.nathan.loadtracker.activities
 
-import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -11,7 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import com.example.nathan.loadtracker.DatabaseOpenHelper
 
-import com.example.nathan.loadtracker.load.Load
+import com.example.nathan.loadtracker.models.Load
 import com.example.nathan.loadtracker.R
 import kotlinx.android.synthetic.main.tracking_activity.*
 

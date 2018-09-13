@@ -7,8 +7,7 @@ import android.widget.TextView;
 import com.example.nathan.loadtracker.Item;
 import com.example.nathan.loadtracker.R;
 import com.example.nathan.loadtracker.arrayadapters.JobSessionArrayAdapter;
-
-import org.w3c.dom.Text;
+import com.example.nathan.loadtracker.models.JobSession;
 
 /**
  * Created by Nathan on 2017-10-20.

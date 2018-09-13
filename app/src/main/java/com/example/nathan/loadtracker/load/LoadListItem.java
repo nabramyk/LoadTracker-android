@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.example.nathan.loadtracker.Item;
 import com.example.nathan.loadtracker.R;
 import com.example.nathan.loadtracker.arrayadapters.TrackingHistoryArrayAdapter;
+import com.example.nathan.loadtracker.models.Load;
 
 /**
  * Created by nathanabramyk on 2017-10-19.

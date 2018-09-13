@@ -13,7 +13,7 @@ import android.widget.AdapterView
 import android.widget.ListView
 
 import com.example.nathan.loadtracker.Item
-import com.example.nathan.loadtracker.load.Load
+import com.example.nathan.loadtracker.models.Load
 import com.example.nathan.loadtracker.load.LoadListItem
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.arrayadapters.TrackingHistoryArrayAdapter

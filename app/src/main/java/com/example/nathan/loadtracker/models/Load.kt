@@ -1,14 +1,10 @@
-package com.example.nathan.loadtracker.load
+package com.example.nathan.loadtracker.models
 
 import java.sql.Timestamp
 import java.util.Date
 
-/**
- * Created by nathanabramyk on 2017-10-15.
- */
-
 class Load(
-        var id: Int = 0,
+        var id: Int? = 0,
         var title: String? = null,
         var driver: String? = null,
         var unitId: String? = null,
