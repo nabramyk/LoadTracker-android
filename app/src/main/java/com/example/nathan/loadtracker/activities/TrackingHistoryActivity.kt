@@ -4,35 +4,33 @@ import android.content.Intent
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import kotlinx.android.synthetic.main.tracking_history_activity.*
+import kotlinx.android.synthetic.main.activity_tracking_history.*
 
 import com.example.nathan.loadtracker.Item
 import com.example.nathan.loadtracker.load.LoadListItem
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.arrayadapters.TrackingHistoryArrayAdapter
 import com.example.nathan.loadtracker.database
-import com.example.nathan.loadtracker.models.Load
 
 class TrackingHistoryActivity : AppCompatActivity() {
 
     private var listAdapter: ArrayAdapter<Item>? = null
-    private var session_title: String? = null
+    private var sessionTitle: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.tracking_history_activity)
+        setContentView(R.layout.activity_tracking_history)
 
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        session_title = intent.extras!!.getString("session_title_index")
+        sessionTitle = intent.extras!!.getString("session_title_index")
 
-        title = "Load History: " + session_title!!
+        title = "Load History: " + sessionTitle!!
 
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_arrow_back_black_36px))
@@ -41,7 +39,7 @@ class TrackingHistoryActivity : AppCompatActivity() {
         registerForContextMenu(trackedLoadHistory)
         trackedLoadHistory!!.isLongClickable = true
 
-        val loads = database.getLoadsForSession(session_title!!)
+        val loads = database.getLoadsForSession(sessionTitle!!)
 
         val loadsList = loads.map { LoadListItem(it) }
 
@@ -57,7 +55,6 @@ class TrackingHistoryActivity : AppCompatActivity() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
-        //val db = DatabaseHandler(this)
         val temp = listAdapter!!.getItem(info.position) as LoadListItem
         if (listAdapter!!.getItemViewType(info.position) == 1) {
             return super.onContextItemSelected(item)
@@ -78,7 +75,7 @@ class TrackingHistoryActivity : AppCompatActivity() {
         when (item.itemId) {
             android.R.id.home -> {
                 val upIntent = Intent(this, TrackingActivity::class.java)
-                upIntent.putExtra("session_title_index", session_title!!.toString())
+                upIntent.putExtra("session_title_index", sessionTitle!!.toString())
                 upIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 NavUtils.navigateUpTo(this, upIntent)
             }

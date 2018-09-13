@@ -5,18 +5,14 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.example.nathan.loadtracker.DatabaseOpenHelper
 
 import com.example.nathan.loadtracker.models.Load
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.database
-import kotlinx.android.synthetic.main.tracking_activity.*
-import org.jetbrains.anko.db.classParser
-import org.jetbrains.anko.db.select
+import kotlinx.android.synthetic.main.activity_tracking.*
 
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -28,7 +24,7 @@ class TrackingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.tracking_activity)
+        setContentView(R.layout.activity_tracking)
 
         setSupportActionBar(toolbar)
         toolbar.overflowIcon = resources.getDrawable(R.drawable.ic_more_vert_black_36px)
