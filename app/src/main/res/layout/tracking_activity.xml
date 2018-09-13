@@ -10,7 +10,7 @@
     tools:layout_editor_absoluteY="25dp">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/tracking_activity_toolbar"
+        android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"

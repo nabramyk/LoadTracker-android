@@ -1,8 +1,5 @@
 package com.example.nathan.loadtracker.models
 
-import java.sql.Timestamp
-import java.util.Date
-
 class Load(
         var id: Int? = 0,
         var title: String? = null,

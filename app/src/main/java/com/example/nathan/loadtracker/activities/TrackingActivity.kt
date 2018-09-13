@@ -1,5 +1,6 @@
 package com.example.nathan.loadtracker.activities
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -12,7 +13,10 @@ import com.example.nathan.loadtracker.DatabaseOpenHelper
 
 import com.example.nathan.loadtracker.models.Load
 import com.example.nathan.loadtracker.R
+import com.example.nathan.loadtracker.database
 import kotlinx.android.synthetic.main.tracking_activity.*
+import org.jetbrains.anko.db.classParser
+import org.jetbrains.anko.db.select
 
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -20,40 +24,32 @@ import java.util.HashMap
 
 class TrackingActivity : AppCompatActivity() {
 
-    private var db = DatabaseOpenHelper.getInstance(this)
-
     private lateinit var sessionTitle: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.tracking_activity)
 
-        setSupportActionBar(tracking_activity_toolbar)
-        tracking_activity_toolbar.overflowIcon = resources.getDrawable(R.drawable.ic_more_vert_black_36px)
+        setSupportActionBar(toolbar)
+        toolbar.overflowIcon = resources.getDrawable(R.drawable.ic_more_vert_black_36px)
 
-        val ab = supportActionBar
-        ab!!.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_arrow_back_black_36px))
-        ab.setDisplayHomeAsUpEnabled(true)
-
-        //db = DatabaseHandler(this)
+        supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_arrow_back_black_36px))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         sessionTitle = intent.getStringExtra("session_title_index")
 
-        Log.d("Session Title: ", sessionTitle)
-        title = sessionTitle
+        val js = database.getLoadsForSession(sessionTitle).toMutableList()
 
-        //val js = db.getAllLoadsForSession(title.toString())
-
-//        if (js.size != 0) {
-//            materialInput.setText(js[js.size - 1].material)
-//            unitIDInput.setText(js[js.size - 1].unitId)
-//            driverNameInput.setText(js[js.size - 1].driver)
-//            companyNameInput.setText(js[js.size - 1].companyName)
-//        } else {
-//            val sharedPrefs = getSharedPreferences("com.example.nathan.loadtracker", Context.MODE_PRIVATE)
-//            driverNameInput.setText(sharedPrefs.getString("name", ""))
-//            companyNameInput.setText(sharedPrefs.getString("company", ""))
-//        }
+        if (js.isNotEmpty()) {
+            materialInput.setText(js[js.size - 1].material)
+            unitIDInput.setText(js[js.size - 1].unitId)
+            driverNameInput.setText(js[js.size - 1].driver)
+            companyNameInput.setText(js[js.size - 1].companyName)
+        } else {
+            val sharedPrefs = getSharedPreferences("com.example.nathan.loadtracker", Context.MODE_PRIVATE)
+            driverNameInput.setText(sharedPrefs.getString("name", ""))
+            companyNameInput.setText(sharedPrefs.getString("company", ""))
+        }
 
         history_breakdown.text = updateTotalLoadsTracked()
         average_load_time.text = updateAverageRunTime()
@@ -86,18 +82,20 @@ class TrackingActivity : AppCompatActivity() {
             return
         }
 
-        val load = Load()
         val c = Calendar.getInstance()
-        val time = SimpleDateFormat("HH:mm:ss.SSS")
-        val date = SimpleDateFormat("yyyy/MM/dd")
-        load.unitId = unitIDInput.text.toString()
-        load.material = materialInput.text.toString()
-        load.companyName = companyNameInput.text.toString()
-        load.driver = driverNameInput.text.toString()
-        load.title = title.toString()
-        load.timeLoaded = time.format(c.time)
-        load.dateLoaded = date.format(c.time)
-        //db.addLoadToSession(load)
+
+        database.addLoad(
+                Load(
+                        id = null,
+                        title = sessionTitle,
+                        driver = driverNameInput.text.toString(),
+                        unitId = unitIDInput.text.toString(),
+                        material = materialInput.text.toString(),
+                        companyName = companyNameInput.text.toString(),
+                        timeLoaded = SimpleDateFormat("HH:mm:ss.SSS").format(c.time),
+                        dateLoaded = SimpleDateFormat("yyyy/MM/dd").format(c.time)
+                )
+        )
 
         history_breakdown.text = updateTotalLoadsTracked()
         average_load_time.text = updateAverageRunTime()

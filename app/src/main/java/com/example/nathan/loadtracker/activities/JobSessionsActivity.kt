@@ -15,14 +15,12 @@ import com.example.nathan.loadtracker.jobsession.JobSessionItem
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.database
 import kotlinx.android.synthetic.main.activity_job_sessions.*
-import org.jetbrains.anko.db.classParser
-import org.jetbrains.anko.db.select
 
 class JobSessionsActivity : AppCompatActivity() {
 
     private var listAdapter: ArrayAdapter<Item>? = null
-    lateinit var jobs: MutableList<JobSession>
-    lateinit var jobsList: List<Item>
+    private lateinit var jobs: MutableList<JobSession>
+    private lateinit var jobsList: List<Item>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,15 +51,9 @@ class JobSessionsActivity : AppCompatActivity() {
     }
 
     private fun populateJobSessionsList() {
-        jobs = database.use {
-            val rowParser = classParser<JobSession>()
-            select(DatabaseOpenHelper.jobSessionsTable).parseList(rowParser).toMutableList()
-        }
+        jobs = database.getJobSessions().toMutableList()
 
-        jobsList = jobs.map {
-            JobSessionItem(it)
-        }
-
+        jobsList = jobs.map { JobSessionItem(it) }
         listAdapter = JobSessionArrayAdapter(this, jobsList)
         jobSessionListView!!.isLongClickable = true
         registerForContextMenu(jobSessionListView)

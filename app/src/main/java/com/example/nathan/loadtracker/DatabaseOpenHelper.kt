@@ -2,6 +2,8 @@ package com.example.nathan.loadtracker
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import com.example.nathan.loadtracker.models.JobSession
+import com.example.nathan.loadtracker.models.Load
 import org.jetbrains.anko.db.*
 
 class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_tracker", null, 1) {
@@ -48,6 +50,36 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.dropTable(jobSessionsTable, true)
         db.dropTable(loadsTable, true)
+    }
+
+    fun addLoad(load : Load) {
+        use {
+            insert("loads")
+        }
+    }
+
+    fun addJobSession() {
+
+    }
+
+    fun getLoads() {
+
+    }
+
+    fun getLoadsForSession(title : String) : List<Load> {
+        return use {
+            select(DatabaseOpenHelper.loadsTable).whereArgs("($columnTitle  = {jobSessionTitle})", "jobSessionTitle" to title).parseList(classParser<Load>())
+        }
+    }
+
+    fun getJobSessions() : List<JobSession> {
+        return use {
+            select(DatabaseOpenHelper.jobSessionsTable).parseList(classParser())
+        }
+    }
+
+    fun deleteJobSession() {
+
     }
 }
 

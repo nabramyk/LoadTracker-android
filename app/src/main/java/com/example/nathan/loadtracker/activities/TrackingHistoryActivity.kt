@@ -10,21 +10,19 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.AdapterView
-import android.widget.ListView
+import android.widget.ArrayAdapter
+import kotlinx.android.synthetic.main.tracking_history_activity.*
 
 import com.example.nathan.loadtracker.Item
-import com.example.nathan.loadtracker.models.Load
 import com.example.nathan.loadtracker.load.LoadListItem
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.arrayadapters.TrackingHistoryArrayAdapter
-
-import java.util.ArrayList
+import com.example.nathan.loadtracker.database
+import com.example.nathan.loadtracker.models.Load
 
 class TrackingHistoryActivity : AppCompatActivity() {
 
-    private var trackedLoadsHistory: ListView? = null
-    private var loads: List<Load>? = null
-    private var listAdapter: TrackingHistoryArrayAdapter? = null
+    private var listAdapter: ArrayAdapter<Item>? = null
     private var session_title: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,33 +34,19 @@ class TrackingHistoryActivity : AppCompatActivity() {
 
         title = "Load History: " + session_title!!
 
-        val myToolbar = findViewById(R.id.history_activity_toolbar) as Toolbar
-        setSupportActionBar(myToolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_arrow_back_black_36px))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val ab = supportActionBar
-        ab!!.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_arrow_back_black_36px))
-        ab.setDisplayHomeAsUpEnabled(true)
+        registerForContextMenu(trackedLoadHistory)
+        trackedLoadHistory!!.isLongClickable = true
 
-        trackedLoadsHistory = findViewById(R.id.trackedLoadHistory) as ListView
-        registerForContextMenu(trackedLoadsHistory)
-        trackedLoadsHistory!!.isLongClickable = true
-        //val db = DatabaseHandler(this)
-        //loads = db.getAllLoadsForSession(intent.extras!!.getString("session_title_index"))
+        val loads = database.getLoadsForSession(session_title!!)
 
-        val loadsList = ArrayList<Item>()
-
-        for (l in loads!!) {
-            if (loads!!.indexOf(l) <= 0) {
-                loadsList.add(LoadListItem(l))
-            } else if (l.dateLoaded != loads!![loads!!.indexOf(l) - 1].dateLoaded) {
-                loadsList.add(LoadListItem(l))
-            } else
-                loadsList.add(LoadListItem(l))
-
-        }
+        val loadsList = loads.map { LoadListItem(it) }
 
         listAdapter = TrackingHistoryArrayAdapter(this, loadsList)
-        trackedLoadsHistory!!.adapter = listAdapter
+        trackedLoadHistory!!.adapter = listAdapter
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo) {
