@@ -10,14 +10,10 @@ import com.example.nathan.loadtracker.Item
 
 class JobSessionArrayAdapter(context: Context, items: List<Item>) : ArrayAdapter<Item>(context, 0, items) {
 
-    private val mInflater: LayoutInflater
+    private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
     enum class RowType {
         LIST_ITEM, HEADER_ITEM
-    }
-
-    init {
-        this.mInflater = LayoutInflater.from(context)
     }
 
     override fun getItemViewType(position: Int): Int {
