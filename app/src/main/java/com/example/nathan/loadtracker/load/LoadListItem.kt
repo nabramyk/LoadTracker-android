@@ -11,13 +11,12 @@ import com.example.nathan.loadtracker.models.Load
 
 class LoadListItem(load: Load) : Item {
 
-    val id: Int
+    val id: Int = load.id!!
     private val timeLoaded: String?
     private val material: String?
     private val unitId: String?
 
     init {
-        this.id = load.id!!
         this.timeLoaded = load.timeLoaded
         this.material = load.material
         this.unitId = load.unitId
@@ -40,9 +39,9 @@ class LoadListItem(load: Load) : Item {
         val material = view.findViewById<View>(R.id.material) as TextView
         val unitId = view.findViewById<View>(R.id.unitId) as TextView
 
-        trackedLoads.text = "Time loaded: " + this.timeLoaded!!
-        material.text = "Material: " + this.material!!
-        unitId.text = "Unit ID: " + this.unitId!!
+        trackedLoads.text = this.timeLoaded!!
+        material.text = this.material!!
+        unitId.text = this.unitId!!
 
         return view
     }

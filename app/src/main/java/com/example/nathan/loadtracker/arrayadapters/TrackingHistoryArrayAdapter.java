@@ -10,9 +10,6 @@ import com.example.nathan.loadtracker.Item;
 
 import java.util.List;
 
-/**
- * Created by nathanabramyk on 2017-10-19.
- */
 public class TrackingHistoryArrayAdapter extends ArrayAdapter<Item> {
 
     private LayoutInflater mInflater;

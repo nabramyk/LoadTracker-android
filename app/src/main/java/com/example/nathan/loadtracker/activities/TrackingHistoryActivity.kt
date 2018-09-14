@@ -27,7 +27,6 @@ class TrackingHistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tracking_history)
 
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         sessionTitle = intent.extras!!.getString("session_title_index")
 
         title = "Load History: " + sessionTitle!!
@@ -40,7 +39,6 @@ class TrackingHistoryActivity : AppCompatActivity() {
         trackedLoadHistory!!.isLongClickable = true
 
         val loads = database.getLoadsForSession(sessionTitle!!)
-
         val loadsList = loads.map { LoadListItem(it) }
 
         listAdapter = TrackingHistoryArrayAdapter(this, loadsList)

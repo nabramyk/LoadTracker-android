@@ -34,7 +34,6 @@
             android:id="@+id/unitIDInput"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/border_style"
             android:hint="@string/unit_id"
             android:inputType="text"
             android:textAlignment="center" />
@@ -52,7 +51,6 @@
             android:id="@+id/materialInput"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/border_style"
             android:hint="@string/material"
             android:inputType="textPersonName"
             android:textAlignment="center" />
@@ -70,7 +68,6 @@
             android:id="@+id/driverNameInput"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/border_style"
             android:hint="@string/driver_name"
             android:inputType="textPersonName"
             android:textAlignment="center" />
@@ -88,10 +85,10 @@
             android:id="@+id/companyNameInput"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/border_style"
             android:hint="@string/company_name"
             android:inputType="textPersonName"
             android:textAlignment="center" />
+
     </android.support.design.widget.TextInputLayout>
 
     <Button

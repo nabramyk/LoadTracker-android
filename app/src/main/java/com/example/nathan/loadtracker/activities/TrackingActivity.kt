@@ -79,7 +79,6 @@ class TrackingActivity : AppCompatActivity() {
         }
 
         val c = Calendar.getInstance()
-
         database.addLoad(
                 Load(
                         id = null,
@@ -92,6 +91,8 @@ class TrackingActivity : AppCompatActivity() {
                         dateLoaded = SimpleDateFormat("yyyy/MM/dd").format(c.time)
                 )
         )
+
+        Snackbar.make(view, "Tracked!", Snackbar.LENGTH_LONG).show()
 
         //history_breakdown.text = updateTotalLoadsTracked()
         //average_load_time.text = updateAverageRunTime()
@@ -164,7 +165,7 @@ class TrackingActivity : AppCompatActivity() {
 
     private fun viewLoadTrackingHistory() {
         val intent = Intent(this, TrackingHistoryActivity::class.java)
-        intent.putExtra("session_title_index", title.toString())
+        intent.putExtra("session_title_index", sessionTitle)
         startActivity(intent)
     }
 }

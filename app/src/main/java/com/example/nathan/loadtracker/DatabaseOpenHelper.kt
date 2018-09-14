@@ -8,12 +8,6 @@ import org.jetbrains.anko.db.*
 
 class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_tracker", null, 1) {
     companion object {
-        const val jobSessionsTable = "job_sessions"
-        const val loadsTable = "loads"
-        const val columnId = "_id"
-        const val columnTitle = "title"
-        const val columnCreated = "created"
-
         private var instance: DatabaseOpenHelper? = null
 
         @Synchronized
@@ -23,28 +17,45 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
             }
             return instance!!
         }
+
+        const val columnId = "_id"
+        const val columnTitle = "title"
+        const val columnCreated = "created"
+        const val columnDriver = "driver"
+        const val columnStartDate = "start_date"
+        const val columnClosedDate = "closed_date"
+        const val columnTotalLoads = "total_loads"
+        const val columnUnitId = "unit_id"
+        const val columnMaterial = "material"
+        const val columnCompanyName = "company_name"
+        const val columnTimeLoaded = "time_loaded"
+        const val columnDateLoaded = "date_loaded"
+        const val columnModified = "modified"
+
+        const val jobSessionsTable = "job_sessions"
+        const val loadsTable = "loads"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.createTable(jobSessionsTable, true,
+        db.createTable(Companion.jobSessionsTable, true,
                 columnId to INTEGER + PRIMARY_KEY + UNIQUE,
                 columnTitle to TEXT,
-                "start_date" to TEXT,
-                "closed_date" to TEXT,
+                columnStartDate to TEXT,
+                columnClosedDate to TEXT,
                 columnCreated to TEXT,
-                "total_loads" to INTEGER)
+                columnTotalLoads to INTEGER)
 
-        db.createTable(loadsTable, true,
+        db.createTable(Companion.loadsTable, true,
                 columnId to INTEGER + PRIMARY_KEY + UNIQUE,
                 columnTitle to TEXT,
-                "driver" to TEXT,
-                "unit_id" to TEXT,
-                "material" to TEXT,
-                "company_name" to TEXT,
-                "time_loaded" to TEXT,
-                "date_loaded" to TEXT,
+                columnDriver to TEXT,
+                columnUnitId to TEXT,
+                columnMaterial to TEXT,
+                columnCompanyName to TEXT,
+                columnTimeLoaded to TEXT,
+                columnDateLoaded to TEXT,
                 columnCreated to TEXT,
-                "modified" to TEXT)
+                columnModified to TEXT)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -54,7 +65,11 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
 
     fun addLoad(load : Load) {
         use {
-            insert("loads")
+            insert(loadsTable,
+                    columnTitle to load.title,
+                    columnDriver to load.driver,
+                    columnMaterial to load.material,
+                    columnCompanyName to load.companyName)
         }
     }
 
@@ -68,7 +83,7 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
 
     fun getLoadsForSession(title : String) : List<Load> {
         return use {
-            select(DatabaseOpenHelper.loadsTable).whereArgs("($columnTitle  = {jobSessionTitle})", "jobSessionTitle" to title).parseList(classParser<Load>())
+            select(DatabaseOpenHelper.loadsTable).whereArgs("(${Companion.columnTitle}  = {jobSessionTitle})", "jobSessionTitle" to title).parseList(classParser())
         }
     }
 
