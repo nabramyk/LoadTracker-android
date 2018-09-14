@@ -20,8 +20,10 @@
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/activities/TrackingActivity.kt" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/activities/TrackingActivity.kt" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_tracking.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_tracking.xml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/trackedloadrow.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/trackedloadrow.xml" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/menu/tracking_activity_menu.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/tracking_activity_menu.xml" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -44,30 +46,49 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="activity_tracking.xml" pinned="false" current-in-tab="true">
+      <file leaf-file-name="activity_tracking.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_tracking.xml">
           <provider editor-type-id="android-designer2">
             <state />
           </provider>
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="329">
-              <caret line="112" column="62" lean-forward="false" selection-start-line="112" selection-start-column="62" selection-end-line="112" selection-end-column="62" />
+            <state relative-caret-position="-1366">
+              <caret line="2" column="43" lean-forward="false" selection-start-line="2" selection-start-column="43" selection-end-line="2" selection-end-column="43" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tracking_activity_menu.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/tracking_activity_menu.xml">
+          <provider editor-type-id="android-designer2">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="75">
+              <caret line="5" column="23" lean-forward="false" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
               <folding>
-                <element signature="e#2253#2270#0" expanded="true" />
-                <element signature="e#3106#3124#0" expanded="true" />
-                <element signature="e#3981#4002#0" expanded="true" />
-                <element signature="e#4863#4885#0" expanded="true" />
-                <element signature="e#5380#5395#0" expanded="true" />
+                <element signature="e#173#200#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TrackingActivity.kt" pinned="false" current-in-tab="false">
+      <file leaf-file-name="TrackingActivity.kt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/activities/TrackingActivity.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="49" column="60" lean-forward="false" selection-start-line="49" selection-start-column="60" selection-end-line="49" selection-end-column="60" />
+            <state relative-caret-position="480">
+              <caret line="50" column="4" lean-forward="false" selection-start-line="50" selection-start-column="4" selection-end-line="50" selection-end-column="4" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DatabaseOpenHelper.kt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/DatabaseOpenHelper.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="295">
+              <caret line="77" column="5" lean-forward="false" selection-start-line="77" selection-start-column="5" selection-end-line="77" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -2236,7 +2257,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/models/Load.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/load/LoadListItem.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/DatabaseOpenHelper.kt" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/activities/TrackingActivity.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/activities/TrackingHistoryActivity.kt" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/arrayadapters/TrackingHistoryArrayAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/arrayadapters/JobSessionArrayAdapter.kt" />
@@ -2244,14 +2264,16 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/jobsession/JobSessionItem.kt" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/trackedloadrow.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_tracking.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/menu/tracking_activity_menu.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/activities/TrackingActivity.kt" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
     <option name="x" value="1440" />
-    <option name="y" value="-19" />
-    <option name="width" value="956" />
-    <option name="height" value="1058" />
+    <option name="y" value="-41" />
+    <option name="width" value="1920" />
+    <option name="height" value="1080" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -2337,17 +2359,6 @@
               <item name="java" type="edd41e36:AndroidSourceTypeNode" />
               <item name="loadtracker" type="cbb59c9e:AndroidPsiDirectoryNode" />
               <item name="load" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LoadTracker-android" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-            </path>
-            <path>
-              <item name="LoadTracker-android" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
             </path>
           </expand>
           <select />
@@ -2589,14 +2600,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/activities/TrackingActivity.kt</url>
-          <line>36</line>
-          <properties />
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-      </breakpoints>
       <option name="time" value="6" />
     </breakpoint-manager>
     <watches-manager />
@@ -2609,13 +2612,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1575">
           <caret line="105" column="38" lean-forward="false" selection-start-line="105" selection-start-column="38" selection-end-line="105" selection-end-column="38" />
-          <folding>
-            <element signature="e#2253#2270#0" expanded="true" />
-            <element signature="e#3106#3124#0" expanded="true" />
-            <element signature="e#3981#4002#0" expanded="true" />
-            <element signature="e#4863#4885#0" expanded="true" />
-            <element signature="e#5380#5395#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2745,14 +2742,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/DatabaseOpenHelper.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="492">
-          <caret line="77" column="5" lean-forward="false" selection-start-line="77" selection-start-column="5" selection-end-line="77" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/activities/TrackingHistoryActivity.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="291">
@@ -2824,11 +2813,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/activities/TrackingActivity.kt">
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/menu/tracking_activity_menu.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="49" column="60" lean-forward="false" selection-start-line="49" selection-start-column="60" selection-end-line="49" selection-end-column="60" />
-          <folding />
+        <state relative-caret-position="75">
+          <caret line="5" column="23" lean-forward="false" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
+          <folding>
+            <element signature="e#173#200#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2837,15 +2831,25 @@
         <state />
       </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
-          <caret line="112" column="62" lean-forward="false" selection-start-line="112" selection-start-column="62" selection-end-line="112" selection-end-column="62" />
-          <folding>
-            <element signature="e#2253#2270#0" expanded="true" />
-            <element signature="e#3106#3124#0" expanded="true" />
-            <element signature="e#3981#4002#0" expanded="true" />
-            <element signature="e#4863#4885#0" expanded="true" />
-            <element signature="e#5380#5395#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-1366">
+          <caret line="2" column="43" lean-forward="false" selection-start-line="2" selection-start-column="43" selection-end-line="2" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/DatabaseOpenHelper.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="77" column="5" lean-forward="false" selection-start-line="77" selection-start-column="5" selection-end-line="77" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/nathan/loadtracker/activities/TrackingActivity.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="50" column="4" lean-forward="false" selection-start-line="50" selection-start-column="4" selection-end-line="50" selection-end-column="4" />
+          <folding />
         </state>
       </provider>
     </entry>
