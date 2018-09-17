@@ -48,6 +48,12 @@ class TrackingActivity : AppCompatActivity() {
             driverNameInput.setText(sharedPrefs.getString("name", ""))
             companyNameInput.setText(sharedPrefs.getString("company", ""))
         }
+
+        nav_view.menu.findItem(R.id.view_load_history).setOnMenuItemClickListener {
+            startActivity(Intent(this, TrackingHistoryActivity::class.java)
+                    .putExtra("session_title_index", sessionTitle))
+            true
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -145,8 +151,7 @@ class TrackingActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.tracking_activity_menu, menu)
+        tracking_drawer_layout.openDrawer(GravityCompat.END)
         return true
     }
 

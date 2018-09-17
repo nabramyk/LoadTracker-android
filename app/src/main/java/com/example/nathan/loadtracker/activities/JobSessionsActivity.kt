@@ -49,15 +49,8 @@ class JobSessionsActivity : AppCompatActivity() {
         jobs = database.getJobSessions() as ArrayList<JobSession>
 
         val listAdapter = JobSessionAdapter(this, jobs)
-        //rvJobSessions.isLongClickable = true
         rvJobSessions.layoutManager = LinearLayoutManager(this)
         registerForContextMenu(rvJobSessions)
-
-//        rvJobSessions.addOnItemTouchListener(RecyclerView.OnItemTouchListener { _, view, position, _ ->
-//            val intent = Intent(view.context, TrackingActivity::class.java)
-//            intent.putExtra("session_title_index", jobs[position].jobTitle)
-//            startActivity(intent)
-//        })
 
         rvJobSessions.adapter = listAdapter
     }
