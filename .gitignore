@@ -1,6 +1,7 @@
 text
 .gradle
-.idea
+.idea/
 *.properties
 /build
 *.iml
+/app/app.iml
