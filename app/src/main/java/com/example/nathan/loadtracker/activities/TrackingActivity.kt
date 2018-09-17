@@ -38,21 +38,29 @@ class TrackingActivity : AppCompatActivity() {
 
         val js = database.getLoadsForSession(sessionTitle).toMutableList()
 
-        if (js.isNotEmpty()) {
-            materialInput.setText(js[js.size - 1].material)
-            unitIDInput.setText(js[js.size - 1].unitId)
-            driverNameInput.setText(js[js.size - 1].driver)
-            companyNameInput.setText(js[js.size - 1].companyName)
-        } else {
-            val sharedPrefs = getSharedPreferences("com.example.nathan.loadtracker", Context.MODE_PRIVATE)
-            driverNameInput.setText(sharedPrefs.getString("name", ""))
-            companyNameInput.setText(sharedPrefs.getString("company", ""))
-        }
+//        if (js.isNotEmpty()) {
+//            materialInput.setText(js[js.size - 1].material)
+//            unitIDInput.setText(js[js.size - 1].unitId)
+//            driverNameInput.setText(js[js.size - 1].driver)
+//            companyNameInput.setText(js[js.size - 1].companyName)
+//        } else {
+//            val sharedPrefs = getSharedPreferences("com.example.nathan.loadtracker", Context.MODE_PRIVATE)
+//            driverNameInput.setText(sharedPrefs.getString("name", ""))
+//            companyNameInput.setText(sharedPrefs.getString("company", ""))
+//        }
 
-        nav_view.menu.findItem(R.id.view_load_history).setOnMenuItemClickListener {
-            startActivity(Intent(this, TrackingHistoryActivity::class.java)
-                    .putExtra("session_title_index", sessionTitle))
-            true
+//        nav_view.menu.findItem(R.id.view_load_history).setOnMenuItemClickListener {
+//            viewLoadTrackingHistory()
+//            true
+//        }
+
+        bottom_navigation.setOnNavigationItemSelectedListener {
+            when(it.itemId) {
+                R.id.fragment_track -> { true }
+                R.id.fragment_stats -> { true }
+                R.id.fragment_history -> { true }
+                else -> true
+            }
         }
     }
 
@@ -63,39 +71,39 @@ class TrackingActivity : AppCompatActivity() {
 
     fun trackData(view: View) {
 
-        if (materialInput.text.toString().trim { it <= ' ' }.isEmpty()) {
-            Snackbar.make(view, "Missing material", Snackbar.LENGTH_LONG).show()
-            return
-        }
-
-        if (unitIDInput.text.toString().trim { it <= ' ' }.isEmpty()) {
-            Snackbar.make(view, "Missing unit ID", Snackbar.LENGTH_LONG).show()
-            return
-        }
-
-        if (driverNameInput.text.toString().trim { it <= ' ' }.isEmpty()) {
-            Snackbar.make(view, "Missing driver name", Snackbar.LENGTH_LONG).show()
-            return
-        }
-
-        if (companyNameInput.text.toString().trim { it <= ' ' }.isEmpty()) {
-            Snackbar.make(view, "Missing company name", Snackbar.LENGTH_LONG).show()
-            return
-        }
-
-        val c = Calendar.getInstance()
-        database.addLoad(
-                Load(
-                        id = null,
-                        title = sessionTitle,
-                        driver = driverNameInput.text.toString(),
-                        unitId = unitIDInput.text.toString(),
-                        material = materialInput.text.toString(),
-                        companyName = companyNameInput.text.toString(),
-                        timeLoaded = SimpleDateFormat("HH:mm:ss.SSS").format(c.time),
-                        dateLoaded = SimpleDateFormat("yyyy/MM/dd").format(c.time)
-                )
-        )
+//        if (materialInput.text.toString().trim { it <= ' ' }.isEmpty()) {
+//            Snackbar.make(view, "Missing material", Snackbar.LENGTH_LONG).show()
+//            return
+//        }
+//
+//        if (unitIDInput.text.toString().trim { it <= ' ' }.isEmpty()) {
+//            Snackbar.make(view, "Missing unit ID", Snackbar.LENGTH_LONG).show()
+//            return
+//        }
+//
+//        if (driverNameInput.text.toString().trim { it <= ' ' }.isEmpty()) {
+//            Snackbar.make(view, "Missing driver name", Snackbar.LENGTH_LONG).show()
+//            return
+//        }
+//
+//        if (companyNameInput.text.toString().trim { it <= ' ' }.isEmpty()) {
+//            Snackbar.make(view, "Missing company name", Snackbar.LENGTH_LONG).show()
+//            return
+//        }
+//
+//        val c = Calendar.getInstance()
+//        database.addLoad(
+//                Load(
+//                        id = null,
+//                        title = sessionTitle,
+//                        driver = driverNameInput.text.toString(),
+//                        unitId = unitIDInput.text.toString(),
+//                        material = materialInput.text.toString(),
+//                        companyName = companyNameInput.text.toString(),
+//                        timeLoaded = SimpleDateFormat("HH:mm:ss.SSS").format(c.time),
+//                        dateLoaded = SimpleDateFormat("yyyy/MM/dd").format(c.time)
+//                )
+//        )
 
         Snackbar.make(view, "Tracked!", Snackbar.LENGTH_LONG).show()
 
@@ -119,13 +127,13 @@ class TrackingActivity : AppCompatActivity() {
         formattedOutput = formattedOutput.replace("{", "")
         formattedOutput = formattedOutput.replace("}", "")
 
-        nav_view.menu.add(formattedOutput)
+       // nav_view.menu.add(formattedOutput)
     }
 
     private fun updateAverageRunTime() {
         val loads = database.getLoadsForSession(title.toString())
         if (loads.isEmpty()) {
-            nav_view.menu.add("00:00:00.000")
+        //    nav_view.menu.add("00:00:00.000")
             return
         }
         var hours = 0
@@ -147,23 +155,13 @@ class TrackingActivity : AppCompatActivity() {
         seconds /= loads.size
         milliseconds /= loads.size
 
-        nav_view.menu.add(hours.toString() + ":" + minutes + ":" + seconds + "." + milliseconds)
+       // nav_view.menu.add(hours.toString() + ":" + minutes + ":" + seconds + "." + milliseconds)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        tracking_drawer_layout.openDrawer(GravityCompat.END)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.view_load_history -> {
-                tracking_drawer_layout.openDrawer(GravityCompat.END)
-                false
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        tracking_drawer_layout.openDrawer(GravityCompat.END)
+//        return super.onOptionsItemSelected(item)
+//    }
 
     private fun viewLoadTrackingHistory() {
         val intent = Intent(this, TrackingHistoryActivity::class.java)

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/view_load_history"
-        android:title="@string/view_load_history">
-    </item>
-    <item android:id="@+id/history_breakdown"
-        android:title="" />
+    <item android:id="@+id/fragment_track"
+        android:title="Track" />
+    <item android:id="@+id/fragment_stats"
+        android:title="Stats" />
+    <item android:id="@+id/fragment_history"
+        android:title="History" />
 </menu>
