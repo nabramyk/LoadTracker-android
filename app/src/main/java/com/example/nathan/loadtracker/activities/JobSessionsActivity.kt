@@ -1,26 +1,21 @@
 package com.example.nathan.loadtracker.activities
 
 import android.support.v7.app.AppCompatActivity
-import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 
 import com.example.nathan.loadtracker.DatabaseOpenHelper
-import com.example.nathan.loadtracker.Item
 import com.example.nathan.loadtracker.models.JobSession
-import com.example.nathan.loadtracker.arrayadapters.JobSessionArrayAdapter
-import com.example.nathan.loadtracker.jobsession.JobSessionItem
+import com.example.nathan.loadtracker.arrayadapters.JobSessionAdapter
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.database
 import kotlinx.android.synthetic.main.activity_job_sessions.*
 
 class JobSessionsActivity : AppCompatActivity() {
 
-    private var listAdapter: ArrayAdapter<Item>? = null
-    private lateinit var jobs: MutableList<JobSession>
-    private lateinit var jobsList: List<Item>
+    private lateinit var jobs: ArrayList<JobSession>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +34,7 @@ class JobSessionsActivity : AppCompatActivity() {
             R.id.edit_session_entry,
 
             R.id.close_session_entry -> {
-                listAdapter!!.remove(listAdapter!!.getItem(info.position))
+                //listAdapter.remove(listAdapter.getItem(info.position))
                 jobs.removeAt(info.position)
                 database.use {
                     delete(DatabaseOpenHelper.jobSessionsTable, null, null)
@@ -51,19 +46,19 @@ class JobSessionsActivity : AppCompatActivity() {
     }
 
     private fun populateJobSessionsList() {
-        jobs = database.getJobSessions().toMutableList()
+        jobs = database.getJobSessions() as ArrayList<JobSession>
 
-        jobsList = jobs.map { JobSessionItem(it) }
-        listAdapter = JobSessionArrayAdapter(this, jobsList)
-        jobSessionListView!!.isLongClickable = true
-        registerForContextMenu(jobSessionListView)
+        val listAdapter = JobSessionAdapter(this, jobs)
+        //rvJobSessions.isLongClickable = true
+        rvJobSessions.layoutManager = LinearLayoutManager(this)
+        registerForContextMenu(rvJobSessions)
 
-        jobSessionListView!!.onItemClickListener = AdapterView.OnItemClickListener { _, view, position, _ ->
-            val intent = Intent(view.context, TrackingActivity::class.java)
-            intent.putExtra("session_title_index", jobs[position].jobTitle)
-            startActivity(intent)
-        }
+//        rvJobSessions.addOnItemTouchListener(RecyclerView.OnItemTouchListener { _, view, position, _ ->
+//            val intent = Intent(view.context, TrackingActivity::class.java)
+//            intent.putExtra("session_title_index", jobs[position].jobTitle)
+//            startActivity(intent)
+//        })
 
-        jobSessionListView!!.adapter = listAdapter
+        rvJobSessions.adapter = listAdapter
     }
 }
