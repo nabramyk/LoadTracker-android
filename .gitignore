@@ -1,6 +1,5 @@
 text
 .gradle
 .idea
-local.properties
-LoadTracker-android.iml
-app/app.iml
+*.properties
+*.iml
