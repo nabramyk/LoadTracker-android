@@ -2,5 +2,5 @@ text
 .gradle
 .idea
 *.properties
-*.iml
 /build
+*.iml
