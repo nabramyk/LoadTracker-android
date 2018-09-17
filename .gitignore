@@ -3,3 +3,4 @@ text
 .idea
 *.properties
 *.iml
+/build
