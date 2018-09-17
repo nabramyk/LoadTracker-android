@@ -73,8 +73,11 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
         }
     }
 
-    fun addJobSession() {
-
+    fun addJobSession(jobSession: String) {
+        use {
+            insert(jobSessionsTable,
+                    columnTitle to jobSession)
+        }
     }
 
     fun getLoads() {
