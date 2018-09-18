@@ -1,23 +1,18 @@
 package com.example.nathan.loadtracker.activities
 
-import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.view.Menu
-import android.view.MenuItem
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentStatePagerAdapter
 import android.view.View
 
-import com.example.nathan.loadtracker.models.Load
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.database
 import kotlinx.android.synthetic.main.activity_tracking.*
 
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.HashMap
 
 class TrackingActivity : AppCompatActivity() {
@@ -35,33 +30,19 @@ class TrackingActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         sessionTitle = intent.getStringExtra("session_title_index")
+        title = sessionTitle
 
-        val js = database.getLoadsForSession(sessionTitle).toMutableList()
+        vPager.adapter = TrackingPagerAdapter(supportFragmentManager)
+        vPager.currentItem = Tab.TRACKING.ordinal
 
-//        if (js.isNotEmpty()) {
-//            materialInput.setText(js[js.size - 1].material)
-//            unitIDInput.setText(js[js.size - 1].unitId)
-//            driverNameInput.setText(js[js.size - 1].driver)
-//            companyNameInput.setText(js[js.size - 1].companyName)
-//        } else {
-//            val sharedPrefs = getSharedPreferences("com.example.nathan.loadtracker", Context.MODE_PRIVATE)
-//            driverNameInput.setText(sharedPrefs.getString("name", ""))
-//            companyNameInput.setText(sharedPrefs.getString("company", ""))
+//        bottom_navigation.setOnNavigationItemSelectedListener {
+//            when(it.itemId) {
+//                R.id.fragment_track -> { true }
+//                R.id.fragment_stats -> { true }
+//                R.id.fragment_history -> { true }
+//                else -> true
+//            }
 //        }
-
-//        nav_view.menu.findItem(R.id.view_load_history).setOnMenuItemClickListener {
-//            viewLoadTrackingHistory()
-//            true
-//        }
-
-        bottom_navigation.setOnNavigationItemSelectedListener {
-            when(it.itemId) {
-                R.id.fragment_track -> { true }
-                R.id.fragment_stats -> { true }
-                R.id.fragment_history -> { true }
-                else -> true
-            }
-        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -167,5 +148,22 @@ class TrackingActivity : AppCompatActivity() {
         val intent = Intent(this, TrackingHistoryActivity::class.java)
         intent.putExtra("session_title_index", sessionTitle)
         startActivity(intent)
+    }
+
+    enum class Tab {
+        TRACKING,
+        STATS,
+        HISTORY
+    }
+
+    inner class TrackingPagerAdapter(fragmentManager: FragmentManager) : FragmentStatePagerAdapter(fragmentManager) {
+        override fun getItem(position: Int): Fragment = when (position) {
+            Tab.TRACKING.ordinal -> TrackLoadFragment()
+            Tab.STATS.ordinal -> StatisticsFragment()
+            Tab.HISTORY.ordinal -> HistoryFragment()
+            else -> throw IndexOutOfBoundsException("Fragment not found")
+        }
+
+        override fun getCount(): Int = Tab.values().size
     }
 }
