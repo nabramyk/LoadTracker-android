@@ -24,7 +24,6 @@ class TrackingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_tracking)
 
         setSupportActionBar(toolbar)
-        toolbar.overflowIcon = resources.getDrawable(R.drawable.ic_more_vert_black_36px)
 
         supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_arrow_back_black_36px))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -48,49 +47,6 @@ class TrackingActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         this.intent = intent
-    }
-
-    fun trackData(view: View) {
-
-//        if (materialInput.text.toString().trim { it <= ' ' }.isEmpty()) {
-//            Snackbar.make(view, "Missing material", Snackbar.LENGTH_LONG).show()
-//            return
-//        }
-//
-//        if (unitIDInput.text.toString().trim { it <= ' ' }.isEmpty()) {
-//            Snackbar.make(view, "Missing unit ID", Snackbar.LENGTH_LONG).show()
-//            return
-//        }
-//
-//        if (driverNameInput.text.toString().trim { it <= ' ' }.isEmpty()) {
-//            Snackbar.make(view, "Missing driver name", Snackbar.LENGTH_LONG).show()
-//            return
-//        }
-//
-//        if (companyNameInput.text.toString().trim { it <= ' ' }.isEmpty()) {
-//            Snackbar.make(view, "Missing company name", Snackbar.LENGTH_LONG).show()
-//            return
-//        }
-//
-//        val c = Calendar.getInstance()
-//        database.addLoad(
-//                Load(
-//                        id = null,
-//                        title = sessionTitle,
-//                        driver = driverNameInput.text.toString(),
-//                        unitId = unitIDInput.text.toString(),
-//                        material = materialInput.text.toString(),
-//                        companyName = companyNameInput.text.toString(),
-//                        timeLoaded = SimpleDateFormat("HH:mm:ss.SSS").format(c.time),
-//                        dateLoaded = SimpleDateFormat("yyyy/MM/dd").format(c.time)
-//                )
-//        )
-
-        Snackbar.make(view, "Tracked!", Snackbar.LENGTH_LONG).show()
-
-        updateTotalLoadsTracked()
-        updateAverageRunTime()
-
     }
 
     private fun updateTotalLoadsTracked() {
