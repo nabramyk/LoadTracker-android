@@ -3,11 +3,9 @@ package com.example.nathan.loadtracker.activities
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
-import android.view.View
 
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.database
@@ -95,17 +93,6 @@ class TrackingActivity : AppCompatActivity() {
        // nav_view.menu.add(hours.toString() + ":" + minutes + ":" + seconds + "." + milliseconds)
     }
 
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        tracking_drawer_layout.openDrawer(GravityCompat.END)
-//        return super.onOptionsItemSelected(item)
-//    }
-
-    private fun viewLoadTrackingHistory() {
-        val intent = Intent(this, TrackingHistoryActivity::class.java)
-        intent.putExtra("session_title_index", sessionTitle)
-        startActivity(intent)
-    }
-
     enum class Tab {
         TRACKING,
         STATS,
@@ -116,7 +103,7 @@ class TrackingActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment = when (position) {
             Tab.TRACKING.ordinal -> TrackLoadFragment()
             Tab.STATS.ordinal -> StatisticsFragment()
-            Tab.HISTORY.ordinal -> HistoryFragment()
+            Tab.HISTORY.ordinal -> TrackingHistoryFragment()
             else -> throw IndexOutOfBoundsException("Fragment not found")
         }
 

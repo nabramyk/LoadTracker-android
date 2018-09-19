@@ -1,58 +1,37 @@
 package com.example.nathan.loadtracker.activities
 
-import android.content.Intent
-import android.support.v4.app.NavUtils
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.view.ContextMenu
-import android.view.MenuItem
-import android.view.View
-import kotlinx.android.synthetic.main.activity_tracking_history.*
+import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.view.*
+import kotlinx.android.synthetic.main.fragment_tracking_history.*
 
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.arrayadapters.TrackingHistoryAdapter
 import com.example.nathan.loadtracker.database
 import com.example.nathan.loadtracker.models.Load
 
-class TrackingHistoryActivity : AppCompatActivity() {
+class TrackingHistoryFragment : Fragment() {
 
-    private var sessionTitle: String? = null
+    private lateinit var sessionTitle: String
+    private lateinit var loads: ArrayList<Load>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tracking_history)
 
-        sessionTitle = intent.extras!!.getString("session_title_index")
+        sessionTitle = activity?.title?.toString()!!
+        loads = context?.database?.getLoadsForSession(sessionTitle) as ArrayList<Load>
+    }
 
-        title = "Load History: " + sessionTitle!!
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_tracking_history, container, false)
+    }
 
-        setSupportActionBar(toolbar)
-        supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_arrow_back_black_36px))
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val loads = database.getLoadsForSession(sessionTitle!!) as ArrayList<Load>
-        val listAdapter = TrackingHistoryAdapter(this, loads)
+        val listAdapter = TrackingHistoryAdapter(context!!, loads)
+        trackedLoadHistory.layoutManager = LinearLayoutManager(context)
         trackedLoadHistory.adapter = listAdapter
     }
-
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-        val inflater = menuInflater
-        inflater.inflate(R.menu.tracking_history_context_menu, menu)
-
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                val upIntent = Intent(this, TrackingActivity::class.java)
-                upIntent.putExtra("session_title_index", sessionTitle!!.toString())
-                upIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                NavUtils.navigateUpTo(this, upIntent)
-            }
-        }
-        return true
-    }
-
-    
 }
