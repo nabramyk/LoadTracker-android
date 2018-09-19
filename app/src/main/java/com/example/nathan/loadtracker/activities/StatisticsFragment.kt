@@ -9,6 +9,6 @@ import com.example.nathan.loadtracker.R
 
 class StatisticsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_load_tracking, container, false)
+        return inflater.inflate(R.layout.fragment_statistics, container, false)
     }
 }

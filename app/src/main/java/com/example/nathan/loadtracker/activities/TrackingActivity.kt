@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.view.ViewPager
 
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.database
@@ -32,19 +33,37 @@ class TrackingActivity : AppCompatActivity() {
         vPager.adapter = TrackingPagerAdapter(supportFragmentManager)
         vPager.currentItem = Tab.TRACKING.ordinal
 
-//        bottom_navigation.setOnNavigationItemSelectedListener {
-//            when(it.itemId) {
-//                R.id.fragment_track -> { true }
-//                R.id.fragment_stats -> { true }
-//                R.id.fragment_history -> { true }
-//                else -> true
-//            }
-//        }
-    }
+        vPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {}
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        this.intent = intent
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+
+            override fun onPageSelected(position: Int) {
+                bottom_navigation.selectedItemId = when (position) {
+                    0 -> R.id.fragment_track
+                    1 -> R.id.fragment_stats
+                    else -> R.id.fragment_history
+                }
+            }
+        })
+
+        bottom_navigation.setOnNavigationItemSelectedListener {
+            when(it.itemId) {
+                R.id.fragment_track -> {
+                    vPager.setCurrentItem(0, true)
+                    true
+                }
+                R.id.fragment_stats -> {
+                    vPager.setCurrentItem(1, true)
+                    true
+                }
+                R.id.fragment_history -> {
+                    vPager.setCurrentItem(2, true)
+                    true
+                }
+                else -> true
+            }
+        }
     }
 
     private fun updateTotalLoadsTracked() {
