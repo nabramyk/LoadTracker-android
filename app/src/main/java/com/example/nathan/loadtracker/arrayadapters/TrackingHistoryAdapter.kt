@@ -31,7 +31,9 @@ class TrackingHistoryAdapter(context: Context,
     inner class LoadViewHolder(parent: ViewGroup)
         : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.cell_load, parent, false)) {
         fun bindViewHolder(load: Load) {
-            itemView.tvUnitId.text = load.unitId
+            itemView.tvUnitId.text = "Unit ID: " + load.unitId
+            itemView.tvMaterial.text = "Material: " + load.material
+            itemView.tvTimeLoaded.text = "Time Loaded: " + load.timeLoaded
         }
     }
 }

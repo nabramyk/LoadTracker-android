@@ -63,9 +63,11 @@ class TrackLoadFragment : Fragment() {
                             driver = driverNameInput.text.toString(),
                             unitId = unitIDInput.text.toString(),
                             material = materialInput.text.toString(),
-                            companyName = companyNameInput.text.toString(),
                             timeLoaded = SimpleDateFormat("HH:mm:ss.SSS").format(c.time),
-                            dateLoaded = SimpleDateFormat("yyyy/MM/dd").format(c.time)
+                            dateLoaded = SimpleDateFormat("yyyy/MM/dd").format(c.time),
+                            created = SimpleDateFormat("yyyy/MM/dd").format(c.time),
+                            modified = null,
+                            companyName = companyNameInput.text.toString()
                     )
             )
 

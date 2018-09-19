@@ -37,7 +37,7 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.createTable(Companion.jobSessionsTable, true,
+        db.createTable(jobSessionsTable, true,
                 columnId to INTEGER + PRIMARY_KEY + UNIQUE,
                 columnTitle to TEXT,
                 columnStartDate to TEXT,
@@ -45,17 +45,17 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
                 columnCreated to TEXT,
                 columnTotalLoads to INTEGER)
 
-        db.createTable(Companion.loadsTable, true,
+        db.createTable(loadsTable, true,
                 columnId to INTEGER + PRIMARY_KEY + UNIQUE,
                 columnTitle to TEXT,
                 columnDriver to TEXT,
                 columnUnitId to TEXT,
                 columnMaterial to TEXT,
-                columnCompanyName to TEXT,
                 columnTimeLoaded to TEXT,
                 columnDateLoaded to TEXT,
                 columnCreated to TEXT,
-                columnModified to TEXT)
+                columnModified to TEXT,
+                columnCompanyName to TEXT)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -63,13 +63,19 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
         db.dropTable(loadsTable, true)
     }
 
-    fun addLoad(load : Load) {
+    fun addLoad(load: Load) {
         use {
             insert(loadsTable,
+                    columnId to load.id,
                     columnTitle to load.title,
                     columnDriver to load.driver,
+                    columnUnitId to load.unitId,
                     columnMaterial to load.material,
-                    columnCompanyName to load.companyName)
+                    columnCompanyName to load.companyName,
+                    columnTimeLoaded to load.timeLoaded,
+                    columnDateLoaded to load.dateLoaded,
+                    columnCreated to load.created,
+                    columnModified to load.modified)
         }
     }
 
@@ -80,17 +86,15 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
         }
     }
 
-    fun getLoads() {
-
-    }
-
-    fun getLoadsForSession(title : String) : List<Load> {
+    fun getLoadsForSession(title: String): List<Load> {
         return use {
-            select(DatabaseOpenHelper.loadsTable).whereArgs("(${Companion.columnTitle}  = {jobSessionTitle})", "jobSessionTitle" to title).parseList(classParser())
+            select(DatabaseOpenHelper.loadsTable)
+                    .whereArgs("($columnTitle  = {jobSessionTitle})", "jobSessionTitle" to title)
+                    .parseList(classParser())
         }
     }
 
-    fun getJobSessions() : List<JobSession> {
+    fun getJobSessions(): List<JobSession> {
         return use {
             select(DatabaseOpenHelper.jobSessionsTable).parseList(classParser())
         }
@@ -101,6 +105,5 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "load_trac
     }
 }
 
-// Access property for Context
 val Context.database: DatabaseOpenHelper
     get() = DatabaseOpenHelper.getInstance(applicationContext)
