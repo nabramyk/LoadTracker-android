@@ -7,81 +7,109 @@
     android:parentActivityName="com.example.nathan.loadtracker.MainActivity"
     tools:context="com.example.nathan.loadtracker.activities.TrackingActivity">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/unitIdLayout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bTrack"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/unitIDInput"
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/unit_id"
-            android:inputType="text"
-            android:textAlignment="center" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_height="wrap_content">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/materialInputLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/unitIdLayout">
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/unitIdLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/materialInput"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/material"
-            android:inputType="textPersonName"
-            android:textAlignment="center" />
-    </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/unitIDInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/unit_id"
+                    android:inputType="text" />
+            </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/driverNameInputLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/materialInputLayout">
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/materialInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/unitIdLayout">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/driverNameInput"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/driver_name"
-            android:inputType="textPersonName"
-            android:textAlignment="center" />
-    </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/materialInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/material"
+                    android:inputType="textPersonName" />
+            </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/companyNameInputLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/driverNameInputLayout">
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/driverNameInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/materialInputLayout">
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/companyNameInput"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/company_name"
-            android:inputType="textPersonName"
-            android:textAlignment="center" />
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/driverNameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/driver_name"
+                    android:inputType="textPersonName" />
+            </android.support.design.widget.TextInputLayout>
 
-    </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/companyNameInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/driverNameInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/companyNameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/company_name"
+                    android:inputType="textPersonName" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilDumpSite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/companyNameInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/tietDumpSite"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/dump_site"
+                    android:inputType="textPersonName" />
+
+            </android.support.design.widget.TextInputLayout>
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
 
     <Button
         android:id="@+id/bTrack"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="6dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:elevation="24dp"
+        android:padding="24dp"
         android:text="@string/track"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -14,7 +14,7 @@
     <string name="job_description">Job Description:</string>
     <string name="session_title">Title:</string>
     <string name="open_job_sessions">Open Job Sessions</string>
-    <string name="textview">TextView</string>
+    <string name="dump_site">Dump Site</string>
     <string name="session">Session</string>
     <string name="action">Action</string>
     <string name="date">Date</string>

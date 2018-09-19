@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
+import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 
 import com.example.nathan.loadtracker.R
@@ -17,6 +18,7 @@ import java.util.HashMap
 class TrackingActivity : AppCompatActivity() {
 
     private lateinit var sessionTitle: String
+    lateinit var vAdapter : TrackingPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +32,8 @@ class TrackingActivity : AppCompatActivity() {
         sessionTitle = intent.getStringExtra("session_title_index")
         title = sessionTitle
 
-        vPager.adapter = TrackingPagerAdapter(supportFragmentManager)
+        vAdapter = TrackingPagerAdapter(supportFragmentManager)
+        vPager.adapter = vAdapter
         vPager.currentItem = Tab.TRACKING.ordinal
 
         vPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -48,6 +51,7 @@ class TrackingActivity : AppCompatActivity() {
         })
 
         bottom_navigation.setOnNavigationItemSelectedListener {
+            vAdapter.notifyDataSetChanged()
             when(it.itemId) {
                 R.id.fragment_track -> {
                     vPager.setCurrentItem(0, true)
@@ -66,52 +70,6 @@ class TrackingActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateTotalLoadsTracked() {
-        val loads = database.getLoadsForSession(sessionTitle)
-        val materials = HashMap<String, Int>()
-
-        for (l in loads) {
-            if (!materials.containsKey(l.material)) materials[l.material!!] = 1
-            else if (materials.containsKey(l.material)) materials[l.material!!] = materials[l.material!!]!! + 1
-        }
-
-        var formattedOutput = materials.toString()
-        formattedOutput = formattedOutput.replace("=", ": ")
-        formattedOutput = formattedOutput.replace(",", "\n")
-        formattedOutput = formattedOutput.replace("{", "")
-        formattedOutput = formattedOutput.replace("}", "")
-
-       // nav_view.menu.add(formattedOutput)
-    }
-
-    private fun updateAverageRunTime() {
-        val loads = database.getLoadsForSession(title.toString())
-        if (loads.isEmpty()) {
-        //    nav_view.menu.add("00:00:00.000")
-            return
-        }
-        var hours = 0
-        var minutes = 0
-        var seconds = 0
-        var milliseconds = 0
-        for (l in loads) {
-            var timeLoaded = l.timeLoaded
-            timeLoaded = timeLoaded!!.replace(":", " ")
-            timeLoaded = timeLoaded.replace(".", " ")
-            val components = timeLoaded.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            hours += Integer.parseInt(components[0])
-            minutes += Integer.parseInt(components[1])
-            seconds += Integer.parseInt(components[2])
-            milliseconds += Integer.parseInt(components[3])
-        }
-        hours /= loads.size
-        minutes /= loads.size
-        seconds /= loads.size
-        milliseconds /= loads.size
-
-       // nav_view.menu.add(hours.toString() + ":" + minutes + ":" + seconds + "." + milliseconds)
-    }
-
     enum class Tab {
         TRACKING,
         STATS,
@@ -127,5 +85,9 @@ class TrackingActivity : AppCompatActivity() {
         }
 
         override fun getCount(): Int = Tab.values().size
+
+        override fun getItemPosition(`object`: Any): Int {
+            return PagerAdapter.POSITION_NONE
+        }
     }
 }
