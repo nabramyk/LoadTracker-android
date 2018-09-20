@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("Create") { _,_ ->
                     if (!TextUtils.isEmpty(promptView.sessionTitleEditText.text)) {
                         database.addJobSession(promptView.sessionTitleEditText.text.toString())
-                        //showStartImmediateDialog(js.jobTitle)
+                        showStartImmediateDialog(promptView.sessionTitleEditText.text.toString())
                     }
                 }
                 .setNegativeButton("Cancel"
