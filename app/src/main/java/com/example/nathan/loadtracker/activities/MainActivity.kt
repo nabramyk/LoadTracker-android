@@ -27,8 +27,6 @@ class MainActivity : AppCompatActivity() {
 
         button_create_session.setOnClickListener { showCreateDialog() }
         button_continue_session.setOnClickListener { startActivity(Intent(this, JobSessionsActivity::class.java)) }
-        button_continue_last_session.setOnClickListener {
-        }
         button_export.setOnClickListener { startActivity(Intent(this, ExportActivity::class.java)) }
     }
 
