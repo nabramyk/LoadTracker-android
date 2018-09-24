@@ -19,20 +19,61 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Session:"
         android:textSize="18sp"
+        android:gravity="start"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/sSession"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"/>
+        app:layout_constraintTop_toBottomOf="@id/textView2"/>
+
+    <CheckBox
+        android:id="@+id/cbCurrentDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/sSession"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Only use today"/>
+
+    <TextView
+        android:id="@+id/tvStartDateLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start Date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cbCurrentDate"/>
+
+    <Spinner
+        android:id="@+id/sStartDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvStartDateLabel"/>
+
+    <TextView
+        android:id="@+id/tvEndDateLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="End Date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sStartDate"/>
+
+    <Spinner
+        android:id="@+id/sEndDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvEndDateLabel"/>
 
     <Button
         android:id="@+id/bExport"

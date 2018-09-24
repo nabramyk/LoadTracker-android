@@ -34,15 +34,15 @@ class ExportActivity : AppCompatActivity() {
             adapter.add(js.jobTitle.toString())
         }
 
-        spinner.adapter = adapter
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        sSession.adapter = adapter
+        sSession.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {}
 
             override fun onNothingSelected(adapterView: AdapterView<*>) {}
         }
 
         bExport.setOnClickListener {
-            val loads = database.getLoadsForSession(spinner.selectedItem.toString())
+            val loads = database.getLoadsForSession(sSession.selectedItem.toString())
             val file = File(getExternalFilesDir(null), "output.csv")
             val csvWriter = CSVWriter(FileWriter(file))
 
