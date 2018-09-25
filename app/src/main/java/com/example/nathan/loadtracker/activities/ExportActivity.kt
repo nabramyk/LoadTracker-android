@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import com.example.nathan.loadtracker.DatabaseOpenHelper
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.database
+import com.example.nathan.loadtracker.models.Load
 import com.opencsv.CSVWriter
 import java.io.File
 
@@ -17,6 +18,8 @@ import kotlinx.android.synthetic.main.activity_export.*
 import java.io.FileWriter
 
 class ExportActivity : AppCompatActivity() {
+
+    private lateinit var loads : List<Load>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +30,10 @@ class ExportActivity : AppCompatActivity() {
 
         title = "Export"
 
+        initView()
+    }
+
+    private fun initView() {
         val jobs = database.getJobSessions()
 
         val adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
@@ -36,13 +43,14 @@ class ExportActivity : AppCompatActivity() {
 
         sSession.adapter = adapter
         sSession.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {}
+            override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
+                populateFromJob()
+            }
 
             override fun onNothingSelected(adapterView: AdapterView<*>) {}
         }
 
         bExport.setOnClickListener {
-            val loads = database.getLoadsForSession(sSession.selectedItem.toString())
             val file = File(getExternalFilesDir(null), "output.csv")
             val csvWriter = CSVWriter(FileWriter(file))
 
@@ -61,5 +69,28 @@ class ExportActivity : AppCompatActivity() {
             startActivityForResult(Intent.createChooser(intent, "Send email...."), 1)
             finish()
         }
+
+        cbCurrentDate.setOnClickListener {
+            sStartDate.isEnabled = !cbCurrentDate.isChecked
+            sEndDate.isEnabled = !cbCurrentDate.isChecked
+            sStartTime.isEnabled = !cbCurrentDate.isChecked
+            sEndTime.isEnabled = !cbCurrentDate.isChecked
+        }
+    }
+
+    private fun populateFromJob() {
+        loads = database.getLoadsForSession(sSession.selectedItem.toString())
+
+        val dateAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
+        loads.asSequence().map { it.dateLoaded }.distinct().toList().forEach { dateAdapter.add(it) }
+
+        sStartDate.adapter = dateAdapter
+        sEndDate.adapter = dateAdapter
+
+        val timeAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
+        loads.asSequence().map { it.timeLoaded }.distinct().toList().forEach { timeAdapter.add(it) }
+
+        sStartTime.adapter = timeAdapter
+        sEndTime.adapter = timeAdapter
     }
 }
