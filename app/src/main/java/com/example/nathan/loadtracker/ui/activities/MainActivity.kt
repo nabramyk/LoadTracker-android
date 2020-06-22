@@ -1,20 +1,18 @@
-package com.example.nathan.loadtracker.activities
+package com.example.nathan.loadtracker.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.Menu
-import com.example.nathan.loadtracker.DatabaseOpenHelper
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.database
+import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.create_session_dialog.view.*
-import org.jetbrains.anko.db.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .setPositiveButton("Create") { _,_ ->
                     if (!TextUtils.isEmpty(promptView.sessionTitleEditText.text)) {
-                        database.addJobSession(promptView.sessionTitleEditText.text.toString())
+                        LoadTrackerDatabase.addJobSession(promptView.sessionTitleEditText.text.toString())
                         showStartImmediateDialog(promptView.sessionTitleEditText.text.toString())
                     }
                 }

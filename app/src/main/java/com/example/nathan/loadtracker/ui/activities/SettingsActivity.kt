@@ -1,8 +1,8 @@
-package com.example.nathan.loadtracker.activities
+package com.example.nathan.loadtracker.ui.activities
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
 import com.example.nathan.loadtracker.R

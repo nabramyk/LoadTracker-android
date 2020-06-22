@@ -1,20 +1,19 @@
-package com.example.nathan.loadtracker.activities
+package com.example.nathan.loadtracker.ui.activities
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.database
-import com.example.nathan.loadtracker.models.Load
+import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
+import com.example.nathan.loadtracker.core.database.entities.Load
 import kotlinx.android.synthetic.main.fragment_statistics.*
 import java.util.HashMap
 
 class StatisticsFragment : Fragment() {
 
     private lateinit var sessionTitle: String
-    //private lateinit var loads: ArrayList<Load>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +24,7 @@ class StatisticsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        val loads = context?.database?.getLoadsForSession(sessionTitle) as ArrayList<Load>
+        val loads = LoadTrackerDatabase.getLoadsForSession(sessionTitle) as ArrayList<Load>
 
         updateTotalLoadsTracked(loads)
         updateAverageRunTime(loads)

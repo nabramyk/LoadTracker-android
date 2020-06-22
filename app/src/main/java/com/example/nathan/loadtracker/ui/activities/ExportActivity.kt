@@ -1,16 +1,15 @@
-package com.example.nathan.loadtracker.activities
+package com.example.nathan.loadtracker.ui.activities
 
 import android.content.Intent
-import android.support.v4.content.FileProvider
-import android.support.v7.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import com.example.nathan.loadtracker.DatabaseOpenHelper
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.database
-import com.example.nathan.loadtracker.models.Load
+import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
+import com.example.nathan.loadtracker.core.database.entities.Load
 import com.opencsv.CSVWriter
 import java.io.File
 
@@ -34,7 +33,7 @@ class ExportActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        val jobs = database.getJobSessions()
+        val jobs = LoadTrackerDatabase.getJobSessions()
 
         val adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
         for (js in jobs) {
@@ -54,9 +53,9 @@ class ExportActivity : AppCompatActivity() {
             val file = File(getExternalFilesDir(null), "output.csv")
             val csvWriter = CSVWriter(FileWriter(file))
 
-            csvWriter.writeNext(arrayOf(DatabaseOpenHelper.columnId, DatabaseOpenHelper.columnMaterial, DatabaseOpenHelper.columnDriver, DatabaseOpenHelper.columnTitle))
+            csvWriter.writeNext(arrayOf("Id", "Material", "Driver", "Title"))
             for (load in loads) {
-                csvWriter.writeNext(arrayOf(load.id.toString(), load.material, load.driver, load.title))
+                csvWriter.writeNext(arrayOf(load.id.toString(), load.material, load.driver, load.jobSession.target.jobTitle))
             }
 
             csvWriter.close()
@@ -79,7 +78,7 @@ class ExportActivity : AppCompatActivity() {
     }
 
     private fun populateFromJob() {
-        loads = database.getLoadsForSession(sSession.selectedItem.toString())
+        loads = LoadTrackerDatabase.getLoadsForSession(sSession.selectedItem.toString())
 
         val dateAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
         loads.asSequence().map { it.dateLoaded }.distinct().toList().forEach { dateAdapter.add(it) }

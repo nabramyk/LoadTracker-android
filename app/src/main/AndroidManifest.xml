@@ -13,38 +13,38 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".activities.MainActivity">
+        <activity android:name="com.example.nathan.loadtracker.ui.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.TrackingActivity"
-            android:parentActivityName=".activities.MainActivity">
+            android:name="com.example.nathan.loadtracker.ui.activities.TrackingActivity"
+            android:parentActivityName="com.example.nathan.loadtracker.ui.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.nathan.loadtracker.activities.MainActivity" />
+                android:value="com.example.nathan.loadtracker.ui.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".activities.TrackingHistoryFragment"
-            android:parentActivityName=".activities.TrackingActivity">
+            android:name="com.example.nathan.loadtracker.ui.activities.TrackingHistoryFragment"
+            android:parentActivityName="com.example.nathan.loadtracker.ui.activities.TrackingActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.nathan.loadtracker.activities.TrackingActivity" />
+                android:value="com.example.nathan.loadtracker.ui.activities.TrackingActivity" />
         </activity>
-        <activity android:name=".activities.JobSessionsActivity"
-            android:parentActivityName=".activities.MainActivity">
+        <activity android:name="com.example.nathan.loadtracker.ui.activities.JobSessionsActivity"
+            android:parentActivityName="com.example.nathan.loadtracker.ui.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.nathan.loadtracker.activities.MainActivity" />
+                android:value="com.example.nathan.loadtracker.ui.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".activities.ExportActivity"
-            android:parentActivityName=".activities.MainActivity">
+            android:name="com.example.nathan.loadtracker.ui.activities.ExportActivity"
+            android:parentActivityName="com.example.nathan.loadtracker.ui.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.nathan.loadtracker.activities.ExportActivity" />
+                android:value="com.example.nathan.loadtracker.ui.activities.ExportActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.action.SENDTO" />
@@ -58,14 +58,14 @@
 
         </activity>
         <activity
-            android:name=".activities.SettingsActivity"
-            android:parentActivityName=".activities.MainActivity">
+            android:name="com.example.nathan.loadtracker.ui.activities.SettingsActivity"
+            android:parentActivityName="com.example.nathan.loadtracker.ui.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.nathan.loadtracker.activities.SettingsActivity" />
+                android:value="com.example.nathan.loadtracker.ui.activities.SettingsActivity" />
         </activity>
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="@string/file_provider_authority"
             android:exported="false"
             android:grantUriPermissions="true">

@@ -1,16 +1,14 @@
-package com.example.nathan.loadtracker.activities
+package com.example.nathan.loadtracker.ui.activities
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.widget.AdapterView
-
-import com.example.nathan.loadtracker.DatabaseOpenHelper
-import com.example.nathan.loadtracker.models.JobSession
-import com.example.nathan.loadtracker.arrayadapters.JobSessionAdapter
+import com.example.nathan.loadtracker.core.database.entities.JobSession
+import com.example.nathan.loadtracker.ui.arrayadapters.JobSessionAdapter
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.database
+import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
 import kotlinx.android.synthetic.main.activity_job_sessions.*
 
 class JobSessionsActivity : AppCompatActivity() {
@@ -34,11 +32,7 @@ class JobSessionsActivity : AppCompatActivity() {
             R.id.edit_session_entry,
 
             R.id.close_session_entry -> {
-                //listAdapter.remove(listAdapter.getItem(info.position))
                 jobs.removeAt(info.position)
-                database.use {
-                    delete(DatabaseOpenHelper.jobSessionsTable, null, null)
-                }
                 super.onContextItemSelected(item)
             }
             else -> super.onContextItemSelected(item)
@@ -46,7 +40,7 @@ class JobSessionsActivity : AppCompatActivity() {
     }
 
     private fun populateJobSessionsList() {
-        jobs = database.getJobSessions() as ArrayList<JobSession>
+        jobs = LoadTrackerDatabase.getJobSessions() as ArrayList<JobSession>
 
         val listAdapter = JobSessionAdapter(this, jobs)
         rvJobSessions.layoutManager = LinearLayoutManager(this)

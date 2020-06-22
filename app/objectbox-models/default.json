@@ -1,0 +1,122 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:8835936423607706149",
+      "lastPropertyId": "11:2677228197864401261",
+      "name": "Load",
+      "properties": [
+        {
+          "id": "1:1971097134558714888",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "3:3348054485937943890",
+          "name": "driver",
+          "type": 9
+        },
+        {
+          "id": "4:2374745752496710856",
+          "name": "unitId",
+          "type": 9
+        },
+        {
+          "id": "5:7536299678602912110",
+          "name": "material",
+          "type": 9
+        },
+        {
+          "id": "6:3420267118988966780",
+          "name": "timeLoaded",
+          "type": 9
+        },
+        {
+          "id": "7:6942193713922037208",
+          "name": "dateLoaded",
+          "type": 9
+        },
+        {
+          "id": "8:4667369083109919123",
+          "name": "created",
+          "type": 9
+        },
+        {
+          "id": "9:6417536311487971468",
+          "name": "modified",
+          "type": 9
+        },
+        {
+          "id": "10:9153303569024078742",
+          "name": "companyName",
+          "type": 9
+        },
+        {
+          "id": "11:2677228197864401261",
+          "name": "jobSessionId",
+          "indexId": "1:2208508154379080838",
+          "type": 11,
+          "flags": 1548,
+          "relationTarget": "JobSession"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:2512800609880355336",
+      "lastPropertyId": "6:2076872093470929643",
+      "name": "JobSession",
+      "properties": [
+        {
+          "id": "1:29087978527760436",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3273089778142990827",
+          "name": "jobTitle",
+          "type": 9
+        },
+        {
+          "id": "3:5306365800631294271",
+          "name": "startDate",
+          "type": 9
+        },
+        {
+          "id": "4:1263125902629010621",
+          "name": "closedDate",
+          "type": 9
+        },
+        {
+          "id": "5:8750261252728681669",
+          "name": "created",
+          "type": 9
+        },
+        {
+          "id": "6:2076872093470929643",
+          "name": "totalLoads",
+          "type": 5,
+          "flags": 2
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "2:2512800609880355336",
+  "lastIndexId": "1:2208508154379080838",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    3155652221997074546
+  ],
+  "retiredRelationUids": [],
+  "version": 1
+}

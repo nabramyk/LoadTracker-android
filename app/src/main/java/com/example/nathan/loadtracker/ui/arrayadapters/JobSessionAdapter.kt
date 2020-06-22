@@ -1,15 +1,15 @@
-package com.example.nathan.loadtracker.arrayadapters
+package com.example.nathan.loadtracker.ui.arrayadapters
 
 import android.content.Context
 import android.content.Intent
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.app.ActivityOptionsCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.activities.TrackingActivity
+import com.example.nathan.loadtracker.ui.activities.TrackingActivity
 
-import com.example.nathan.loadtracker.models.JobSession
+import com.example.nathan.loadtracker.core.database.entities.JobSession
 import kotlinx.android.synthetic.main.cell_job_session.view.*
 import java.lang.ref.WeakReference
 

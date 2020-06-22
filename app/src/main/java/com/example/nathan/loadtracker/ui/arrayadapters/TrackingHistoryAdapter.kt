@@ -1,12 +1,12 @@
-package com.example.nathan.loadtracker.arrayadapters
+package com.example.nathan.loadtracker.ui.arrayadapters
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.nathan.loadtracker.R
 
-import com.example.nathan.loadtracker.models.Load
+import com.example.nathan.loadtracker.core.database.entities.Load
 import kotlinx.android.synthetic.main.cell_load.view.*
 import java.lang.ref.WeakReference
 
