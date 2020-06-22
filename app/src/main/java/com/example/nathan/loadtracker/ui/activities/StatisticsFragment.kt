@@ -24,7 +24,7 @@ class StatisticsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        val loads = LoadTrackerDatabase.getLoadsForSession(sessionTitle) as ArrayList<Load>
+        val loads = LoadTrackerDatabase.getLoadsForSession(sessionTitle)
 
         updateTotalLoadsTracked(loads)
         updateAverageRunTime(loads)
@@ -34,7 +34,7 @@ class StatisticsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_statistics, container, false)
     }
 
-    private fun updateTotalLoadsTracked(loads: ArrayList<Load>) {
+    private fun updateTotalLoadsTracked(loads: List<Load>) {
         val materials = HashMap<String, Int>()
 
         for (l in loads) {
@@ -51,7 +51,7 @@ class StatisticsFragment : Fragment() {
         tvTotalLoads.text = formattedOutput
     }
 
-    private fun updateAverageRunTime(loads: ArrayList<Load>) {
+    private fun updateAverageRunTime(loads: List<Load>) {
         if (loads.isEmpty()) {
             tvAverageRunTime.text = "00:00:00.000"
             return

@@ -27,5 +27,6 @@ object LoadTrackerDatabase {
     fun deleteJobSession() {
 
     }
+
     fun addJobSession(title: String) = jobSessionBox.put(JobSession(jobTitle = title))
 }

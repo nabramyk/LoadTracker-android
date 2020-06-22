@@ -14,13 +14,13 @@ import com.example.nathan.loadtracker.core.database.entities.Load
 class TrackingHistoryFragment : Fragment() {
 
     private lateinit var sessionTitle: String
-    private lateinit var loads: ArrayList<Load>
+    private lateinit var loads: List<Load>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         sessionTitle = activity?.title?.toString()!!
-        loads = LoadTrackerDatabase.getLoadsForSession(sessionTitle) as ArrayList<Load>
+        loads = LoadTrackerDatabase.getLoadsForSession(sessionTitle)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -30,7 +30,7 @@ class TrackingHistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val listAdapter = TrackingHistoryAdapter(context!!, loads)
+        val listAdapter = TrackingHistoryAdapter(loads)
         trackedLoadHistory.layoutManager = LinearLayoutManager(context)
         trackedLoadHistory.adapter = listAdapter
     }
