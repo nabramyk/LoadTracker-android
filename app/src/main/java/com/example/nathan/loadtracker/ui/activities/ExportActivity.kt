@@ -10,21 +10,23 @@ import android.widget.ArrayAdapter
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
 import com.example.nathan.loadtracker.core.database.entities.Load
+import com.example.nathan.loadtracker.databinding.ActivityExportBinding
 import com.opencsv.CSVWriter
 import java.io.File
-
-import kotlinx.android.synthetic.main.activity_export.*
 import java.io.FileWriter
 
 class ExportActivity : AppCompatActivity() {
 
     private lateinit var loads : List<Load>
+    private lateinit var binding: ActivityExportBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_export)
+        binding = ActivityExportBinding.inflate(layoutInflater)
 
-        setSupportActionBar(toolbar)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         title = "Export"
@@ -40,8 +42,8 @@ class ExportActivity : AppCompatActivity() {
             adapter.add(js.jobTitle.toString())
         }
 
-        sSession.adapter = adapter
-        sSession.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.sSession.adapter = adapter
+        binding.sSession.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
                 populateFromJob()
             }
@@ -49,7 +51,7 @@ class ExportActivity : AppCompatActivity() {
             override fun onNothingSelected(adapterView: AdapterView<*>) {}
         }
 
-        bExport.setOnClickListener {
+        binding.bExport.setOnClickListener {
             val file = File(getExternalFilesDir(null), "output.csv")
             val csvWriter = CSVWriter(FileWriter(file))
 
@@ -69,27 +71,27 @@ class ExportActivity : AppCompatActivity() {
             finish()
         }
 
-        cbCurrentDate.setOnClickListener {
-            sStartDate.isEnabled = !cbCurrentDate.isChecked
-            sEndDate.isEnabled = !cbCurrentDate.isChecked
-            sStartTime.isEnabled = !cbCurrentDate.isChecked
-            sEndTime.isEnabled = !cbCurrentDate.isChecked
+        binding.cbCurrentDate.setOnClickListener {
+            binding.sStartDate.isEnabled = !binding.cbCurrentDate.isChecked
+            binding.sEndDate.isEnabled = !binding.cbCurrentDate.isChecked
+            binding.sStartTime.isEnabled = !binding.cbCurrentDate.isChecked
+            binding.sEndTime.isEnabled = !binding.cbCurrentDate.isChecked
         }
     }
 
     private fun populateFromJob() {
-        loads = LoadTrackerDatabase.getLoadsForSession(sSession.selectedItem.toString())
+        loads = LoadTrackerDatabase.getLoadsForSession(binding.sSession.selectedItem.toString())
 
         val dateAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
         loads.asSequence().map { it.dateLoaded }.distinct().toList().forEach { dateAdapter.add(it) }
 
-        sStartDate.adapter = dateAdapter
-        sEndDate.adapter = dateAdapter
+        binding.sStartDate.adapter = dateAdapter
+        binding.sEndDate.adapter = dateAdapter
 
         val timeAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
         loads.asSequence().map { it.timeLoaded }.distinct().toList().forEach { timeAdapter.add(it) }
 
-        sStartTime.adapter = timeAdapter
-        sEndTime.adapter = timeAdapter
+        binding.sStartTime.adapter = timeAdapter
+        binding.sEndTime.adapter = timeAdapter
     }
 }

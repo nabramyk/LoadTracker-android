@@ -6,21 +6,21 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.ui.activities.TrackingActivity
 
 import com.example.nathan.loadtracker.core.database.entities.JobSession
-import kotlinx.android.synthetic.main.cell_job_session.view.*
+import com.example.nathan.loadtracker.databinding.CellJobSessionBinding
 import java.lang.ref.WeakReference
 
 class JobSessionAdapter(context: Context,
-                        jobSessions: ArrayList<JobSession>) : RecyclerView.Adapter<JobSessionAdapter.JobSessionViewHolder>() {
+                        private val jobSessions: ArrayList<JobSession>
+) : RecyclerView.Adapter<JobSessionAdapter.JobSessionViewHolder>() {
 
     private val context = WeakReference(context)
-    private val jobSessions = jobSessions
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobSessionViewHolder {
-        return JobSessionViewHolder(parent)
+        val binding = CellJobSessionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return JobSessionViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
@@ -31,13 +31,11 @@ class JobSessionAdapter(context: Context,
         holder.bindViewHolder(jobSessions[position])
     }
 
-    inner class JobSessionViewHolder(parent: ViewGroup)
-        : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.cell_job_session, parent, false)) {
-
+    inner class JobSessionViewHolder(private val binding: CellJobSessionBinding): RecyclerView.ViewHolder(binding.root) {
         fun bindViewHolder(jobSession: JobSession) {
-            itemView.tvTitle.text = jobSession.jobTitle
+            binding.tvTitle.text = jobSession.jobTitle
 
-            itemView.setOnClickListener {
+            binding.root.setOnClickListener {
                 context.get()?.let { c ->
                     c.startActivity(Intent(c, TrackingActivity::class.java)
                             .putExtra("session_title_index", jobSession.jobTitle), ActivityOptionsCompat.makeBasic().toBundle())

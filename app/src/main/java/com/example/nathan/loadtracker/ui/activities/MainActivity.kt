@@ -7,25 +7,28 @@ import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.Menu
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.create_session_dialog.view.*
+import com.example.nathan.loadtracker.databinding.ActivityMainBinding
+import com.example.nathan.loadtracker.databinding.CreateSessionDialogBinding
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
 
-        setSupportActionBar(toolbar)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
         title = ""
 
-        button_create_session.setOnClickListener { showCreateDialog() }
-        button_continue_session.setOnClickListener { startActivity(Intent(this, JobSessionsActivity::class.java)) }
-        button_export.setOnClickListener { startActivity(Intent(this, ExportActivity::class.java)) }
+        binding.buttonCreateSession.setOnClickListener { showCreateDialog() }
+        binding.buttonContinueSession.setOnClickListener { startActivity(Intent(this, JobSessionsActivity::class.java)) }
+        binding.buttonExport.setOnClickListener { startActivity(Intent(this, ExportActivity::class.java)) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -34,17 +37,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showCreateDialog() {
-        val layoutInflater = LayoutInflater.from(this@MainActivity)
-        val promptView = layoutInflater.inflate(R.layout.create_session_dialog, null)
+        val dialogBinding = CreateSessionDialogBinding.inflate(layoutInflater)
+
         val alertDialogBuilder = AlertDialog.Builder(this@MainActivity)
 
         val alertDialog = alertDialogBuilder
-                .setView(promptView)
+                .setView(dialogBinding.root)
                 .setCancelable(false)
                 .setPositiveButton("Create") { _,_ ->
-                    if (!TextUtils.isEmpty(promptView.sessionTitleEditText.text)) {
-                        LoadTrackerDatabase.addJobSession(promptView.sessionTitleEditText.text.toString())
-                        showStartImmediateDialog(promptView.sessionTitleEditText.text.toString())
+                    if (!TextUtils.isEmpty(dialogBinding.sessionTitleEditText.text)) {
+                        LoadTrackerDatabase.addJobSession(dialogBinding.sessionTitleEditText.text.toString())
+                        showStartImmediateDialog(dialogBinding.sessionTitleEditText.text.toString())
                     }
                 }
                 .setNegativeButton("Cancel"
@@ -53,14 +56,14 @@ class MainActivity : AppCompatActivity() {
 
         alertDialog.show()
 
-        promptView.sessionTitleEditText.addTextChangedListener(object : TextWatcher {
+        dialogBinding.sessionTitleEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (count == 0) {
-                    promptView.sessionTitleEditText.error = "Session title must not be empty"
+                    dialogBinding.sessionTitleEditText.error = "Session title must not be empty"
                 }
             }
         })

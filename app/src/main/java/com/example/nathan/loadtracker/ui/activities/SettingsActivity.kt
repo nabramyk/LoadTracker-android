@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
 import com.example.nathan.loadtracker.R
-import kotlinx.android.synthetic.main.activity_settings.*
+import com.example.nathan.loadtracker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -14,16 +14,20 @@ class SettingsActivity : AppCompatActivity() {
     private var company: EditText? = null
 
     private var sharedPrefs: SharedPreferences? = null
+    private lateinit var binding: ActivitySettingsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
 
-        setSupportActionBar(settings_activity_toolbar)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.settingsActivityToolbar)
         title = "Settings"
 
         val ab = supportActionBar
-        ab!!.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_arrow_back_black_36px))
+
+        ab!!.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_arrow_back_black_36px, null))
         ab.setDisplayHomeAsUpEnabled(true)
 
         sharedPrefs = getSharedPreferences("com.example.nathan.loadtracker", Context.MODE_PRIVATE)
@@ -36,7 +40,7 @@ class SettingsActivity : AppCompatActivity() {
             company?.setText(sharedPrefs!!.getString("company", ""))
         }
 
-        saveButton.setOnClickListener {
+        binding.saveButton.setOnClickListener {
             sharedPrefs!!.edit().putString("name", name!!.text.toString()).apply()
             sharedPrefs!!.edit().putString("company", company!!.text.toString()).apply()
             finish()

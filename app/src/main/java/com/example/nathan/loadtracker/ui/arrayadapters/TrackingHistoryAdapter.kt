@@ -3,15 +3,15 @@ package com.example.nathan.loadtracker.ui.arrayadapters
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.example.nathan.loadtracker.R
 
 import com.example.nathan.loadtracker.core.database.entities.Load
-import kotlinx.android.synthetic.main.cell_load.view.*
+import com.example.nathan.loadtracker.databinding.CellLoadBinding
 
 class TrackingHistoryAdapter(private val loads: List<Load>) : RecyclerView.Adapter<TrackingHistoryAdapter.LoadViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackingHistoryAdapter.LoadViewHolder {
-        return LoadViewHolder(parent)
+        val binding = CellLoadBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return LoadViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
@@ -22,13 +22,12 @@ class TrackingHistoryAdapter(private val loads: List<Load>) : RecyclerView.Adapt
         holder.bindViewHolder(loads[position])
     }
 
-    inner class LoadViewHolder(parent: ViewGroup)
-        : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.cell_load, parent, false)) {
+    inner class LoadViewHolder(val binding: CellLoadBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindViewHolder(load: Load) {
-            itemView.tvCounter.text = load.id.toString()
-            itemView.tvUnitId.text = "Unit ID: " + load.unitId
-            itemView.tvMaterial.text = "Material: " + load.material
-            itemView.tvTimeLoaded.text = "Time Loaded: " + load.timeLoaded
+            binding.tvCounter.text = load.id.toString()
+            binding.tvUnitId.text = "Unit ID: " + load.unitId
+            binding.tvMaterial.text = "Material: " + load.material
+            binding.tvTimeLoaded.text = "Time Loaded: " + load.timeLoaded
         }
     }
 }

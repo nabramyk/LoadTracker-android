@@ -9,17 +9,20 @@ import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.ui.arrayadapters.JobSessionAdapter
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
-import kotlinx.android.synthetic.main.activity_job_sessions.*
+import com.example.nathan.loadtracker.databinding.ActivityJobSessionsBinding
 
 class JobSessionsActivity : AppCompatActivity() {
 
     private lateinit var jobs: ArrayList<JobSession>
+    private lateinit var binding: ActivityJobSessionsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_job_sessions)
+        binding = ActivityJobSessionsBinding.inflate(layoutInflater)
 
-        setSupportActionBar(toolbar)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "Open Job Sessions"
 
@@ -43,9 +46,9 @@ class JobSessionsActivity : AppCompatActivity() {
         jobs = LoadTrackerDatabase.getJobSessions() as ArrayList<JobSession>
 
         val listAdapter = JobSessionAdapter(this, jobs)
-        rvJobSessions.layoutManager = LinearLayoutManager(this)
-        registerForContextMenu(rvJobSessions)
+        binding.rvJobSessions.layoutManager = LinearLayoutManager(this)
+        registerForContextMenu(binding.rvJobSessions)
 
-        rvJobSessions.adapter = listAdapter
+        binding.rvJobSessions.adapter = listAdapter
     }
 }

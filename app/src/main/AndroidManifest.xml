@@ -3,7 +3,6 @@
     package="com.example.nathan.loadtracker">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".LoadTrackerApplication"
@@ -13,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name="com.example.nathan.loadtracker.ui.activities.MainActivity">
+        <activity android:name="com.example.nathan.loadtracker.ui.activities.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -26,37 +26,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.nathan.loadtracker.ui.activities.MainActivity" />
         </activity>
-        <activity
-            android:name="com.example.nathan.loadtracker.ui.activities.TrackingHistoryFragment"
-            android:parentActivityName="com.example.nathan.loadtracker.ui.activities.TrackingActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.nathan.loadtracker.ui.activities.TrackingActivity" />
-        </activity>
         <activity android:name="com.example.nathan.loadtracker.ui.activities.JobSessionsActivity"
             android:parentActivityName="com.example.nathan.loadtracker.ui.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.nathan.loadtracker.ui.activities.MainActivity" />
         </activity>
-        <activity
-            android:name="com.example.nathan.loadtracker.ui.activities.ExportActivity"
-            android:parentActivityName="com.example.nathan.loadtracker.ui.activities.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.nathan.loadtracker.ui.activities.ExportActivity" />
 
-            <intent-filter>
-                <action android:name="android.intent.action.SENDTO" />
-                <data android:scheme="mailto" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-
-        </activity>
         <activity
             android:name="com.example.nathan.loadtracker.ui.activities.SettingsActivity"
             android:parentActivityName="com.example.nathan.loadtracker.ui.activities.MainActivity">

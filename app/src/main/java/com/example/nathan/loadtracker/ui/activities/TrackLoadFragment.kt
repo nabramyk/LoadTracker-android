@@ -11,7 +11,7 @@ import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.Load
-import kotlinx.android.synthetic.main.fragment_load_tracking.*
+import com.example.nathan.loadtracker.databinding.FragmentLoadTrackingBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -19,6 +19,9 @@ class TrackLoadFragment : Fragment() {
 
     private lateinit var sessionTitle: String
     private lateinit var js: JobSession
+
+    private var _binding: FragmentLoadTrackingBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,36 +32,38 @@ class TrackLoadFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_load_tracking, container, false)
+        _binding = FragmentLoadTrackingBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bTrack.setOnClickListener {
-            if (materialInput.text.toString().trim { it <= ' ' }.isEmpty()) {
+        binding.bTrack.setOnClickListener {
+            if (binding.materialInput.text.toString().trim { it <= ' ' }.isEmpty()) {
                 Snackbar.make(view, "Missing material", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            if (unitIDInput.text.toString().trim { it <= ' ' }.isEmpty()) {
+            if (binding.unitIDInput.text.toString().trim { it <= ' ' }.isEmpty()) {
                 Snackbar.make(view, "Missing unit ID", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            if (driverNameInput.text.toString().trim { it <= ' ' }.isEmpty()) {
+            if (binding.driverNameInput.text.toString().trim { it <= ' ' }.isEmpty()) {
                 Snackbar.make(view, "Missing driver name", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            if (companyNameInput.text.toString().trim { it <= ' ' }.isEmpty()) {
+            if (binding.companyNameInput.text.toString().trim { it <= ' ' }.isEmpty()) {
                 Snackbar.make(view, "Missing company name", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
             val c = Calendar.getInstance()
 
-            js.loads.add(Load(
+            binding.apply {
+                js.loads.add(Load(
                     driver = driverNameInput.text.toString(),
                     unitId = unitIDInput.text.toString(),
                     material = materialInput.text.toString(),
@@ -67,22 +72,23 @@ class TrackLoadFragment : Fragment() {
                     created = SimpleDateFormat("yyyy/MM/dd").format(c.time),
                     modified = null,
                     companyName = companyNameInput.text.toString()
-            ))
+                ))
+            }
 
             Snackbar.make(view, "Tracked!", Snackbar.LENGTH_LONG).show()
         }
 
         if (js.loads.isNotEmpty()) {
             js.loads.let {
-                materialInput.setText(it[it.size - 1].material)
-                unitIDInput.setText(it[it.size - 1].unitId)
-                driverNameInput.setText(it[it.size - 1].driver)
-                companyNameInput.setText(it[it.size - 1].companyName)
+                binding.materialInput.setText(it[it.size - 1].material)
+                binding.unitIDInput.setText(it[it.size - 1].unitId)
+                binding.driverNameInput.setText(it[it.size - 1].driver)
+                binding.companyNameInput.setText(it[it.size - 1].companyName)
             }
         } else {
             val sharedPrefs = activity?.getSharedPreferences("com.example.nathan.loadtracker", Context.MODE_PRIVATE)
-            driverNameInput.setText(sharedPrefs?.getString("name", ""))
-            companyNameInput.setText(sharedPrefs?.getString("company", ""))
+            binding.driverNameInput.setText(sharedPrefs?.getString("name", ""))
+            binding.companyNameInput.setText(sharedPrefs?.getString("company", ""))
         }
     }
 }

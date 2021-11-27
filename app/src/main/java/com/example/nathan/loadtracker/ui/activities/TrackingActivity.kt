@@ -9,36 +9,40 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 
 import com.example.nathan.loadtracker.R
-import kotlinx.android.synthetic.main.activity_tracking.*
+import com.example.nathan.loadtracker.databinding.ActivityTrackingBinding
 
 class TrackingActivity : AppCompatActivity() {
 
     private lateinit var sessionTitle: String
     lateinit var vAdapter : TrackingPagerAdapter
 
+    private lateinit var binding: ActivityTrackingBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tracking)
+        binding = ActivityTrackingBinding.inflate(layoutInflater)
 
-        setSupportActionBar(toolbar)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
 
         supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_arrow_back_black_36px))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        sessionTitle = intent.getStringExtra("session_title_index")
+        sessionTitle = intent.getStringExtra("session_title_index") ?: ""
         title = sessionTitle
 
         vAdapter = TrackingPagerAdapter(supportFragmentManager)
-        vPager.adapter = vAdapter
-        vPager.currentItem = Tab.TRACKING.ordinal
+        binding.vPager.adapter = vAdapter
+        binding.vPager.currentItem = Tab.TRACKING.ordinal
 
-        vPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        binding.vPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
-                bottom_navigation.selectedItemId = when (position) {
+                binding.bottomNavigation.selectedItemId = when (position) {
                     0 -> R.id.fragment_track
                     1 -> R.id.fragment_stats
                     else -> R.id.fragment_history
@@ -46,19 +50,19 @@ class TrackingActivity : AppCompatActivity() {
             }
         })
 
-        bottom_navigation.setOnNavigationItemSelectedListener {
+        binding.bottomNavigation.setOnNavigationItemSelectedListener {
             vAdapter.notifyDataSetChanged()
             when(it.itemId) {
                 R.id.fragment_track -> {
-                    vPager.setCurrentItem(0, true)
+                    binding.vPager.setCurrentItem(0, true)
                     true
                 }
                 R.id.fragment_stats -> {
-                    vPager.setCurrentItem(1, true)
+                    binding.vPager.setCurrentItem(1, true)
                     true
                 }
                 R.id.fragment_history -> {
-                    vPager.setCurrentItem(2, true)
+                    binding.vPager.setCurrentItem(2, true)
                     true
                 }
                 else -> true

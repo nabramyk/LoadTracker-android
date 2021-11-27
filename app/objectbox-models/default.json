@@ -59,7 +59,7 @@
           "name": "jobSessionId",
           "indexId": "1:2208508154379080838",
           "type": 11,
-          "flags": 1548,
+          "flags": 520,
           "relationTarget": "JobSession"
         }
       ],
@@ -99,8 +99,7 @@
         {
           "id": "6:2076872093470929643",
           "name": "totalLoads",
-          "type": 5,
-          "flags": 2
+          "type": 5
         }
       ],
       "relations": []

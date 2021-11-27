@@ -15,11 +15,6 @@
           "flags": 1
         },
         {
-          "id": "2:3155652221997074546",
-          "name": "title",
-          "type": 9
-        },
-        {
           "id": "3:3348054485937943890",
           "name": "driver",
           "type": 9
@@ -119,7 +114,9 @@
   "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    3155652221997074546
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

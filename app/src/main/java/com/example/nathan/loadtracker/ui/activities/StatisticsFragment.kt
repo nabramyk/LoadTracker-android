@@ -5,15 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
 import com.example.nathan.loadtracker.core.database.entities.Load
-import kotlinx.android.synthetic.main.fragment_statistics.*
+import com.example.nathan.loadtracker.databinding.FragmentStatisticsBinding
 import java.util.HashMap
 
 class StatisticsFragment : Fragment() {
 
     private lateinit var sessionTitle: String
+    private var _binding: FragmentStatisticsBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +32,8 @@ class StatisticsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_statistics, container, false)
+        _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     private fun updateTotalLoadsTracked(loads: List<Load>) {
@@ -48,12 +50,12 @@ class StatisticsFragment : Fragment() {
         formattedOutput = formattedOutput.replace("{", "")
         formattedOutput = formattedOutput.replace("}", "")
 
-        tvTotalLoads.text = formattedOutput
+        binding.tvTotalLoads.text = formattedOutput
     }
 
     private fun updateAverageRunTime(loads: List<Load>) {
         if (loads.isEmpty()) {
-            tvAverageRunTime.text = "00:00:00.000"
+            binding.tvAverageRunTime.text = "00:00:00.000"
             return
         }
         var hours = 0
@@ -75,6 +77,6 @@ class StatisticsFragment : Fragment() {
         seconds /= loads.size
         milliseconds /= loads.size
 
-        tvAverageRunTime.text = hours.toString() + ":" + minutes + ":" + seconds + "." + milliseconds
+        binding.tvAverageRunTime.text = hours.toString() + ":" + minutes + ":" + seconds + "." + milliseconds
     }
 }
