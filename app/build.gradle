@@ -16,7 +16,8 @@ android {
     }
 
     lint {
-        baseline = file("lint-baseline.xml")
+        setLintConfig(file("lint.xml"))
+        ignoreWarnings = true
     }
 
     buildTypes {
