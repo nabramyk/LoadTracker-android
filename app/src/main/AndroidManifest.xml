@@ -37,6 +37,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.nathan.loadtracker.ui.activities.SettingsActivity" />
         </activity>
+        <activity
+            android:name=".ui.activities.ExportActivity"
+            android:parentActivityName="com.example.nathan.loadtracker.ui.activities.MainActivity">
+        </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="@string/file_provider_authority"
