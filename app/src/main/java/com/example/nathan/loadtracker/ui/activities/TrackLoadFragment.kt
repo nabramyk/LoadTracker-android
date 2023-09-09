@@ -3,6 +3,7 @@ package com.example.nathan.loadtracker.ui.activities
 import android.content.Context
 import androidx.fragment.app.Fragment
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import android.view.LayoutInflater
 import android.view.View
@@ -31,7 +32,11 @@ class TrackLoadFragment : Fragment() {
         js = LoadTrackerDatabase.getJobSession(sessionTitle)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentLoadTrackingBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -63,7 +68,7 @@ class TrackLoadFragment : Fragment() {
             val c = Calendar.getInstance()
 
             binding.apply {
-                js.loads.add(Load(
+                LoadTrackerDatabase.addLoad(Load(
                     driver = driverNameInput.text.toString(),
                     unitId = unitIDInput.text.toString(),
                     material = materialInput.text.toString(),
@@ -72,7 +77,9 @@ class TrackLoadFragment : Fragment() {
                     created = SimpleDateFormat("yyyy/MM/dd").format(c.time),
                     modified = null,
                     companyName = companyNameInput.text.toString()
-                ))
+                ).also {
+                    it.jobSession.target = js
+                })
             }
 
             Snackbar.make(view, "Tracked!", Snackbar.LENGTH_LONG).show()
@@ -86,7 +93,10 @@ class TrackLoadFragment : Fragment() {
                 binding.companyNameInput.setText(it[it.size - 1].companyName)
             }
         } else {
-            val sharedPrefs = activity?.getSharedPreferences("com.example.nathan.loadtracker", Context.MODE_PRIVATE)
+            val sharedPrefs = activity?.getSharedPreferences(
+                "com.example.nathan.loadtracker",
+                Context.MODE_PRIVATE
+            )
             binding.driverNameInput.setText(sharedPrefs?.getString("name", ""))
             binding.companyNameInput.setText(sharedPrefs?.getString("company", ""))
         }

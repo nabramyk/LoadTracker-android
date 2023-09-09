@@ -24,7 +24,7 @@ class TrackingHistoryFragment : Fragment() {
         loads = LoadTrackerDatabase.getLoadsForSession(sessionTitle)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentTrackingHistoryBinding.inflate(inflater, container, false)
         return binding.root
     }
