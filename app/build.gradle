@@ -32,11 +32,7 @@ android {
             debuggable = true
         }
 
-        create("staging") {
-            initWith debug
-            manifestPlaceholders["hostName"] = "internal.example.com"
-            applicationIdSuffix = ".debugStaging"
-        }
+
     }
 
     productFlavors {
