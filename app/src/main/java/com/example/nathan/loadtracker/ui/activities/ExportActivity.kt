@@ -62,19 +62,21 @@ class ExportActivity : AppCompatActivity() {
 
                 close()
 
-                val intent = Intent(Intent.ACTION_SEND)
-                intent.type = "text/plain"
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                intent.putExtra(
-                    Intent.EXTRA_STREAM,
-                    FileProvider.getUriForFile(
-                        applicationContext,
-                        getString(R.string.file_provider_authority),
-                        file
-                    )
-                )
-
-                startActivityForResult(Intent.createChooser(intent, "Send email...."), 1)
+                // I originally was using `createChooser` but it was throwing some error messages
+                // about file permissions. This could be cleaner but it works for the time being.
+                val intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    type = "text/plain"
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    putExtra(
+                        Intent.EXTRA_STREAM,
+                        FileProvider.getUriForFile(
+                            applicationContext,
+                            getString(R.string.file_provider_authority),
+                            file
+                        ))
+                }
+                startActivity(intent)
                 finish()
             }
         }
