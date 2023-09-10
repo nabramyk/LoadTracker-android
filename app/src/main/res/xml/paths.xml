@@ -6,5 +6,5 @@
     <external-path name="file" path="."/>
     <cache-path
         name="file"
-        path="exports"/>
+        path="."/>
 </paths>

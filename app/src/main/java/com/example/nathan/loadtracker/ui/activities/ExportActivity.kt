@@ -1,6 +1,5 @@
 package com.example.nathan.loadtracker.ui.activities
 
-import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +12,6 @@ import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
 import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.databinding.ActivityExportBinding
 import java.io.File
-import java.io.FileOutputStream
 import java.io.FileWriter
 
 class ExportActivity : AppCompatActivity() {
@@ -53,28 +51,23 @@ class ExportActivity : AppCompatActivity() {
         }
 
         binding.bExport.setOnClickListener {
-//            val file = File(cacheDir, "output.csv")
-//            FileProvider.getUriForFile(
-//                applicationContext,
-//                getString(R.string.file_provider_authority),
-//                file
-//            )
-//            FileWriter(file).apply {
-//                write("""Id", "Material", "Driver", "Title""")
-//                loads.forEach { load ->
-//                    write("${load.id}, ${load.material}, ${load.driver}, ${load.jobSession.target.jobTitle}")
-//                }
-//
-//                close()
+            val file = File(cacheDir, "output.csv")
+            FileWriter(file).apply {
+                write("""Id", "Material", "Driver", "Title""")
+                loads.forEach { load ->
+                    write("${load.id}, ${load.material}, ${load.driver}, ${load.jobSession.target.jobTitle}")
+                }
 
-//                val intent = Intent(Intent.ACTION_SEND)
-//                intent.type = "text/plain"
-//                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-//                intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(applicationContext, getString(R.string.file_provider_authority), this.))
+                close()
 
-//                startActivityForResult(Intent.createChooser(intent, "Send email...."), 1)
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.type = "text/plain"
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(applicationContext, getString(R.string.file_provider_authority), file))
+
+                startActivityForResult(Intent.createChooser(intent, "Send email...."), 1)
                 finish()
-//            }
+            }
         }
 
         binding.cbCurrentDate.setOnClickListener {
