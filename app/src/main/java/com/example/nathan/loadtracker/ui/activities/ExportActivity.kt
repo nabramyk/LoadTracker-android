@@ -53,9 +53,11 @@ class ExportActivity : AppCompatActivity() {
         binding.bExport.setOnClickListener {
             val file = File(cacheDir, "output.csv")
             FileWriter(file).apply {
-                write("""Id", "Material", "Driver", "Title""")
+                // Converting the string to CharArrays is so far the only way I've figured out
+                // to get the entries to properly newline in the .csv
+                write("Id, Material, Driver, Title\n".toCharArray())
                 loads.forEach { load ->
-                    write("${load.id}, ${load.material}, ${load.driver}, ${load.jobSession.target.jobTitle}")
+                    write("${load.id}, ${load.material}, ${load.driver}, ${load.jobSession.target.jobTitle}\n".toCharArray())
                 }
 
                 close()
@@ -63,7 +65,14 @@ class ExportActivity : AppCompatActivity() {
                 val intent = Intent(Intent.ACTION_SEND)
                 intent.type = "text/plain"
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(applicationContext, getString(R.string.file_provider_authority), file))
+                intent.putExtra(
+                    Intent.EXTRA_STREAM,
+                    FileProvider.getUriForFile(
+                        applicationContext,
+                        getString(R.string.file_provider_authority),
+                        file
+                    )
+                )
 
                 startActivityForResult(Intent.createChooser(intent, "Send email...."), 1)
                 finish()
