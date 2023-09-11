@@ -30,10 +30,6 @@ class TrackingViewModel(application: Application): ViewModel() {
         mutableJobSession.value = jobSession
     }
 
-    fun getAllJobSessions(): LiveData<List<JobSessionWithLoads>> {
-        return loadTrackerRepository.getAllJobSessions()
-    }
-
     fun addJobSession(jobTitle: String) {
         viewModelScope.launch(Dispatchers.IO) {
             loadTrackerRepository.addJobSession(

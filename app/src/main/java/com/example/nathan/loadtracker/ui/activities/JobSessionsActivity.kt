@@ -3,6 +3,7 @@ package com.example.nathan.loadtracker.ui.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.widget.AdapterView
@@ -57,13 +58,14 @@ class JobSessionsActivity : AppCompatActivity() {
     }
 
     private fun populateJobSessionsList(jobs: List<JobSessionWithLoads>) {
-        val listAdapter = JobSessionAdapter(this, jobs.map { it.jobSession } as ArrayList<JobSession>) { position ->
-            viewModel.selectJobSession(jobs[position])
+        val listAdapter = JobSessionAdapter(this, jobs as ArrayList<JobSessionWithLoads>) { selectedJobSession ->
+            viewModel.selectJobSession(selectedJobSession)
             startActivity(
                 Intent(this, TrackingActivity::class.java)
-                    .putExtra("session_title_index", jobs[position].jobSession.jobTitle),
+                    .putExtra("session_title_index", selectedJobSession.jobSession.jobTitle),
                 ActivityOptionsCompat.makeBasic().toBundle()
             )
+            Log.d("CLicked", "clicked")
         }
 
         binding.rvJobSessions.layoutManager = LinearLayoutManager(this)
