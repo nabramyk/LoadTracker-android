@@ -15,11 +15,11 @@ interface JobSessionDao {
     suspend fun add(jobSession: JobSession)
 
     @Query("SELECT * FROM jobsession WHERE id=:jobSessionId")
-    fun getJobSessionById(jobSessionId: Long): JobSession
+    suspend fun getJobSessionById(jobSessionId: Long): JobSessionWithLoads
 
     @Transaction
     @Query("SELECT * FROM jobsession")
-    fun allJobSessionsWithLoads(): LiveData<List<JobSessionWithLoads>>
+    fun allJobSessions(): LiveData<List<JobSession>>
 
     @Transaction
     @Query("SELECT * FROM jobsession where id = :jobSessionId")

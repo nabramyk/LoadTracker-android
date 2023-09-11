@@ -8,7 +8,7 @@ import com.example.nathan.loadtracker.core.database.entities.Load
 @Dao
 interface LoadDao {
     @Insert
-    fun add(load: Load)
+    suspend fun add(load: Load)
 
     @Query("SELECT * FROM load WHERE jobSessionId = :jobSessionId")
     fun getLoadsForJobSession(jobSessionId: Long): List<Load>

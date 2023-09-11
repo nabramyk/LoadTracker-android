@@ -15,14 +15,15 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.ActivityMainBinding
 import com.example.nathan.loadtracker.databinding.CreateSessionDialogBinding
+import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
 import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: TrackingViewModel by lazy {
-        ViewModelProvider(this, TrackingViewModel.Factory(application))[TrackingViewModel::class.java]
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this, MainViewModel.Factory(application))[MainViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun showCreateDialog(viewModel: TrackingViewModel) {
+    private fun showCreateDialog(viewModel: MainViewModel) {
         val dialogBinding = CreateSessionDialogBinding.inflate(layoutInflater)
 
         val alertDialogBuilder = AlertDialog.Builder(this@MainActivity)

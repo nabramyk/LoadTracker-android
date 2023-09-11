@@ -7,16 +7,15 @@ import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.database.entities.Load
 import java.text.SimpleDateFormat
+import java.util.Date
 
 class LoadTrackerRepository(application: Application) {
     private val db: LoadTrackerDatabase = LoadTrackerDatabase.getInstance(application.applicationContext)
 
-    fun addLoad(driver: String,
+    suspend fun addLoad(driver: String,
                 unitId: String,
                 material: String,
-                timeLoaded: String,
-                dateLoaded: String,
-                created: String?,
+                timestamp: Date,
                 companyName: String?,
                 jobSessionId: Long
     ) {
@@ -25,9 +24,9 @@ class LoadTrackerRepository(application: Application) {
                 driver = driver,
                 unitId = unitId,
                 material = material,
-                timeLoaded = SimpleDateFormat("HH:mm:ss.SSS").format(timeLoaded),
-                dateLoaded = SimpleDateFormat("yyyy/MM/dd").format(dateLoaded),
-                created = SimpleDateFormat("yyyy/MM/dd").format(created),
+                timeLoaded = SimpleDateFormat("HH:mm:ss.SSS").format(timestamp),
+                dateLoaded = SimpleDateFormat("yyyy/MM/dd").format(timestamp),
+                created = SimpleDateFormat("yyyy/MM/dd").format(timestamp),
                 modified = null,
                 companyName = companyName,
                 jobSessionId = jobSessionId
@@ -41,7 +40,11 @@ class LoadTrackerRepository(application: Application) {
         )
     }
 
-    fun getAllJobSessions(): LiveData<List<JobSessionWithLoads>> {
-        return db.jobSessionDao().allJobSessionsWithLoads()
+    fun getAllJobSessions(): LiveData<List<JobSession>> {
+        return db.jobSessionDao().allJobSessions()
+    }
+
+    suspend fun getJobSessionById(id: Long): JobSessionWithLoads {
+        return db.jobSessionDao().getJobSessionById(id)
     }
 }

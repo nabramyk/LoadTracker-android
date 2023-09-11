@@ -1,31 +1,26 @@
 package com.example.nathan.loadtracker.ui.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.widget.AdapterView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProvider
-import com.example.nathan.loadtracker.core.database.entities.JobSession
-import com.example.nathan.loadtracker.ui.arrayadapters.JobSessionAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
+import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.databinding.ActivityJobSessionsBinding
-import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
+import com.example.nathan.loadtracker.ui.arrayadapters.JobSessionAdapter
+import com.example.nathan.loadtracker.ui.viewmodels.JobSessionsViewModel
 
 class JobSessionsActivity : AppCompatActivity() {
 
     private lateinit var jobs: ArrayList<JobSession>
     private lateinit var binding: ActivityJobSessionsBinding
 
-    private val viewModel: TrackingViewModel by lazy {
-        ViewModelProvider(
-            this,
-            TrackingViewModel.Factory(application)
-        )[TrackingViewModel::class.java]
+    private val viewModel: JobSessionsViewModel by lazy {
+        ViewModelProvider(this, JobSessionsViewModel.Factory(application))[JobSessionsViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,8 +33,8 @@ class JobSessionsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "Open Job Sessions"
 
-        viewModel.allJobSessionsWithLoads.observe(this) { jobSessionsWithLoads ->
-            populateJobSessionsList(jobSessionsWithLoads)
+        viewModel.allJobSessions.observe(this) { jobSessions ->
+            populateJobSessionsList(jobSessions)
         }
     }
 
@@ -57,15 +52,13 @@ class JobSessionsActivity : AppCompatActivity() {
         }
     }
 
-    private fun populateJobSessionsList(jobs: List<JobSessionWithLoads>) {
-        val listAdapter = JobSessionAdapter(this, jobs as ArrayList<JobSessionWithLoads>) { selectedJobSession ->
-            viewModel.selectJobSession(selectedJobSession)
+    private fun populateJobSessionsList(jobs: List<JobSession>) {
+        val listAdapter = JobSessionAdapter(this, jobs as ArrayList<JobSession>) { selectedJobSession ->
             startActivity(
                 Intent(this, TrackingActivity::class.java)
-                    .putExtra("session_title_index", selectedJobSession.jobSession.jobTitle),
+                    .putExtra("job_session_id", selectedJobSession.id),
                 ActivityOptionsCompat.makeBasic().toBundle()
             )
-            Log.d("CLicked", "clicked")
         }
 
         binding.rvJobSessions.layoutManager = LinearLayoutManager(this)

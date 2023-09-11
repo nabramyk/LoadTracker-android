@@ -1,18 +1,18 @@
 package com.example.nathan.loadtracker.ui.activities
 
 import android.content.Context
-import androidx.fragment.app.Fragment
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.example.nathan.loadtracker.databinding.FragmentLoadTrackingBinding
 import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
+import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
 
 class TrackLoadFragment : Fragment() {
 
@@ -21,12 +21,7 @@ class TrackLoadFragment : Fragment() {
     private var _binding: FragmentLoadTrackingBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: TrackingViewModel by lazy {
-        ViewModelProvider(
-            this,
-            TrackingViewModel.Factory(requireActivity().application)
-        )[TrackingViewModel::class.java]
-    }
+    private val viewModel: TrackingViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,9 +69,7 @@ class TrackLoadFragment : Fragment() {
                     driver = driverNameInput.text.toString(),
                     unitId = unitIDInput.text.toString(),
                     material = materialInput.text.toString(),
-                    timeLoaded = SimpleDateFormat("HH:mm:ss.SSS").format(c.time),
-                    dateLoaded = SimpleDateFormat("yyyy/MM/dd").format(c.time),
-                    created = SimpleDateFormat("yyyy/MM/dd").format(c.time),
+                    timestamp = c.time,
                     companyName = companyNameInput.text.toString(),
                 )
             }

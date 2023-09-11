@@ -1,16 +1,14 @@
 package com.example.nathan.loadtracker.ui.activities
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.databinding.FragmentStatisticsBinding
 import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
-import java.util.HashMap
 
 class StatisticsFragment : Fragment() {
 

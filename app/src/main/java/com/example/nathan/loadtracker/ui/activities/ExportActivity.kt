@@ -8,23 +8,17 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
-import com.example.nathan.loadtracker.core.database.entities.JobSession
-import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.databinding.ActivityExportBinding
-import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import com.example.nathan.loadtracker.ui.viewmodels.ExportActivityViewModel
 import java.io.File
 import java.io.FileWriter
 
 class ExportActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityExportBinding
-    private val viewModel: TrackingViewModel by lazy {
-        ViewModelProvider(this, TrackingViewModel.Factory(application))[TrackingViewModel::class.java]
+    private val viewModel: ExportActivityViewModel by lazy {
+        ViewModelProvider(this, ExportActivityViewModel.Factory(application))[ExportActivityViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,22 +36,43 @@ class ExportActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        viewModel.allJobSessionsWithLoads.observe(this) { jobSessionsWithLoads ->
-            val jobs = jobSessionsWithLoads.map { it.jobSession }
+        viewModel.allJobSessions.observe(this) { jobSessions ->
 
-            val adapter = ArrayAdapter<Pair<String, Long>>(this, android.R.layout.simple_spinner_dropdown_item)
-            for (js in jobs) {
+            val adapter = ArrayAdapter<Pair<String, Long>>(
+                this,
+                android.R.layout.simple_spinner_dropdown_item
+            )
+            for (js in jobSessions) {
                 adapter.add(Pair(js.jobTitle.toString(), js.id))
             }
             binding.sSession.adapter = adapter
 
             binding.sSession.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-                    populateFromJob(jobSessionsWithLoads[i])
+                override fun onItemSelected(
+                    adapterView: AdapterView<*>,
+                    view: View,
+                    i: Int,
+                    l: Long
+                ) {
+                    viewModel.selectJobSessionToExport(jobSessions[i].id)
                 }
 
                 override fun onNothingSelected(adapterView: AdapterView<*>) {}
             }
+        }
+
+        viewModel.jobSessionToExport.observe(this) { jobSessionWithLoads ->
+            val dateAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
+            jobSessionWithLoads.loads.asSequence().map { it.dateLoaded }.distinct().toList().forEach { dateAdapter.add(it) }
+
+            binding.sStartDate.adapter = dateAdapter
+            binding.sEndDate.adapter = dateAdapter
+
+            val timeAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
+            jobSessionWithLoads.loads.asSequence().map { it.timeLoaded }.distinct().toList().forEach { timeAdapter.add(it) }
+
+            binding.sStartTime.adapter = timeAdapter
+            binding.sEndTime.adapter = timeAdapter
         }
 
         binding.bExport.setOnClickListener {
@@ -67,8 +82,8 @@ class ExportActivity : AppCompatActivity() {
                 // to get the entries to properly newline in the .csv
                 write("Id, Material, Driver, Title\n".toCharArray())
 
-                viewModel.jobSessionToExport!!.loads.forEach { load ->
-                    write("${load.id}, ${load.material}, ${load.driver}, ${viewModel.jobSessionToExport!!.jobSession.jobTitle}\n".toCharArray())
+                viewModel.jobSessionToExport.value!!.loads.forEach { load ->
+                    write("${load.id}, ${load.material}, ${load.driver}, ${viewModel.jobSessionToExport.value!!.jobSession.jobTitle}\n".toCharArray())
                 }
 
                 close()
@@ -98,19 +113,5 @@ class ExportActivity : AppCompatActivity() {
             binding.sStartTime.isEnabled = !binding.cbCurrentDate.isChecked
             binding.sEndTime.isEnabled = !binding.cbCurrentDate.isChecked
         }
-    }
-
-    private fun populateFromJob(jobSessionWithLoads: JobSessionWithLoads) {
-        val dateAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
-        jobSessionWithLoads.loads.asSequence().map { it.dateLoaded }.distinct().toList().forEach { dateAdapter.add(it) }
-
-        binding.sStartDate.adapter = dateAdapter
-        binding.sEndDate.adapter = dateAdapter
-
-        val timeAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
-        jobSessionWithLoads.loads.asSequence().map { it.timeLoaded }.distinct().toList().forEach { timeAdapter.add(it) }
-
-        binding.sStartTime.adapter = timeAdapter
-        binding.sEndTime.adapter = timeAdapter
     }
 }
