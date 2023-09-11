@@ -15,6 +15,7 @@ class JobSessionsActivity : AppCompatActivity() {
 
     private lateinit var jobs: ArrayList<JobSession>
     private lateinit var binding: ActivityJobSessionsBinding
+    private val db: LoadTrackerDatabase by lazy { LoadTrackerDatabase.getInstance(applicationContext) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +44,7 @@ class JobSessionsActivity : AppCompatActivity() {
     }
 
     private fun populateJobSessionsList() {
-        jobs = LoadTrackerDatabase.getJobSessions() as ArrayList<JobSession>
+        jobs = db.jobSessionDao().all() as ArrayList<JobSession>
 
         val listAdapter = JobSessionAdapter(this, jobs)
         binding.rvJobSessions.layoutManager = LinearLayoutManager(this)

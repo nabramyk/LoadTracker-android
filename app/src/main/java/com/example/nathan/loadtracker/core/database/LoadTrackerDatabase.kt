@@ -1,34 +1,33 @@
 package com.example.nathan.loadtracker.core.database
 
 import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.example.nathan.loadtracker.core.database.dao.JobSessionDao
+import com.example.nathan.loadtracker.core.database.dao.LoadDao
 import com.example.nathan.loadtracker.core.database.entities.JobSession
-import com.example.nathan.loadtracker.core.database.entities.JobSession_
 import com.example.nathan.loadtracker.core.database.entities.Load
-import com.example.nathan.loadtracker.core.database.entities.MyObjectBox
-import io.objectbox.Box
-import io.objectbox.BoxStore
-import io.objectbox.kotlin.boxFor
 
-object LoadTrackerDatabase {
+@Database(entities = [JobSession::class, Load::class], exportSchema = false, version = 1)
+abstract class LoadTrackerDatabase: RoomDatabase() {
 
-    private lateinit var boxStore: BoxStore
-    private val jobSessionBox: Box<JobSession> by lazy { boxStore.boxFor() }
-    private val loadBox: Box<Load> by lazy { boxStore.boxFor() }
+    companion object {
+        private var instance: LoadTrackerDatabase? = null
 
-    fun init(context: Context) {
-        boxStore = MyObjectBox.builder()
-                .androidContext(context.applicationContext)
-                .build()
+        fun getInstance(context: Context): LoadTrackerDatabase {
+            if (instance == null) {
+                synchronized(LoadTrackerDatabase::class) {
+                    instance = Room.databaseBuilder(
+                        context.applicationContext,
+                        LoadTrackerDatabase::class.java, "load-tracker-database"
+                    ).build()
+                }
+            }
+            return instance!!
+        }
     }
 
-    fun getBoxStore(): BoxStore = boxStore
-
-    fun getJobSessions(): List<JobSession> = jobSessionBox.all
-    fun getJobSession(title: String): JobSession = jobSessionBox.query(JobSession_.jobTitle.equal(title)).build().findFirst() ?: JobSession()
-    fun getLoadsForSession(jobTitle: String): List<Load> = jobSessionBox.query(JobSession_.jobTitle.equal(jobTitle)).build().findFirst()?.loads?.toList() ?: emptyList()
-
-
-    fun addJobSession(title: String) = jobSessionBox.put(JobSession(jobTitle = title))
-
-    fun addLoad(load: Load) = loadBox.put(load)
+    abstract fun loadDao(): LoadDao
+    abstract fun jobSessionDao(): JobSessionDao
 }

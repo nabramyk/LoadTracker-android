@@ -10,12 +10,14 @@ import android.text.TextWatcher
 import android.view.Menu
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
+import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.databinding.ActivityMainBinding
 import com.example.nathan.loadtracker.databinding.CreateSessionDialogBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val db: LoadTrackerDatabase by lazy { LoadTrackerDatabase.getInstance(applicationContext) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +48,11 @@ class MainActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .setPositiveButton("Create") { _,_ ->
                     if (!TextUtils.isEmpty(dialogBinding.sessionTitleEditText.text)) {
-                        LoadTrackerDatabase.addJobSession(dialogBinding.sessionTitleEditText.text.toString())
+                        db.jobSessionDao().addNewJobSession(
+                            JobSession(
+                                jobTitle = dialogBinding.sessionTitleEditText.text.toString()
+                            )
+                        )
                         showStartImmediateDialog(dialogBinding.sessionTitleEditText.text.toString())
                     }
                 }

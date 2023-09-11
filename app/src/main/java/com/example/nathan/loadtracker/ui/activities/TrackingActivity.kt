@@ -2,6 +2,7 @@ package com.example.nathan.loadtracker.ui.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -10,13 +11,15 @@ import androidx.viewpager.widget.ViewPager
 
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.ActivityTrackingBinding
+import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
 
 class TrackingActivity : AppCompatActivity() {
 
     private lateinit var sessionTitle: String
-    lateinit var vAdapter : TrackingPagerAdapter
+    private lateinit var vAdapter : TrackingPagerAdapter
 
     private lateinit var binding: ActivityTrackingBinding
+    private val viewModel: TrackingViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

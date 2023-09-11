@@ -9,15 +9,17 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
-import com.example.nathan.loadtracker.core.database.entities.Load
+import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.databinding.ActivityExportBinding
 import java.io.File
 import java.io.FileWriter
 
 class ExportActivity : AppCompatActivity() {
 
-    private lateinit var loads : List<Load>
+    private lateinit var jobSessionWithLoads: JobSessionWithLoads
     private lateinit var binding: ActivityExportBinding
+
+    private val db by lazy { LoadTrackerDatabase.getInstance(applicationContext) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,11 +36,11 @@ class ExportActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        val jobs = LoadTrackerDatabase.getJobSessions()
+        val jobs = db.jobSessionDao().all()
 
-        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
+        val adapter = ArrayAdapter<Pair<String, Long>>(this, android.R.layout.simple_spinner_dropdown_item)
         for (js in jobs) {
-            adapter.add(js.jobTitle.toString())
+            adapter.add(Pair(js.jobTitle.toString(), js.id))
         }
 
         binding.sSession.adapter = adapter
@@ -56,8 +58,8 @@ class ExportActivity : AppCompatActivity() {
                 // Converting the string to CharArrays is so far the only way I've figured out
                 // to get the entries to properly newline in the .csv
                 write("Id, Material, Driver, Title\n".toCharArray())
-                loads.forEach { load ->
-                    write("${load.id}, ${load.material}, ${load.driver}, ${load.jobSession.target.jobTitle}\n".toCharArray())
+                jobSessionWithLoads.loads.forEach { load ->
+                    write("${load.id}, ${load.material}, ${load.driver}, ${jobSessionWithLoads.jobSession.jobTitle}\n".toCharArray())
                 }
 
                 close()
@@ -90,16 +92,16 @@ class ExportActivity : AppCompatActivity() {
     }
 
     private fun populateFromJob() {
-        loads = LoadTrackerDatabase.getLoadsForSession(binding.sSession.selectedItem.toString())
+        jobSessionWithLoads = db.jobSessionDao().getJobSessionWithLoads((binding.sSession.selectedItem as Pair<*, Long>).second)
 
         val dateAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
-        loads.asSequence().map { it.dateLoaded }.distinct().toList().forEach { dateAdapter.add(it) }
+        jobSessionWithLoads.loads.asSequence().map { it.dateLoaded }.distinct().toList().forEach { dateAdapter.add(it) }
 
         binding.sStartDate.adapter = dateAdapter
         binding.sEndDate.adapter = dateAdapter
 
         val timeAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
-        loads.asSequence().map { it.timeLoaded }.distinct().toList().forEach { timeAdapter.add(it) }
+        jobSessionWithLoads.loads.asSequence().map { it.timeLoaded }.distinct().toList().forEach { timeAdapter.add(it) }
 
         binding.sStartTime.adapter = timeAdapter
         binding.sEndTime.adapter = timeAdapter

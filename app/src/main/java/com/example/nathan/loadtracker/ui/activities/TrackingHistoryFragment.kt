@@ -4,24 +4,24 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.*
+import androidx.fragment.app.activityViewModels
 
-import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
 import com.example.nathan.loadtracker.ui.arrayadapters.TrackingHistoryAdapter
-import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.databinding.FragmentTrackingHistoryBinding
+import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
 
 class TrackingHistoryFragment : Fragment() {
 
     private lateinit var sessionTitle: String
-    private lateinit var loads: List<Load>
     private var _binding: FragmentTrackingHistoryBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: TrackingViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         sessionTitle = activity?.title?.toString()!!
-        loads = LoadTrackerDatabase.getLoadsForSession(sessionTitle)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -37,8 +37,10 @@ class TrackingHistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val listAdapter = TrackingHistoryAdapter(loads)
-        binding.trackedLoadHistory.layoutManager = LinearLayoutManager(context)
-        binding.trackedLoadHistory.adapter = listAdapter
+        viewModel.selectedJobSession.observe(viewLifecycleOwner) { js ->
+            val listAdapter = TrackingHistoryAdapter(js.loads)
+            binding.trackedLoadHistory.layoutManager = LinearLayoutManager(context)
+            binding.trackedLoadHistory.adapter = listAdapter
+        }
     }
 }
