@@ -7,19 +7,25 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
+import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.databinding.ActivityExportBinding
+import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileWriter
 
 class ExportActivity : AppCompatActivity() {
 
-    private lateinit var jobSessionWithLoads: JobSessionWithLoads
     private lateinit var binding: ActivityExportBinding
-
-    private val db by lazy { LoadTrackerDatabase.getInstance(applicationContext) }
+    private val viewModel: TrackingViewModel by lazy {
+        ViewModelProvider(this, TrackingViewModel.Factory(application))[TrackingViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,20 +42,22 @@ class ExportActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        val jobs = db.jobSessionDao().all()
+        viewModel.allJobSessionsWithLoads.observe(this) { jobSessionsWithLoads ->
+            val jobs = jobSessionsWithLoads.map { it.jobSession }
 
-        val adapter = ArrayAdapter<Pair<String, Long>>(this, android.R.layout.simple_spinner_dropdown_item)
-        for (js in jobs) {
-            adapter.add(Pair(js.jobTitle.toString(), js.id))
-        }
-
-        binding.sSession.adapter = adapter
-        binding.sSession.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-                populateFromJob()
+            val adapter = ArrayAdapter<Pair<String, Long>>(this, android.R.layout.simple_spinner_dropdown_item)
+            for (js in jobs) {
+                adapter.add(Pair(js.jobTitle.toString(), js.id))
             }
+            binding.sSession.adapter = adapter
 
-            override fun onNothingSelected(adapterView: AdapterView<*>) {}
+            binding.sSession.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
+                    populateFromJob(jobSessionsWithLoads[i])
+                }
+
+                override fun onNothingSelected(adapterView: AdapterView<*>) {}
+            }
         }
 
         binding.bExport.setOnClickListener {
@@ -58,8 +66,9 @@ class ExportActivity : AppCompatActivity() {
                 // Converting the string to CharArrays is so far the only way I've figured out
                 // to get the entries to properly newline in the .csv
                 write("Id, Material, Driver, Title\n".toCharArray())
-                jobSessionWithLoads.loads.forEach { load ->
-                    write("${load.id}, ${load.material}, ${load.driver}, ${jobSessionWithLoads.jobSession.jobTitle}\n".toCharArray())
+
+                viewModel.jobSessionToExport!!.loads.forEach { load ->
+                    write("${load.id}, ${load.material}, ${load.driver}, ${viewModel.jobSessionToExport!!.jobSession.jobTitle}\n".toCharArray())
                 }
 
                 close()
@@ -91,9 +100,7 @@ class ExportActivity : AppCompatActivity() {
         }
     }
 
-    private fun populateFromJob() {
-        jobSessionWithLoads = db.jobSessionDao().getJobSessionWithLoads((binding.sSession.selectedItem as Pair<*, Long>).second)
-
+    private fun populateFromJob(jobSessionWithLoads: JobSessionWithLoads) {
         val dateAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
         jobSessionWithLoads.loads.asSequence().map { it.dateLoaded }.distinct().toList().forEach { dateAdapter.add(it) }
 

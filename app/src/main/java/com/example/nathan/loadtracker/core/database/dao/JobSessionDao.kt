@@ -1,5 +1,6 @@
 package com.example.nathan.loadtracker.core.database.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -11,17 +12,14 @@ import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 @Dao
 interface JobSessionDao {
     @Insert
-    fun insert(jobSession: JobSession)
+    suspend fun add(jobSession: JobSession)
 
     @Query("SELECT * FROM jobsession WHERE id=:jobSessionId")
     fun getJobSessionById(jobSessionId: Long): JobSession
 
-    @Query("SELECT * FROM jobsession")
-    fun all(): List<JobSession>
-
     @Transaction
     @Query("SELECT * FROM jobsession")
-    fun allJobSessionsWithLoads(): List<JobSessionWithLoads>
+    fun allJobSessionsWithLoads(): LiveData<List<JobSessionWithLoads>>
 
     @Transaction
     @Query("SELECT * FROM jobsession where id = :jobSessionId")

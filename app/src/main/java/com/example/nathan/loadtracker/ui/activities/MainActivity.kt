@@ -8,16 +8,22 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.Menu
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
-import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.databinding.ActivityMainBinding
 import com.example.nathan.loadtracker.databinding.CreateSessionDialogBinding
+import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val db: LoadTrackerDatabase by lazy { LoadTrackerDatabase.getInstance(applicationContext) }
+    private val viewModel: TrackingViewModel by lazy {
+        ViewModelProvider(this, TrackingViewModel.Factory(application))[TrackingViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +34,12 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         title = ""
 
-        binding.buttonCreateSession.setOnClickListener { showCreateDialog() }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                binding.buttonCreateSession.setOnClickListener { showCreateDialog(viewModel) }
+            }
+        }
+
         binding.buttonContinueSession.setOnClickListener { startActivity(Intent(this, JobSessionsActivity::class.java)) }
         binding.buttonExport.setOnClickListener { startActivity(Intent(this, ExportActivity::class.java)) }
     }
@@ -38,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun showCreateDialog() {
+    private fun showCreateDialog(viewModel: TrackingViewModel) {
         val dialogBinding = CreateSessionDialogBinding.inflate(layoutInflater)
 
         val alertDialogBuilder = AlertDialog.Builder(this@MainActivity)
@@ -48,10 +59,8 @@ class MainActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .setPositiveButton("Create") { _,_ ->
                     if (!TextUtils.isEmpty(dialogBinding.sessionTitleEditText.text)) {
-                        db.jobSessionDao().addNewJobSession(
-                            JobSession(
-                                jobTitle = dialogBinding.sessionTitleEditText.text.toString()
-                            )
+                        viewModel.addJobSession(
+                            jobTitle = dialogBinding.sessionTitleEditText.text.toString()
                         )
                         showStartImmediateDialog(dialogBinding.sessionTitleEditText.text.toString())
                     }

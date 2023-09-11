@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import com.example.nathan.loadtracker.ui.activities.TrackingActivity
 
@@ -13,7 +14,8 @@ import com.example.nathan.loadtracker.databinding.CellJobSessionBinding
 import java.lang.ref.WeakReference
 
 class JobSessionAdapter(context: Context,
-                        private val jobSessions: ArrayList<JobSession>
+                        private val jobSessions: ArrayList<JobSession>,
+                        private val listener: (position: Int) -> Unit
 ) : RecyclerView.Adapter<JobSessionAdapter.JobSessionViewHolder>() {
 
     private val context = WeakReference(context)
@@ -31,16 +33,13 @@ class JobSessionAdapter(context: Context,
         holder.bindViewHolder(jobSessions[position])
     }
 
-    inner class JobSessionViewHolder(private val binding: CellJobSessionBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class JobSessionViewHolder(private val binding: CellJobSessionBinding): RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         fun bindViewHolder(jobSession: JobSession) {
             binding.tvTitle.text = jobSession.jobTitle
+        }
 
-            binding.root.setOnClickListener {
-                context.get()?.let { c ->
-                    c.startActivity(Intent(c, TrackingActivity::class.java)
-                            .putExtra("session_title_index", jobSession.jobTitle), ActivityOptionsCompat.makeBasic().toBundle())
-                }
-            }
+        override fun onClick(v: View?) {
+            listener.invoke(adapterPosition)
         }
     }
 }

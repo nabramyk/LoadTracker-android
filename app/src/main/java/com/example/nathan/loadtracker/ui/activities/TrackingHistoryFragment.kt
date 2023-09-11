@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.*
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 
 import com.example.nathan.loadtracker.ui.arrayadapters.TrackingHistoryAdapter
 import com.example.nathan.loadtracker.databinding.FragmentTrackingHistoryBinding
@@ -16,7 +17,9 @@ class TrackingHistoryFragment : Fragment() {
     private var _binding: FragmentTrackingHistoryBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: TrackingViewModel by activityViewModels()
+    private val viewModel: TrackingViewModel by lazy {
+        ViewModelProvider(this, TrackingViewModel.Factory(requireActivity().application))[TrackingViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

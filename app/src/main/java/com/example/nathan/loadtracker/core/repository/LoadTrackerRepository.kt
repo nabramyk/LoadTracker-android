@@ -1,7 +1,10 @@
 package com.example.nathan.loadtracker.core.repository
 
 import android.app.Application
+import androidx.lifecycle.LiveData
 import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
+import com.example.nathan.loadtracker.core.database.entities.JobSession
+import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.database.entities.Load
 import java.text.SimpleDateFormat
 
@@ -30,5 +33,15 @@ class LoadTrackerRepository(application: Application) {
                 jobSessionId = jobSessionId
             )
         )
+    }
+
+    suspend fun addJobSession(jobTitle: String) {
+        db.jobSessionDao().add(
+            JobSession(jobTitle = jobTitle)
+        )
+    }
+
+    fun getAllJobSessions(): LiveData<List<JobSessionWithLoads>> {
+        return db.jobSessionDao().allJobSessionsWithLoads()
     }
 }

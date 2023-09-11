@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class JobSession(
-        @PrimaryKey var id: Long = 0,
+        @PrimaryKey(autoGenerate = true) var id: Long = 0,
         var jobTitle: String? = null,
         var startDate: String? = null,
         var closedDate: String? = null,

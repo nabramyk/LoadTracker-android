@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Load(
-        @PrimaryKey var id: Long = 0,
+        @PrimaryKey(autoGenerate = true) var id: Long = 0,
         var driver: String = "",
         var unitId: String = "",
         var material: String = "",

@@ -1,21 +1,31 @@
 package com.example.nathan.loadtracker.ui.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.widget.AdapterView
+import androidx.core.app.ActivityOptionsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.ui.arrayadapters.JobSessionAdapter
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
+import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.databinding.ActivityJobSessionsBinding
+import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
 
 class JobSessionsActivity : AppCompatActivity() {
 
     private lateinit var jobs: ArrayList<JobSession>
     private lateinit var binding: ActivityJobSessionsBinding
-    private val db: LoadTrackerDatabase by lazy { LoadTrackerDatabase.getInstance(applicationContext) }
+
+    private val viewModel: TrackingViewModel by lazy {
+        ViewModelProvider(
+            this,
+            TrackingViewModel.Factory(application)
+        )[TrackingViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +37,9 @@ class JobSessionsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "Open Job Sessions"
 
-        populateJobSessionsList()
+        viewModel.allJobSessionsWithLoads.observe(this) { jobSessionsWithLoads ->
+            populateJobSessionsList(jobSessionsWithLoads)
+        }
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
@@ -39,14 +51,21 @@ class JobSessionsActivity : AppCompatActivity() {
                 jobs.removeAt(info.position)
                 super.onContextItemSelected(item)
             }
+
             else -> super.onContextItemSelected(item)
         }
     }
 
-    private fun populateJobSessionsList() {
-        jobs = db.jobSessionDao().all() as ArrayList<JobSession>
+    private fun populateJobSessionsList(jobs: List<JobSessionWithLoads>) {
+        val listAdapter = JobSessionAdapter(this, jobs.map { it.jobSession } as ArrayList<JobSession>) { position ->
+            viewModel.selectJobSession(jobs[position])
+            startActivity(
+                Intent(this, TrackingActivity::class.java)
+                    .putExtra("session_title_index", jobs[position].jobSession.jobTitle),
+                ActivityOptionsCompat.makeBasic().toBundle()
+            )
+        }
 
-        val listAdapter = JobSessionAdapter(this, jobs)
         binding.rvJobSessions.layoutManager = LinearLayoutManager(this)
         registerForContextMenu(binding.rvJobSessions)
 

@@ -19,9 +19,11 @@ abstract class LoadTrackerDatabase: RoomDatabase() {
             if (instance == null) {
                 synchronized(LoadTrackerDatabase::class) {
                     instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        LoadTrackerDatabase::class.java, "load-tracker-database"
-                    ).build()
+                            context.applicationContext,
+                            LoadTrackerDatabase::class.java, "load-tracker-database"
+                        )
+                        .fallbackToDestructiveMigration()
+                        .build()
                 }
             }
             return instance!!
