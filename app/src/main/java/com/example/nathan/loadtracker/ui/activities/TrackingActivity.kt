@@ -1,22 +1,25 @@
 package com.example.nathan.loadtracker.ui.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.ActivityTrackingBinding
+import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
 
 class TrackingActivity : AppCompatActivity() {
 
-    private lateinit var sessionTitle: String
-    lateinit var vAdapter : TrackingPagerAdapter
+    private lateinit var vAdapter : TrackingPagerAdapter
 
     private lateinit var binding: ActivityTrackingBinding
+    private val viewModel: TrackingViewModel by lazy {
+        ViewModelProvider(this, TrackingViewModel.Factory(application))[TrackingViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +32,8 @@ class TrackingActivity : AppCompatActivity() {
         supportActionBar?.setHomeAsUpIndicator(resources.getDrawable(R.drawable.ic_arrow_back_black_36px))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        sessionTitle = intent.getStringExtra("session_title_index") ?: ""
-        title = sessionTitle
+        val jobSessionId = intent.getLongExtra("job_session_id", 0)
+        viewModel.selectJobSession(jobSessionId)
 
         vAdapter = TrackingPagerAdapter(supportFragmentManager)
         binding.vPager.adapter = vAdapter

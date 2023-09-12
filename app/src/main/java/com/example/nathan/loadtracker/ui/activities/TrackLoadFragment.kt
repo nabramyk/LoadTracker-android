@@ -1,37 +1,38 @@
 package com.example.nathan.loadtracker.ui.activities
 
 import android.content.Context
-import androidx.fragment.app.Fragment
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
-import com.example.nathan.loadtracker.core.database.entities.JobSession
-import com.example.nathan.loadtracker.core.database.entities.Load
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import com.example.nathan.loadtracker.databinding.FragmentLoadTrackingBinding
+import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
+import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
 
 class TrackLoadFragment : Fragment() {
 
     private lateinit var sessionTitle: String
-    private lateinit var js: JobSession
 
     private var _binding: FragmentLoadTrackingBinding? = null
     private val binding get() = _binding!!
 
+    private val viewModel: TrackingViewModel by activityViewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         sessionTitle = activity?.title?.toString()!!
-
-        js = LoadTrackerDatabase.getJobSession(sessionTitle)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentLoadTrackingBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -63,32 +64,34 @@ class TrackLoadFragment : Fragment() {
             val c = Calendar.getInstance()
 
             binding.apply {
-                js.loads.add(Load(
+                viewModel.addLoad(
                     driver = driverNameInput.text.toString(),
                     unitId = unitIDInput.text.toString(),
                     material = materialInput.text.toString(),
-                    timeLoaded = SimpleDateFormat("HH:mm:ss.SSS").format(c.time),
-                    dateLoaded = SimpleDateFormat("yyyy/MM/dd").format(c.time),
-                    created = SimpleDateFormat("yyyy/MM/dd").format(c.time),
-                    modified = null,
-                    companyName = companyNameInput.text.toString()
-                ))
+                    timestamp = c.time,
+                    companyName = companyNameInput.text.toString(),
+                )
             }
 
             Snackbar.make(view, "Tracked!", Snackbar.LENGTH_LONG).show()
         }
 
-        if (js.loads.isNotEmpty()) {
-            js.loads.let {
-                binding.materialInput.setText(it[it.size - 1].material)
-                binding.unitIDInput.setText(it[it.size - 1].unitId)
-                binding.driverNameInput.setText(it[it.size - 1].driver)
-                binding.companyNameInput.setText(it[it.size - 1].companyName)
+        viewModel.selectedJobSession.observe(viewLifecycleOwner) { js ->
+            if (js.loads.isNotEmpty()) {
+                js.loads.let {
+                    binding.materialInput.setText(it[it.size - 1].material)
+                    binding.unitIDInput.setText(it[it.size - 1].unitId)
+                    binding.driverNameInput.setText(it[it.size - 1].driver)
+                    binding.companyNameInput.setText(it[it.size - 1].companyName)
+                }
+            } else {
+                val sharedPrefs = activity?.getSharedPreferences(
+                    "com.example.nathan.loadtracker",
+                    Context.MODE_PRIVATE
+                )
+                binding.driverNameInput.setText(sharedPrefs?.getString("name", ""))
+                binding.companyNameInput.setText(sharedPrefs?.getString("company", ""))
             }
-        } else {
-            val sharedPrefs = activity?.getSharedPreferences("com.example.nathan.loadtracker", Context.MODE_PRIVATE)
-            binding.driverNameInput.setText(sharedPrefs?.getString("name", ""))
-            binding.companyNameInput.setText(sharedPrefs?.getString("company", ""))
         }
     }
 }

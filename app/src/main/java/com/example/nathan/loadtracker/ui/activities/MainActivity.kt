@@ -8,14 +8,23 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.Menu
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
 import com.example.nathan.loadtracker.databinding.ActivityMainBinding
 import com.example.nathan.loadtracker.databinding.CreateSessionDialogBinding
+import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
+import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this, MainViewModel.Factory(application))[MainViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +35,12 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         title = ""
 
-        binding.buttonCreateSession.setOnClickListener { showCreateDialog() }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                binding.buttonCreateSession.setOnClickListener { showCreateDialog(viewModel) }
+            }
+        }
+
         binding.buttonContinueSession.setOnClickListener { startActivity(Intent(this, JobSessionsActivity::class.java)) }
         binding.buttonExport.setOnClickListener { startActivity(Intent(this, ExportActivity::class.java)) }
     }
@@ -36,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun showCreateDialog() {
+    private fun showCreateDialog(viewModel: MainViewModel) {
         val dialogBinding = CreateSessionDialogBinding.inflate(layoutInflater)
 
         val alertDialogBuilder = AlertDialog.Builder(this@MainActivity)
@@ -46,8 +60,10 @@ class MainActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .setPositiveButton("Create") { _,_ ->
                     if (!TextUtils.isEmpty(dialogBinding.sessionTitleEditText.text)) {
-                        LoadTrackerDatabase.addJobSession(dialogBinding.sessionTitleEditText.text.toString())
-                        showStartImmediateDialog(dialogBinding.sessionTitleEditText.text.toString())
+                        viewModel.addJobSession(
+                            jobTitle = dialogBinding.sessionTitleEditText.text.toString()
+                        )
+                        showStartImmediateDialog()
                     }
                 }
                 .setNegativeButton("Cancel"
@@ -69,13 +85,13 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun showStartImmediateDialog(title: String) {
+    private fun showStartImmediateDialog() {
         AlertDialog
                 .Builder(this@MainActivity)
                 .setMessage("Start this session now?")
                 .setPositiveButton("Yes") { _, _ ->
                     startActivity(Intent(this, TrackingActivity::class.java)
-                            .putExtra("session_title_index", title))
+                            .putExtra("job_session_id", viewModel.newJobSessionId))
                 }
                 .setNegativeButton("No") { dialog, _ -> dialog.cancel() }
                 .create()

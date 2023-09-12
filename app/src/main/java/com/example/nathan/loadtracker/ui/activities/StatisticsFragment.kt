@@ -1,14 +1,14 @@
 package com.example.nathan.loadtracker.ui.activities
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.databinding.FragmentStatisticsBinding
-import java.util.HashMap
+import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
 
 class StatisticsFragment : Fragment() {
 
@@ -16,22 +16,28 @@ class StatisticsFragment : Fragment() {
     private var _binding: FragmentStatisticsBinding? = null
     private val binding get() = _binding!!
 
+    private val viewModel: TrackingViewModel by lazy {
+        ViewModelProvider(this, TrackingViewModel.Factory(requireActivity().application))[TrackingViewModel::class.java]
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         sessionTitle = activity?.title?.toString()!!
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val loads = LoadTrackerDatabase.getLoadsForSession(sessionTitle)
+        viewModel.selectedJobSession.observe(viewLifecycleOwner) { js ->
+            val loads = js.loads
 
-        updateTotalLoadsTracked(loads)
-        updateAverageRunTime(loads)
+            updateTotalLoadsTracked(loads)
+            updateAverageRunTime(loads)
+        }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
         return binding.root
     }
