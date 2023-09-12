@@ -34,8 +34,8 @@ class LoadTrackerRepository(application: Application) {
         )
     }
 
-    suspend fun addJobSession(jobTitle: String) {
-        db.jobSessionDao().add(
+    suspend fun addJobSession(jobTitle: String): Long {
+        return db.jobSessionDao().add(
             JobSession(jobTitle = jobTitle)
         )
     }

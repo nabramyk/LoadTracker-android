@@ -25,7 +25,6 @@ class TrackLoadFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         sessionTitle = activity?.title?.toString()!!
     }
 

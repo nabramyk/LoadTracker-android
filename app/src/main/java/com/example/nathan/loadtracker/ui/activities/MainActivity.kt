@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
                         viewModel.addJobSession(
                             jobTitle = dialogBinding.sessionTitleEditText.text.toString()
                         )
-                        showStartImmediateDialog(dialogBinding.sessionTitleEditText.text.toString())
+                        showStartImmediateDialog()
                     }
                 }
                 .setNegativeButton("Cancel"
@@ -85,13 +85,13 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun showStartImmediateDialog(title: String) {
+    private fun showStartImmediateDialog() {
         AlertDialog
                 .Builder(this@MainActivity)
                 .setMessage("Start this session now?")
                 .setPositiveButton("Yes") { _, _ ->
                     startActivity(Intent(this, TrackingActivity::class.java)
-                            .putExtra("session_title_index", title))
+                            .putExtra("job_session_id", viewModel.newJobSessionId))
                 }
                 .setNegativeButton("No") { dialog, _ -> dialog.cancel() }
                 .create()

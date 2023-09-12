@@ -11,10 +11,11 @@ import java.lang.IllegalArgumentException
 
 class MainViewModel(application: Application): ViewModel() {
     private val loadTrackerRepository = LoadTrackerRepository(application)
+    var newJobSessionId: Long = 0
 
     fun addJobSession(jobTitle: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            loadTrackerRepository.addJobSession(
+            newJobSessionId = loadTrackerRepository.addJobSession(
                 jobTitle = jobTitle
             )
         }

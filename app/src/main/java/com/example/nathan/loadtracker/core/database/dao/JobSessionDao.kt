@@ -12,7 +12,7 @@ import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 @Dao
 interface JobSessionDao {
     @Insert
-    suspend fun add(jobSession: JobSession)
+    suspend fun add(jobSession: JobSession): Long
 
     @Query("SELECT * FROM jobsession WHERE id=:jobSessionId")
     suspend fun getJobSessionById(jobSessionId: Long): JobSessionWithLoads
