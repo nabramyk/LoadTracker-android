@@ -53,17 +53,17 @@ class JobSessionsActivity : AppCompatActivity() {
     }
 
     private fun populateJobSessionsList(jobs: List<JobSession>) {
-        val listAdapter = JobSessionAdapter(this, jobs as ArrayList<JobSession>) { selectedJobSession ->
-            startActivity(
-                Intent(this, TrackingActivity::class.java)
-                    .putExtra("job_session_id", selectedJobSession.id),
-                ActivityOptionsCompat.makeBasic().toBundle()
-            )
-        }
-
-        binding.rvJobSessions.layoutManager = LinearLayoutManager(this)
-        registerForContextMenu(binding.rvJobSessions)
-
-        binding.rvJobSessions.adapter = listAdapter
+//        val listAdapter = JobSessionAdapter(this, jobs as ArrayList<JobSession>) { selectedJobSession ->
+//            startActivity(
+//                Intent(this, TrackingActivity::class.java)
+//                    .putExtra("job_session_id", selectedJobSession.id),
+//                ActivityOptionsCompat.makeBasic().toBundle()
+//            )
+//        }
+//
+//        binding.rvJobSessions.layoutManager = LinearLayoutManager(this)
+//        registerForContextMenu(binding.rvJobSessions)
+//
+//        binding.rvJobSessions.adapter = listAdapter
     }
 }

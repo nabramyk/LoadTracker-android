@@ -14,6 +14,7 @@ interface JobSessionDao {
     @Insert
     suspend fun add(jobSession: JobSession): Long
 
+    @Transaction
     @Query("SELECT * FROM jobsession WHERE id=:jobSessionId")
     suspend fun getJobSessionById(jobSessionId: Long): JobSessionWithLoads
 

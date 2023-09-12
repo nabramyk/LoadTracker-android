@@ -16,13 +16,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.example.nathan.loadtracker.ui.activities.TrackingActivity"
-            android:parentActivityName="com.example.nathan.loadtracker.ui.activities.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.nathan.loadtracker.ui.activities.MainActivity" />
-        </activity>
         <activity android:name="com.example.nathan.loadtracker.ui.activities.JobSessionsActivity"
             android:parentActivityName="com.example.nathan.loadtracker.ui.activities.MainActivity">
             <meta-data
