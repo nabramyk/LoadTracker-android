@@ -15,6 +15,7 @@ import java.lang.IllegalArgumentException
 import java.util.Calendar
 
 class MainViewModel(application: Application) : ViewModel() {
+
     private val _repository = LoadTrackerRepository(application)
     private val _preferences = application.getSharedPreferences(
         "com.example.nathan.loadtracker",

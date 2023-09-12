@@ -8,7 +8,10 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -26,7 +29,8 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var vAdapter : TrackingPagerAdapter
+    private lateinit var vAdapter: TrackingPagerAdapter
+    private lateinit var lDrawerToggle: ActionBarDrawerToggle
 
     private val viewModel: MainViewModel by viewModels { MainViewModel.Factory(application) }
 
@@ -40,17 +44,19 @@ class MainActivity : AppCompatActivity() {
         viewModel
 
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolbar)
+
         title = ""
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                binding.buttonCreateSession.setOnClickListener { showCreateDialog(viewModel) }
-            }
-        }
-
-        binding.buttonExport.setOnClickListener { startActivity(Intent(this, ExportActivity::class.java)) }
+        lDrawerToggle = ActionBarDrawerToggle(
+            this,
+            binding.drawerLayout,
+            R.string.nav_open,
+            R.string.nav_close
+        )
+        binding.drawerLayout.addDrawerListener(lDrawerToggle)
+        lDrawerToggle.syncState()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         vAdapter = TrackingPagerAdapter(supportFragmentManager)
         binding.vPager.adapter = vAdapter
@@ -59,7 +65,12 @@ class MainActivity : AppCompatActivity() {
         binding.vPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
 
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+            }
 
             override fun onPageSelected(position: Int) {
                 binding.bottomNavigation.selectedItemId = when (position) {
@@ -70,17 +81,19 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        binding.bottomNavigation.setOnNavigationItemSelectedListener {
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
             vAdapter.notifyDataSetChanged()
-            when(it.itemId) {
+            when (item.itemId) {
                 R.id.fragment_track -> {
                     binding.vPager.setCurrentItem(0, true)
                     true
                 }
+
                 R.id.fragment_stats -> {
                     binding.vPager.setCurrentItem(1, true)
                     true
                 }
+
                 R.id.fragment_history -> {
                     binding.vPager.setCurrentItem(2, true)
                     true
@@ -88,11 +101,36 @@ class MainActivity : AppCompatActivity() {
                 else -> true
             }
         }
+
+        binding.nvNavigationView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.new_job_session -> {
+                    showCreateDialog(viewModel)
+                    true
+                }
+
+                R.id.view_job_sessions -> {
+                    startActivity(Intent(this, JobSessionsActivity::class.java))
+                    true
+                }
+
+                R.id.settings -> {
+                    true
+                }
+
+                R.id.export -> {
+                    startActivity(Intent(this, ExportActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_activity_menu, menu)
-        return super.onCreateOptionsMenu(menu)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (lDrawerToggle.onOptionsItemSelected(item)) {
+            true
+        } else super.onOptionsItemSelected(item)
     }
 
     private fun showCreateDialog(viewModel: MainViewModel) {
@@ -101,19 +139,20 @@ class MainActivity : AppCompatActivity() {
         val alertDialogBuilder = AlertDialog.Builder(this@MainActivity)
 
         val alertDialog = alertDialogBuilder
-                .setView(dialogBinding.root)
-                .setCancelable(false)
-                .setPositiveButton("Create") { _,_ ->
-                    if (!TextUtils.isEmpty(dialogBinding.sessionTitleEditText.text)) {
-                        viewModel.addJobSession(
-                            jobTitle = dialogBinding.sessionTitleEditText.text.toString()
-                        )
-                        showStartImmediateDialog()
-                    }
+            .setView(dialogBinding.root)
+            .setCancelable(false)
+            .setPositiveButton("Create") { _, _ ->
+                if (!TextUtils.isEmpty(dialogBinding.sessionTitleEditText.text)) {
+                    viewModel.addJobSession(
+                        jobTitle = dialogBinding.sessionTitleEditText.text.toString()
+                    )
+                    showStartImmediateDialog()
                 }
-                .setNegativeButton("Cancel"
-                ) { dialog, _ -> dialog.cancel() }
-                .create()
+            }
+            .setNegativeButton(
+                "Cancel"
+            ) { dialog, _ -> dialog.cancel() }
+            .create()
 
         alertDialog.show()
 
@@ -132,14 +171,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun showStartImmediateDialog() {
         AlertDialog
-                .Builder(this@MainActivity)
-                .setMessage("Start this session now?")
-                .setPositiveButton("Yes") { _, _ ->
+            .Builder(this@MainActivity)
+            .setMessage("Start this session now?")
+            .setPositiveButton("Yes") { _, _ ->
 
-                }
-                .setNegativeButton("No") { dialog, _ -> dialog.cancel() }
-                .create()
-                .show()
+            }
+            .setNegativeButton("No") { dialog, _ -> dialog.cancel() }
+            .create()
+            .show()
     }
 
     enum class Tab {
@@ -148,7 +187,8 @@ class MainActivity : AppCompatActivity() {
         HISTORY
     }
 
-    inner class TrackingPagerAdapter(fragmentManager: FragmentManager) : FragmentStatePagerAdapter(fragmentManager) {
+    inner class TrackingPagerAdapter(fragmentManager: FragmentManager) :
+        FragmentStatePagerAdapter(fragmentManager) {
         override fun getItem(position: Int): Fragment = when (position) {
             Tab.TRACKING.ordinal -> TrackLoadFragment()
             Tab.STATS.ordinal -> StatisticsFragment()

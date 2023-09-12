@@ -38,10 +38,12 @@ class TrackingHistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.selectedJobSession.observe(viewLifecycleOwner) { js ->
-            val listAdapter = TrackingHistoryAdapter(js.loads)
-            binding.trackedLoadHistory.layoutManager = LinearLayoutManager(context)
-            binding.trackedLoadHistory.adapter = listAdapter
+        if (viewModel.selectedJobSession.value !== null) {
+            viewModel.selectedJobSession.observe(viewLifecycleOwner) { js ->
+                val listAdapter = TrackingHistoryAdapter(js.loads)
+                binding.trackedLoadHistory.layoutManager = LinearLayoutManager(context)
+                binding.trackedLoadHistory.adapter = listAdapter
+            }
         }
     }
 }

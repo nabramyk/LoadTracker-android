@@ -38,20 +38,6 @@ class JobSessionsActivity : AppCompatActivity() {
         }
     }
 
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
-        return when (item.itemId) {
-            R.id.edit_session_entry,
-
-            R.id.close_session_entry -> {
-                jobs.removeAt(info.position)
-                super.onContextItemSelected(item)
-            }
-
-            else -> super.onContextItemSelected(item)
-        }
-    }
-
     private fun populateJobSessionsList(jobs: List<JobSession>) {
 //        val listAdapter = JobSessionAdapter(this, jobs as ArrayList<JobSession>) { selectedJobSession ->
 //            startActivity(
