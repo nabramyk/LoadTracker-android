@@ -24,7 +24,7 @@ interface JobSessionDao {
 
     @Transaction
     @Query("SELECT * FROM jobsession where id = :jobSessionId")
-    fun getJobSessionWithLoads(jobSessionId: Long): JobSessionWithLoads
+    suspend fun getJobSessionWithLoads(jobSessionId: Long): JobSessionWithLoads
 
     @Insert(onConflict = OnConflictStrategy.NONE)
     fun addNewJobSession(jobSession: JobSession)

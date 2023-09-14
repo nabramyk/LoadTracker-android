@@ -25,7 +25,11 @@ class TrackingHistoryFragment : Fragment() {
         sessionTitle = activity?.title?.toString()!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentTrackingHistoryBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -38,9 +42,9 @@ class TrackingHistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (viewModel.selectedJobSession.value !== null) {
-            viewModel.selectedJobSession.observe(viewLifecycleOwner) { js ->
-                val listAdapter = TrackingHistoryAdapter(js.loads)
+        viewModel.mainUiModel.observe(viewLifecycleOwner) { model ->
+            model.activeJobSessionWithLoads?.let {
+                val listAdapter = TrackingHistoryAdapter(it.loads)
                 binding.trackedLoadHistory.layoutManager = LinearLayoutManager(context)
                 binding.trackedLoadHistory.adapter = listAdapter
             }

@@ -2,44 +2,42 @@ package com.example.nathan.loadtracker.ui.activities
 
 import android.content.Intent
 import androidx.core.content.FileProvider
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.databinding.ActivityExportBinding
-import com.example.nathan.loadtracker.ui.viewmodels.ExportActivityViewModel
+import com.example.nathan.loadtracker.databinding.FragmentExportBinding
+import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
 import java.io.File
 import java.io.FileWriter
 
-class ExportActivity : AppCompatActivity() {
+class ExportFragment : Fragment() {
 
-    private lateinit var binding: ActivityExportBinding
-    private val viewModel: ExportActivityViewModel by lazy {
-        ViewModelProvider(this, ExportActivityViewModel.Factory(application))[ExportActivityViewModel::class.java]
+    private var _binding: FragmentExportBinding? = null
+    private val viewModel: MainViewModel by activityViewModels()
+
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentExportBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityExportBinding.inflate(layoutInflater)
 
-        setContentView(binding.root)
-
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        title = "Export"
-
-        initView()
-    }
-
-    private fun initView() {
-        viewModel.allJobSessions.observe(this) { jobSessions ->
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.allJobSessions.observe(viewLifecycleOwner) { jobSessions ->
             val adapter = ArrayAdapter<Pair<String, Long>>(
-                this,
+                requireContext(),
                 android.R.layout.simple_spinner_dropdown_item
             )
             for (js in jobSessions) {
@@ -61,22 +59,32 @@ class ExportActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.jobSessionToExport.observe(this) { jobSessionWithLoads ->
-            val dateAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
-            jobSessionWithLoads.loads.asSequence().map { it.dateLoaded }.distinct().toList().forEach { dateAdapter.add(it) }
+        viewModel.jobSessionToExport.observe(viewLifecycleOwner) { jobSessionWithLoads ->
+            val dateAdapter =
+                ArrayAdapter<String>(
+                    requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item
+                )
+            jobSessionWithLoads.loads.asSequence().map { it.dateLoaded }.distinct().toList()
+                .forEach { dateAdapter.add(it) }
 
             binding.sStartDate.adapter = dateAdapter
             binding.sEndDate.adapter = dateAdapter
 
-            val timeAdapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item)
-            jobSessionWithLoads.loads.asSequence().map { it.timeLoaded }.distinct().toList().forEach { timeAdapter.add(it) }
+            val timeAdapter =
+                ArrayAdapter<String>(
+                    requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item
+                )
+            jobSessionWithLoads.loads.asSequence().map { it.timeLoaded }.distinct().toList()
+                .forEach { timeAdapter.add(it) }
 
             binding.sStartTime.adapter = timeAdapter
             binding.sEndTime.adapter = timeAdapter
         }
 
         binding.bExport.setOnClickListener {
-            val file = File(cacheDir, "output.csv")
+            val file = File(requireContext().cacheDir, "output.csv")
             FileWriter(file).apply {
                 // Converting the string to CharArrays is so far the only way I've figured out
                 // to get the entries to properly newline in the .csv
@@ -97,13 +105,13 @@ class ExportActivity : AppCompatActivity() {
                     putExtra(
                         Intent.EXTRA_STREAM,
                         FileProvider.getUriForFile(
-                            applicationContext,
+                            requireContext(),
                             getString(R.string.file_provider_authority),
                             file
-                        ))
+                        )
+                    )
                 }
                 startActivity(intent)
-                finish()
             }
         }
 

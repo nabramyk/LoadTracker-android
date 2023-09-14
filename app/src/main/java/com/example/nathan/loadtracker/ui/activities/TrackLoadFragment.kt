@@ -68,19 +68,22 @@ class TrackLoadFragment : Fragment() {
             Snackbar.make(view, "Tracked!", Snackbar.LENGTH_LONG).show()
         }
 
-        if (viewModel.selectedJobSession.value !== null) {
-            viewModel.selectedJobSession.observe(viewLifecycleOwner) { js ->
-                if (js.loads.isNotEmpty()) {
-                    js.loads.let {
+
+        viewModel.mainUiModel.observe(viewLifecycleOwner) { uiModel ->
+            if (uiModel.activeJobSessionWithLoads == null) {
+                Snackbar.make(this.binding.root, "Yo! Pick a session first!", Snackbar.LENGTH_LONG).show()
+            } else if (uiModel.activeJobSessionWithLoads.loads.isNotEmpty()) {
+                uiModel.activeJobSessionWithLoads.loads.let { loads ->
+                    loads.let {
                         binding.materialInput.setText(it[it.size - 1].material)
                         binding.unitIDInput.setText(it[it.size - 1].unitId)
                         binding.driverNameInput.setText(it[it.size - 1].driver)
                         binding.companyNameInput.setText(it[it.size - 1].companyName)
                     }
-                } else {
-                    binding.driverNameInput.setText(viewModel.persistentDriverName)
-                    binding.companyNameInput.setText(viewModel.persistentCompanyName)
                 }
+            } else {
+                binding.driverNameInput.setText(uiModel.driverName)
+                binding.companyNameInput.setText(uiModel.companyName)
             }
         }
     }
