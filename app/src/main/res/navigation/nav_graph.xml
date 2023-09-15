@@ -9,11 +9,31 @@
         android:id="@+id/jobSessionsFragment"
         android:name="com.example.nathan.loadtracker.ui.activities.JobSessionsFragment"
         android:label="JobSessionsFragment"
-        tools:layout="@layout/fragment_job_sessions"/>
+        tools:layout="@layout/fragment_job_sessions" />
 
     <fragment
         android:id="@+id/trackingSessionFragment"
         android:name="com.example.nathan.loadtracker.ui.activities.TrackingSessionFragment"
         android:label="TrackingSessionFragment"
-        tools:layout="@layout/fragment_tracking_session" />
+        tools:layout="@layout/fragment_tracking_session">
+        <action
+            android:id="@+id/action_trackingSessionFragment_to_jobSessionsFragment"
+            app:destination="@id/jobSessionsFragment" />
+        <action
+            android:id="@+id/action_trackingSessionFragment_to_exportFragment"
+            app:destination="@id/exportFragment" />
+        <action
+            android:id="@+id/action_trackingSessionFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/exportFragment"
+        android:name="com.example.nathan.loadtracker.ui.activities.ExportFragment"
+        android:label="fragment_export"
+        tools:layout="@layout/fragment_export" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.nathan.loadtracker.ui.activities.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

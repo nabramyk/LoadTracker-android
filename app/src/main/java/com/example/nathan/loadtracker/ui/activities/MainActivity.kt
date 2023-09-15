@@ -1,6 +1,5 @@
 package com.example.nathan.loadtracker.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -8,17 +7,13 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.viewpager.widget.PagerAdapter
-import androidx.viewpager.widget.ViewPager
 import com.example.nathan.loadtracker.LoadTrackerApplication.Companion.dataStore
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.ActivityMainBinding
@@ -32,8 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels {
         MainViewModel.Factory(
-            context = application,
-            dataStore = application.applicationContext.dataStore
+            context = application, dataStore = application.applicationContext.dataStore
         )
     }
 
@@ -55,42 +49,39 @@ class MainActivity : AppCompatActivity() {
         ) as NavHostFragment
 
         navController = navHostFragment.navController
-        setupActionBarWithNavController(navController)
-
-        title = ""
+        setupActionBarWithNavController(navController, binding.drawerLayout)
 
         lDrawerToggle = ActionBarDrawerToggle(
-            this,
-            binding.drawerLayout,
-            R.string.nav_open,
-            R.string.nav_close
+            this, binding.drawerLayout, R.string.nav_open, R.string.nav_close
         )
         binding.drawerLayout.addDrawerListener(lDrawerToggle)
-        lDrawerToggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.nvNavigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.new_job_session -> {
                     showCreateDialog(viewModel)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
 
                 R.id.view_job_sessions -> {
-                    Toast.makeText(this, "TODO", Toast.LENGTH_SHORT).show()
+                    navController.navigate(R.id.action_trackingSessionFragment_to_jobSessionsFragment)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
 
                 R.id.settings -> {
-                    Toast.makeText(this, "TODO", Toast.LENGTH_SHORT).show()
+                    navController.navigate(R.id.action_trackingSessionFragment_to_settingsFragment)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
 
                 R.id.export -> {
-                    Toast.makeText(this, "TODO", Toast.LENGTH_SHORT).show()
+                    navController.navigate(R.id.action_trackingSessionFragment_to_exportFragment)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
-
                 else -> false
             }
         }
@@ -102,14 +93,16 @@ class MainActivity : AppCompatActivity() {
         } else super.onOptionsItemSelected(item)
     }
 
+//    override fun onSupportNavigateUp(): Boolean {
+//        return navController.navigateUp() || super.onSupportNavigateUp()
+//    }
+
     private fun showCreateDialog(viewModel: MainViewModel) {
         val dialogBinding = CreateSessionDialogBinding.inflate(layoutInflater)
 
         val alertDialogBuilder = AlertDialog.Builder(this@MainActivity)
 
-        val alertDialog = alertDialogBuilder
-            .setView(dialogBinding.root)
-            .setCancelable(false)
+        val alertDialog = alertDialogBuilder.setView(dialogBinding.root).setCancelable(false)
             .setPositiveButton("Create") { _, _ ->
                 if (!TextUtils.isEmpty(dialogBinding.sessionTitleEditText.text)) {
                     viewModel.addJobSession(
@@ -117,11 +110,9 @@ class MainActivity : AppCompatActivity() {
                     )
                     showStartImmediateDialog()
                 }
-            }
-            .setNegativeButton(
+            }.setNegativeButton(
                 "Cancel"
-            ) { dialog, _ -> dialog.cancel() }
-            .create()
+            ) { dialog, _ -> dialog.cancel() }.create()
 
         alertDialog.show()
 
@@ -139,20 +130,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showStartImmediateDialog() {
-        AlertDialog
-            .Builder(this@MainActivity)
-            .setMessage("Start this session now?")
+        AlertDialog.Builder(this@MainActivity).setMessage("Start this session now?")
             .setPositiveButton("Yes") { _, _ ->
 
-            }
-            .setNegativeButton("No") { dialog, _ -> dialog.cancel() }
-            .create()
-            .show()
+            }.setNegativeButton("No") { dialog, _ -> dialog.cancel() }.create().show()
     }
 
     enum class Tab {
-        TRACKING,
-        STATS,
-        HISTORY
+        TRACKING, STATS, HISTORY
     }
 }

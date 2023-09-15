@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.databinding.FragmentJobSessionsBinding
@@ -43,6 +44,7 @@ class JobSessionsFragment : Fragment() {
                     jobs as ArrayList<JobSession>
                 ) { selectedJobSession ->
                     viewModel.selectJobSession(selectedJobSession.id)
+                    findNavController().popBackStack()
                 }
 
             binding.rvJobSessions.layoutManager = LinearLayoutManager(requireContext())
