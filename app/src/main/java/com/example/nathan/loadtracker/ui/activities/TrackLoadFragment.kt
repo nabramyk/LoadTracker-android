@@ -1,18 +1,14 @@
 package com.example.nathan.loadtracker.ui.activities
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import com.example.nathan.loadtracker.databinding.FragmentLoadTrackingBinding
-import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
+import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
 import com.google.android.material.snackbar.Snackbar
-import java.text.SimpleDateFormat
-import java.util.Calendar
 
 class TrackLoadFragment : Fragment() {
 
@@ -20,8 +16,7 @@ class TrackLoadFragment : Fragment() {
 
     private var _binding: FragmentLoadTrackingBinding? = null
     private val binding get() = _binding!!
-
-    private val viewModel: TrackingViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,14 +56,11 @@ class TrackLoadFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val c = Calendar.getInstance()
-
             binding.apply {
                 viewModel.addLoad(
                     driver = driverNameInput.text.toString(),
                     unitId = unitIDInput.text.toString(),
                     material = materialInput.text.toString(),
-                    timestamp = c.time,
                     companyName = companyNameInput.text.toString(),
                 )
             }
@@ -76,21 +68,21 @@ class TrackLoadFragment : Fragment() {
             Snackbar.make(view, "Tracked!", Snackbar.LENGTH_LONG).show()
         }
 
-        viewModel.selectedJobSession.observe(viewLifecycleOwner) { js ->
-            if (js.loads.isNotEmpty()) {
-                js.loads.let {
-                    binding.materialInput.setText(it[it.size - 1].material)
-                    binding.unitIDInput.setText(it[it.size - 1].unitId)
-                    binding.driverNameInput.setText(it[it.size - 1].driver)
-                    binding.companyNameInput.setText(it[it.size - 1].companyName)
+        viewModel.mainUiModel.observe(viewLifecycleOwner) { uiModel ->
+            if (uiModel.activeJobSessionWithLoads == null) {
+                Snackbar.make(this.binding.root, "Yo! Pick a session first!", Snackbar.LENGTH_LONG).show()
+            } else if (uiModel.activeJobSessionWithLoads.loads.isNotEmpty()) {
+                uiModel.activeJobSessionWithLoads.loads.let { loads ->
+                    loads.let {
+                        binding.materialInput.setText(it[it.size - 1].material)
+                        binding.unitIDInput.setText(it[it.size - 1].unitId)
+                        binding.driverNameInput.setText(it[it.size - 1].driver)
+                        binding.companyNameInput.setText(it[it.size - 1].companyName)
+                    }
                 }
             } else {
-                val sharedPrefs = activity?.getSharedPreferences(
-                    "com.example.nathan.loadtracker",
-                    Context.MODE_PRIVATE
-                )
-                binding.driverNameInput.setText(sharedPrefs?.getString("name", ""))
-                binding.companyNameInput.setText(sharedPrefs?.getString("company", ""))
+                binding.driverNameInput.setText(uiModel.driverName)
+                binding.companyNameInput.setText(uiModel.companyName)
             }
         }
     }

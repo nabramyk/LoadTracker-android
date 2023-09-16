@@ -28,4 +28,7 @@
     </string-array>
     <string name="file_provider_authority" translatable="false">com.example.nathan.fileprovider</string>
     <string name="view_load_history">View Load History</string>
+
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
 </resources>

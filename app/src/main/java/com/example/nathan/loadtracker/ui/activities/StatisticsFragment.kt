@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.databinding.FragmentStatisticsBinding
-import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
+import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
 
 class StatisticsFragment : Fragment() {
 
@@ -16,9 +16,7 @@ class StatisticsFragment : Fragment() {
     private var _binding: FragmentStatisticsBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: TrackingViewModel by lazy {
-        ViewModelProvider(this, TrackingViewModel.Factory(requireActivity().application))[TrackingViewModel::class.java]
-    }
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,11 +27,11 @@ class StatisticsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.selectedJobSession.observe(viewLifecycleOwner) { js ->
-            val loads = js.loads
-
-            updateTotalLoadsTracked(loads)
-            updateAverageRunTime(loads)
+        viewModel.mainUiModel.observe(viewLifecycleOwner) { model ->
+            model.activeJobSessionWithLoads?.loads?.let {
+                updateTotalLoadsTracked(it)
+                updateAverageRunTime(it)
+            }
         }
     }
 

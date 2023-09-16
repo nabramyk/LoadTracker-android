@@ -1,53 +1,101 @@
 package com.example.nathan.loadtracker.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.view.Menu
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import android.view.MenuItem
+import androidx.activity.viewModels
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.nathan.loadtracker.LoadTrackerApplication.Companion.dataStore
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.ActivityMainBinding
 import com.example.nathan.loadtracker.databinding.CreateSessionDialogBinding
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
-import com.example.nathan.loadtracker.ui.viewmodels.TrackingViewModel
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this, MainViewModel.Factory(application))[MainViewModel::class.java]
+    private lateinit var lDrawerToggle: ActionBarDrawerToggle
+    private val navController: NavController by lazy {
+        (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+    }
+
+    private val viewModel: MainViewModel by viewModels {
+        MainViewModel.Factory(
+            context = application, dataStore = application.applicationContext.dataStore
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+
+        // The viewModel won't be instantiated
+        // before the fragments unless I do it explicitly
+        // Why?! Why God!? Why!?
+        // TODO: Fix this bullshit
+        viewModel
 
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolbar)
-        title = ""
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                binding.buttonCreateSession.setOnClickListener { showCreateDialog(viewModel) }
+        setupActionBarWithNavController(navController, binding.drawerLayout)
+
+        lDrawerToggle = ActionBarDrawerToggle(
+            this, binding.drawerLayout, R.string.nav_open, R.string.nav_close
+        )
+        binding.drawerLayout.addDrawerListener(lDrawerToggle)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.nvNavigationView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.new_job_session -> {
+                    showCreateDialog(viewModel)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+
+                R.id.view_job_sessions -> {
+                    navController.navigate(R.id.action_trackingSessionFragment_to_jobSessionsFragment)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+
+                R.id.settings -> {
+                    navController.navigate(R.id.action_trackingSessionFragment_to_settingsFragment)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+
+                R.id.export -> {
+                    navController.navigate(R.id.action_trackingSessionFragment_to_exportFragment)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+
+                else -> false
             }
         }
-
-        binding.buttonContinueSession.setOnClickListener { startActivity(Intent(this, JobSessionsActivity::class.java)) }
-        binding.buttonExport.setOnClickListener { startActivity(Intent(this, ExportActivity::class.java)) }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_activity_menu, menu)
-        return super.onCreateOptionsMenu(menu)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // This is hacky and I don't much care for it. The navigation menu is treated as an options
+        // menu, and when navigating from the home fragment to anywhere else it will override the
+        // back button and the user will be stuck just repeatedly opening the navigation drawer.
+        /** TODO Find a better way to intercept the back button when the user is farther down the fragment back stack */
+        return if ((navController.currentDestination?.id ?: 0) != R.id.trackingSessionFragment) {
+            navController.navigateUp()
+        } else if (lDrawerToggle.onOptionsItemSelected(item)) {
+            true
+        } else super.onOptionsItemSelected(item)
     }
 
     private fun showCreateDialog(viewModel: MainViewModel) {
@@ -55,20 +103,17 @@ class MainActivity : AppCompatActivity() {
 
         val alertDialogBuilder = AlertDialog.Builder(this@MainActivity)
 
-        val alertDialog = alertDialogBuilder
-                .setView(dialogBinding.root)
-                .setCancelable(false)
-                .setPositiveButton("Create") { _,_ ->
-                    if (!TextUtils.isEmpty(dialogBinding.sessionTitleEditText.text)) {
-                        viewModel.addJobSession(
-                            jobTitle = dialogBinding.sessionTitleEditText.text.toString()
-                        )
-                        showStartImmediateDialog()
-                    }
+        val alertDialog = alertDialogBuilder.setView(dialogBinding.root).setCancelable(false)
+            .setPositiveButton("Create") { _, _ ->
+                if (!TextUtils.isEmpty(dialogBinding.sessionTitleEditText.text)) {
+                    viewModel.addJobSession(
+                        jobTitle = dialogBinding.sessionTitleEditText.text.toString()
+                    )
+                    showStartImmediateDialog()
                 }
-                .setNegativeButton("Cancel"
-                ) { dialog, _ -> dialog.cancel() }
-                .create()
+            }.setNegativeButton(
+                "Cancel"
+            ) { dialog, _ -> dialog.cancel() }.create()
 
         alertDialog.show()
 
@@ -86,15 +131,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showStartImmediateDialog() {
-        AlertDialog
-                .Builder(this@MainActivity)
-                .setMessage("Start this session now?")
-                .setPositiveButton("Yes") { _, _ ->
-                    startActivity(Intent(this, TrackingActivity::class.java)
-                            .putExtra("job_session_id", viewModel.newJobSessionId))
-                }
-                .setNegativeButton("No") { dialog, _ -> dialog.cancel() }
-                .create()
-                .show()
+        AlertDialog.Builder(this@MainActivity).setMessage("Start this session now?")
+            .setPositiveButton("Yes") { _, _ ->
+
+            }.setNegativeButton("No") { dialog, _ -> dialog.cancel() }.create().show()
+    }
+
+    enum class Tab {
+        TRACKING, STATS, HISTORY
     }
 }
