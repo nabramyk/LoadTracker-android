@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         // menu, and when navigating from the home fragment to anywhere else it will override the
         // back button and the user will be stuck just repeatedly opening the navigation drawer.
         /** TODO Find a better way to intercept the back button when the user is farther down the fragment back stack */
-        return if (navController.currentBackStack.value.size > 2) {
+        return if ((navController.currentDestination?.id ?: 0) != R.id.trackingSessionFragment) {
             navController.navigateUp()
         } else if (lDrawerToggle.onOptionsItemSelected(item)) {
             true
