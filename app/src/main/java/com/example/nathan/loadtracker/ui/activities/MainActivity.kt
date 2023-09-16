@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -23,7 +24,9 @@ import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
 class MainActivity : AppCompatActivity() {
 
     private lateinit var lDrawerToggle: ActionBarDrawerToggle
-    private lateinit var navController: NavController
+    private val navController: NavController by lazy {
+        (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+    }
 
     private val viewModel: MainViewModel by viewModels {
         MainViewModel.Factory(
@@ -44,11 +47,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(
-            R.id.nav_host_fragment
-        ) as NavHostFragment
-
-        navController = navHostFragment.navController
         setupActionBarWithNavController(navController, binding.drawerLayout)
 
         lDrawerToggle = ActionBarDrawerToggle(
@@ -82,20 +80,23 @@ class MainActivity : AppCompatActivity() {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
+
                 else -> false
             }
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (lDrawerToggle.onOptionsItemSelected(item)) {
+        // This is hacky and I don't much care for it. The navigation menu is treated as an options
+        // menu, and when navigating from the home fragment to anywhere else it will override the
+        // back button and the user will be stuck just repeatedly opening the navigation drawer.
+        /** TODO Find a better way to intercept the back button when the user is farther down the fragment back stack */
+        return if (navController.currentBackStack.value.size > 2) {
+            navController.navigateUp()
+        } else if (lDrawerToggle.onOptionsItemSelected(item)) {
             true
         } else super.onOptionsItemSelected(item)
     }
-
-//    override fun onSupportNavigateUp(): Boolean {
-//        return navController.navigateUp() || super.onSupportNavigateUp()
-//    }
 
     private fun showCreateDialog(viewModel: MainViewModel) {
         val dialogBinding = CreateSessionDialogBinding.inflate(layoutInflater)
