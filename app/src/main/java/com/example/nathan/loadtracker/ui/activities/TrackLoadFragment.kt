@@ -68,7 +68,6 @@ class TrackLoadFragment : Fragment() {
             Snackbar.make(view, "Tracked!", Snackbar.LENGTH_LONG).show()
         }
 
-
         viewModel.mainUiModel.observe(viewLifecycleOwner) { uiModel ->
             if (uiModel.activeJobSessionWithLoads == null) {
                 Snackbar.make(this.binding.root, "Yo! Pick a session first!", Snackbar.LENGTH_LONG).show()

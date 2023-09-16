@@ -11,8 +11,4 @@ class LoadTrackerApplication : Application() {
             name = "persistent_data_preferences"
         )
     }
-
-    override fun onCreate() {
-        super.onCreate()
-    }
 }

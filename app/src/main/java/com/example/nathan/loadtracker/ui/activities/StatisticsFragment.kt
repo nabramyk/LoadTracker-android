@@ -27,12 +27,12 @@ class StatisticsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        viewModel.selectedJobSession.observe(viewLifecycleOwner) { js ->
-//            val loads = js.loads
-//
-//            updateTotalLoadsTracked(loads)
-//            updateAverageRunTime(loads)
-//        }
+        viewModel.mainUiModel.observe(viewLifecycleOwner) { model ->
+            model.activeJobSessionWithLoads?.loads?.let {
+                updateTotalLoadsTracked(it)
+                updateAverageRunTime(it)
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
