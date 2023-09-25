@@ -1,6 +1,6 @@
 # Pretty much all of this is lifted from https://github.com/marketplace/actions/automated-build-android-app-with-github-action
 
-name: Generated APK AAB (Upload - Create Artifact To Github Action)
+name: Generated APK (Upload - Create Artifact To Github Action)
 
 env:
   # The name of the main module repository
@@ -50,10 +50,6 @@ jobs:
       # Create APK Debug
       - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
         run: ./gradlew :app:assembleDebug -x test
-        env:
-          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
 
       # Create APK Release
       - name: Build apk release project (APK) - ${{ env.main_project_module }} module
