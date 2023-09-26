@@ -39,20 +39,13 @@ jobs:
 #      - name: Run Gradle tests
 #        run: ./gradlew test
 
-      - name: Decode Keystore
+      - name: Decode keystore
         id: decode_keystore
-        env:
-          SUPER_SECRET: ${{ secrets.KEYSTORE }}
-        run: |
-          mkdir home/runner/work/LoadTracker-android/LoadTracker-android/app/keystore/
-          echo "$SUPER_SECRET" | base64 --decode > home/runner/work/LoadTracker-android/LoadTracker-android/app/keystore/keystore.jks
-#      - name: Decode keystore
-#        id: decode_keystore
-#        uses: timheuer/base64-to-file@v1.2
-#        with:
-#          fileName: 'keystore.jks'
-##          fileDir: 'home/runner/work/LoadTracker-android/LoadTracker-android/app/keystore/'
-#          encodedString: ${{ secrets.KEYSTORE }}
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: 'keystore.jks'
+          fileDir: 'app/keystore/'
+          encodedString: ${{ secrets.KEYSTORE }}
 
 #      # Create APK Debug
 #      - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
