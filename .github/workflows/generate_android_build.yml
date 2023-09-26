@@ -47,10 +47,6 @@ jobs:
           fileDir: 'app/keystore/'
           encodedString: ${{ secrets.KEYSTORE }}
 
-#      # Create APK Debug
-#      - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
-#        run: ./gradlew :app:assembleDebug -x test
-
       # Create APK Release
       - name: Build apk release project (APK) - ${{ env.main_project_module }} module
         run: ./gradlew :app:assembleFullRelease -x test
@@ -77,23 +73,3 @@ jobs:
         with:
           name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) release generated
           path: ${{ env.main_project_module }}/build/outputs/apk/full/release/
-  release:
-    name: Release APK
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download APK from build
-        uses: actions/download-artifact@v1
-        with:
-          name: LoadTracker-android
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ github.event.inputs.version }}
-          name: Release v${{ github.event.inputs.version }}
-          draft: false
-          prerelease: false
-          files: LoadTracker-android/LoadTracker-android.apk
