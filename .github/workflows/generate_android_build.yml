@@ -41,8 +41,10 @@ jobs:
 
       - name: Decode Keystore
         id: decode_keystore
+        env:
+          SUPER_SECRET: ${{ secrets.KEYSTORE }}
         run: |
-          echo "$secrets.KEYSTORE" | base64 --decode > app/keystore/keystore.jks
+          echo "$SUPER_SECRET" | base64 --decode > app/keystore/keystore.jks
 #      - name: Decode keystore
 #        id: decode_keystore
 #        uses: timheuer/base64-to-file@v1.2
