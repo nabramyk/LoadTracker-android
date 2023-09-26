@@ -44,7 +44,8 @@ jobs:
         env:
           SUPER_SECRET: ${{ secrets.KEYSTORE }}
         run: |
-          echo "$SUPER_SECRET" | base64 --decode > app/keystore/keystore.jks
+          mkdir home/runner/work/LoadTracker-android/LoadTracker-android/app/keystore/
+          echo "$SUPER_SECRET" | base64 --decode > home/runner/work/LoadTracker-android/LoadTracker-android/app/keystore/keystore.jks
 #      - name: Decode keystore
 #        id: decode_keystore
 #        uses: timheuer/base64-to-file@v1.2
