@@ -6,22 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.nathan.loadtracker.databinding.FragmentLoadTrackingBinding
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 
 class TrackLoadFragment : Fragment() {
-
-    private lateinit var sessionTitle: String
 
     private var _binding: FragmentLoadTrackingBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        sessionTitle = activity?.title?.toString()!!
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,21 +65,21 @@ class TrackLoadFragment : Fragment() {
             Snackbar.make(view, "Tracked!", Snackbar.LENGTH_LONG).show()
         }
 
-        viewModel.mainUiModel.observe(viewLifecycleOwner) { uiModel ->
-            if (uiModel.activeJobSessionWithLoads == null) {
-                Snackbar.make(this.binding.root, "Yo! Pick a session first!", Snackbar.LENGTH_LONG).show()
-            } else if (uiModel.activeJobSessionWithLoads.loads.isNotEmpty()) {
-                uiModel.activeJobSessionWithLoads.loads.let { loads ->
-                    loads.let {
-                        binding.materialInput.setText(it[it.size - 1].material)
-                        binding.unitIDInput.setText(it[it.size - 1].unitId)
-                        binding.driverNameInput.setText(it[it.size - 1].driver)
-                        binding.companyNameInput.setText(it[it.size - 1].companyName)
+        lifecycleScope.launch {
+            viewModel.mainUiModel.collect { uiModel ->
+                if (uiModel.activeJobSessionWithLoads?.loads?.isNotEmpty() == true) {
+                    uiModel.activeJobSessionWithLoads.loads.let { loads ->
+                        loads.let {
+                            binding.materialInput.setText(it[it.size - 1].material)
+                            binding.unitIDInput.setText(it[it.size - 1].unitId)
+                            binding.driverNameInput.setText(it[it.size - 1].driver)
+                            binding.companyNameInput.setText(it[it.size - 1].companyName)
+                        }
                     }
+                } else {
+                    binding.driverNameInput.setText(uiModel.driverName)
+                    binding.companyNameInput.setText(uiModel.companyName)
                 }
-            } else {
-                binding.driverNameInput.setText(uiModel.driverName)
-                binding.companyNameInput.setText(uiModel.companyName)
             }
         }
     }

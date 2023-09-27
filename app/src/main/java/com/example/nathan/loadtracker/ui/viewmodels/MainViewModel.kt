@@ -1,13 +1,13 @@
 package com.example.nathan.loadtracker.ui.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
@@ -23,20 +23,32 @@ import java.util.Calendar
 class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : ViewModel() {
 
     private val _repository = LoadTrackerRepository(context = context, dataStore = dataStore)
-    private val _mutableJobSession: Flow<JobSessionWithLoads> = _repository.activeJobSessionWithLoads
+    private val _mutableJobSession: Flow<JobSessionWithLoads?> = _repository.activeJobSessionWithLoads
+    private val _allJobSessions: Flow<List<JobSession>> = _repository.getAllJobSessions()
 
-    private val mainUiModelFlow = combine(
+    private val _mainUiModelFlow = combine(
         _repository.preferencesFlow,
         _mutableJobSession
     ) { _, jobSession ->
+        Log.i("here", jobSession.toString())
         return@combine MainUiModel(
             driverName = "",
             companyName = "",
             activeJobSessionWithLoads = jobSession
         )
     }
+    val mainUiModel = _mainUiModelFlow
 
-    val mainUiModel = mainUiModelFlow.asLiveData()
+    private val _initializeAppModelFlow = combine(
+        _repository.preferencesFlow,
+        _allJobSessions,
+    ) { preferences, allJobSessions ->
+        return@combine InitializeAppModel(
+            allJobSessions = allJobSessions.isNotEmpty(),
+            activeJobSession = preferences.selectedJobId != null,
+        )
+    }
+    val initializeAppModel = _initializeAppModelFlow
 
     fun addLoad(
         driver: String,
@@ -53,7 +65,7 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
                     material,
                     c.time,
                     companyName,
-                    it.jobSession.id
+                    it!!.jobSession.id
                 )
             }
         }
@@ -68,7 +80,7 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
     }
 
     private val mutableJobSessions = _repository.getAllJobSessions()
-    val allJobSessions: LiveData<List<JobSession>> get() = mutableJobSessions
+    val allJobSessions: Flow<List<JobSession>> get() = mutableJobSessions
 
     private val mutableJobSessionWithLoads = MutableLiveData<JobSessionWithLoads>()
 
@@ -90,7 +102,8 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
         }
     }
 
-    class Factory(val context: Application, val dataStore: DataStore<Preferences>) : ViewModelProvider.Factory {
+    class Factory(val context: Application, val dataStore: DataStore<Preferences>) :
+        ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")

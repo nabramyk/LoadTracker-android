@@ -3,28 +3,26 @@ package com.example.nathan.loadtracker.ui.activities
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import android.text.Editable
-import android.text.TextUtils
-import android.text.TextWatcher
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.nathan.loadtracker.LoadTrackerApplication.Companion.dataStore
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.ActivityMainBinding
-import com.example.nathan.loadtracker.databinding.CreateSessionDialogBinding
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var lDrawerToggle: ActionBarDrawerToggle
-    private val navController: NavController by lazy {
+    private val _navController: NavController by lazy {
         (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
     }
 
@@ -47,41 +45,57 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        setupActionBarWithNavController(navController, binding.drawerLayout)
+        lifecycleScope.launch {
+            viewModel.initializeAppModel.collect { model ->
+                val navGraph = _navController.navInflater.inflate(R.navigation.nav_graph)
+                navGraph.setStartDestination(
+                    if (model.allJobSessions.not()) {
+                        R.id.newJobSessionFragment
+                    } else if (model.activeJobSession.not()) {
+                        R.id.jobSessionsFragment
+                    } else {
+                        R.id.trackingSessionFragment
+                    }
+                )
+                _navController.graph = navGraph
+                binding.nvNavigationView.setupWithNavController(_navController)
+                setupActionBarWithNavController(_navController, binding.drawerLayout)
 
-        lDrawerToggle = ActionBarDrawerToggle(
-            this, binding.drawerLayout, R.string.nav_open, R.string.nav_close
-        )
-        binding.drawerLayout.addDrawerListener(lDrawerToggle)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                lDrawerToggle = ActionBarDrawerToggle(
+                    this@MainActivity, binding.drawerLayout, R.string.nav_open, R.string.nav_close
+                )
+                binding.drawerLayout.addDrawerListener(lDrawerToggle)
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding.nvNavigationView.setNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.new_job_session -> {
-                    showCreateDialog(viewModel)
-                    binding.drawerLayout.closeDrawer(GravityCompat.START)
-                    true
+                binding.nvNavigationView.setNavigationItemSelectedListener { item ->
+                    when (item.itemId) {
+                        R.id.new_job_session -> {
+                            _navController.navigate(R.id.action_trackingSessionFragment_to_newJobSessionFragment)
+                            binding.drawerLayout.closeDrawer(GravityCompat.START)
+                            true
+                        }
+
+                        R.id.view_job_sessions -> {
+                            _navController.navigate(R.id.action_trackingSessionFragment_to_jobSessionsFragment)
+                            binding.drawerLayout.closeDrawer(GravityCompat.START)
+                            true
+                        }
+
+                        R.id.settings -> {
+                            _navController.navigate(R.id.action_trackingSessionFragment_to_settingsFragment)
+                            binding.drawerLayout.closeDrawer(GravityCompat.START)
+                            true
+                        }
+
+                        R.id.export -> {
+                            _navController.navigate(R.id.action_trackingSessionFragment_to_exportFragment)
+                            binding.drawerLayout.closeDrawer(GravityCompat.START)
+                            true
+                        }
+
+                        else -> false
+                    }
                 }
-
-                R.id.view_job_sessions -> {
-                    navController.navigate(R.id.action_trackingSessionFragment_to_jobSessionsFragment)
-                    binding.drawerLayout.closeDrawer(GravityCompat.START)
-                    true
-                }
-
-                R.id.settings -> {
-                    navController.navigate(R.id.action_trackingSessionFragment_to_settingsFragment)
-                    binding.drawerLayout.closeDrawer(GravityCompat.START)
-                    true
-                }
-
-                R.id.export -> {
-                    navController.navigate(R.id.action_trackingSessionFragment_to_exportFragment)
-                    binding.drawerLayout.closeDrawer(GravityCompat.START)
-                    true
-                }
-
-                else -> false
             }
         }
     }
@@ -91,50 +105,11 @@ class MainActivity : AppCompatActivity() {
         // menu, and when navigating from the home fragment to anywhere else it will override the
         // back button and the user will be stuck just repeatedly opening the navigation drawer.
         /** TODO Find a better way to intercept the back button when the user is farther down the fragment back stack */
-        return if ((navController.currentDestination?.id ?: 0) != R.id.trackingSessionFragment) {
-            navController.navigateUp()
+        return if ((_navController.currentDestination?.id ?: 0) != R.id.trackingSessionFragment) {
+            _navController.navigateUp()
         } else if (lDrawerToggle.onOptionsItemSelected(item)) {
             true
         } else super.onOptionsItemSelected(item)
-    }
-
-    private fun showCreateDialog(viewModel: MainViewModel) {
-        val dialogBinding = CreateSessionDialogBinding.inflate(layoutInflater)
-
-        val alertDialogBuilder = AlertDialog.Builder(this@MainActivity)
-
-        val alertDialog = alertDialogBuilder.setView(dialogBinding.root).setCancelable(false)
-            .setPositiveButton("Create") { _, _ ->
-                if (!TextUtils.isEmpty(dialogBinding.sessionTitleEditText.text)) {
-                    viewModel.addJobSession(
-                        jobTitle = dialogBinding.sessionTitleEditText.text.toString()
-                    )
-                    showStartImmediateDialog()
-                }
-            }.setNegativeButton(
-                "Cancel"
-            ) { dialog, _ -> dialog.cancel() }.create()
-
-        alertDialog.show()
-
-        dialogBinding.sessionTitleEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (count == 0) {
-                    dialogBinding.sessionTitleEditText.error = "Session title must not be empty"
-                }
-            }
-        })
-    }
-
-    private fun showStartImmediateDialog() {
-        AlertDialog.Builder(this@MainActivity).setMessage("Start this session now?")
-            .setPositiveButton("Yes") { _, _ ->
-
-            }.setNegativeButton("No") { dialog, _ -> dialog.cancel() }.create().show()
     }
 
     enum class Tab {

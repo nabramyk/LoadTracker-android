@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nathan.loadtracker.databinding.FragmentTrackingHistoryBinding
 import com.example.nathan.loadtracker.ui.arrayadapters.TrackingHistoryAdapter
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
+import kotlinx.coroutines.launch
 
 class TrackingHistoryFragment : Fragment() {
 
@@ -42,11 +44,16 @@ class TrackingHistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.mainUiModel.observe(viewLifecycleOwner) { model ->
-            model.activeJobSessionWithLoads?.let {
-                val listAdapter = TrackingHistoryAdapter(it.loads)
-                binding.trackedLoadHistory.layoutManager = LinearLayoutManager(context)
-                binding.trackedLoadHistory.adapter = listAdapter
+        val listAdapter = TrackingHistoryAdapter(emptyList())
+        binding.trackedLoadHistory.layoutManager = LinearLayoutManager(context)
+        binding.trackedLoadHistory.adapter = listAdapter
+
+        lifecycleScope.launch {
+            viewModel.mainUiModel.collect { model ->
+                model.activeJobSessionWithLoads?.let {
+                    listAdapter.loads = it.loads
+                    listAdapter.notifyDataSetChanged()
+                }
             }
         }
     }

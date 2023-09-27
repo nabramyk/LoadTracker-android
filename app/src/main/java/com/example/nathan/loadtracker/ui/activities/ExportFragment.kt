@@ -10,9 +10,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.FragmentExportBinding
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileWriter
 
@@ -35,27 +37,30 @@ class ExportFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.allJobSessions.observe(viewLifecycleOwner) { jobSessions ->
-            val adapter = ArrayAdapter<Pair<String, Long>>(
-                requireContext(),
-                android.R.layout.simple_spinner_dropdown_item
-            )
-            for (js in jobSessions) {
-                adapter.add(Pair(js.jobTitle.toString(), js.id))
-            }
-            binding.sSession.adapter = adapter
 
-            binding.sSession.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    adapterView: AdapterView<*>,
-                    view: View,
-                    i: Int,
-                    l: Long
-                ) {
-                    viewModel.selectJobSessionToExport(jobSessions[i].id)
+        lifecycleScope.launch {
+            viewModel.allJobSessions.collect { jobSessions ->
+                val adapter = ArrayAdapter<Pair<String, Long>>(
+                    requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item
+                )
+                for (js in jobSessions) {
+                    adapter.add(Pair(js.jobTitle.toString(), js.id))
                 }
+                binding.sSession.adapter = adapter
 
-                override fun onNothingSelected(adapterView: AdapterView<*>) {}
+                binding.sSession.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        adapterView: AdapterView<*>,
+                        view: View,
+                        i: Int,
+                        l: Long
+                    ) {
+                        viewModel.selectJobSessionToExport(jobSessions[i].id)
+                    }
+
+                    override fun onNothingSelected(adapterView: AdapterView<*>) {}
+                }
             }
         }
 
