@@ -19,12 +19,12 @@ class TrackingHistoryAdapter(var loads: List<Load>) : RecyclerView.Adapter<Track
     }
 
     override fun onBindViewHolder(holder: LoadViewHolder, position: Int) {
-        holder.bindViewHolder(loads[position])
+        holder.bindViewHolder(loads[position], position)
     }
 
     inner class LoadViewHolder(val binding: CellLoadBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bindViewHolder(load: Load) {
-            binding.tvCounter.text = load.id.toString()
+        fun bindViewHolder(load: Load, position: Int) {
+            binding.tvCounter.text = (position + 1).toString()
             binding.tvUnitId.text = "Unit ID: " + load.unitId
             binding.tvMaterial.text = "Material: " + load.material
             binding.tvTimeLoaded.text = "Time Loaded: " + load.timeLoaded

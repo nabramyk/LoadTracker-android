@@ -5,10 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.FragmentTrackingSessionBinding
+import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class TrackingSessionFragment : Fragment() {
 
@@ -16,6 +21,7 @@ class TrackingSessionFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var vAdapter: TrackingPagerAdapter
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,7 +40,12 @@ class TrackingSessionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as MainActivity).supportActionBar?.title = "Tracking"
+        lifecycleScope.launch {
+            viewModel.mainUiModel.collectLatest {
+                (activity as MainActivity).supportActionBar?.title =
+                    it.activeJobSessionWithLoads?.jobSession?.jobTitle
+            }
+        }
 
         vAdapter = TrackingPagerAdapter()
         binding.vPager.adapter = vAdapter
@@ -76,6 +87,7 @@ class TrackingSessionFragment : Fragment() {
                     binding.vPager.setCurrentItem(2, true)
                     true
                 }
+
                 else -> true
             }
         }

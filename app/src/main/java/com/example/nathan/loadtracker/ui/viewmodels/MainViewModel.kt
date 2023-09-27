@@ -1,7 +1,6 @@
 package com.example.nathan.loadtracker.ui.viewmodels
 
 import android.app.Application
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.LiveData
@@ -31,7 +30,6 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
         _repository.preferencesFlow,
         _mutableJobSession
     ) { _, jobSession ->
-        Log.i("here", jobSession.toString())
         return@combine MainUiModel(
             driverName = "",
             companyName = "",

@@ -39,6 +39,8 @@ class JobSessionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        (activity as MainActivity).supportActionBar?.title = "Open Job Sessions"
+
         lifecycleScope.launch {
             viewModel.allJobSessions.collect { jobs ->
                 val listAdapter =

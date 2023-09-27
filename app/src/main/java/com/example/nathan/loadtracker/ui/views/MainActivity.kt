@@ -6,6 +6,7 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -43,13 +44,28 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
+        lDrawerToggle = ActionBarDrawerToggle(
+            this@MainActivity, binding.drawerLayout, R.string.nav_open, R.string.nav_close
+        )
+        binding.drawerLayout.addDrawerListener(lDrawerToggle)
+
+        lifecycleScope.launch {
+            viewModel.mainUiModel.collect { model ->
+                if (model.activeJobSessionWithLoads != null) {
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                }
+            }
+        }
+
         lifecycleScope.launch {
             viewModel.initializeAppModel.collect { model ->
                 val navGraph = _navController.navInflater.inflate(R.navigation.nav_graph)
                 navGraph.setStartDestination(
                     if (model.allJobSessions.not()) {
+                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                         R.id.newJobSessionFragment
                     } else if (model.activeJobSession.not()) {
+                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                         R.id.jobSessionsFragment
                     } else {
                         R.id.trackingSessionFragment
@@ -59,10 +75,6 @@ class MainActivity : AppCompatActivity() {
                 binding.nvNavigationView.setupWithNavController(_navController)
                 setupActionBarWithNavController(_navController, binding.drawerLayout)
 
-                lDrawerToggle = ActionBarDrawerToggle(
-                    this@MainActivity, binding.drawerLayout, R.string.nav_open, R.string.nav_close
-                )
-                binding.drawerLayout.addDrawerListener(lDrawerToggle)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
                 binding.nvNavigationView.setNavigationItemSelectedListener { item ->
