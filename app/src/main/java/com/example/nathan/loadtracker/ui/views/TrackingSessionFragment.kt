@@ -52,16 +52,8 @@ class TrackingSessionFragment : Fragment() {
         binding.vPager.currentItem = MainActivity.Tab.TRACKING.ordinal
 
         binding.vPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrollStateChanged(state: Int) {}
-
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-            }
-
             override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
                 binding.bottomNavigation.selectedItemId = when (position) {
                     0 -> R.id.fragment_track
                     1 -> R.id.fragment_stats

@@ -21,4 +21,8 @@
         <item name="itemTextColor">@color/textPrimary</item>
         <item name="android:background">@color/colorPrimary</item>
     </style>
+
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorControlNormal">@color/textPrimary</item>
+    </style>
 </resources>
