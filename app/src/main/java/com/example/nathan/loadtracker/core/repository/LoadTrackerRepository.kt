@@ -7,14 +7,15 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.lifecycle.LiveData
 import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.database.entities.Load
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.single
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -25,7 +26,7 @@ class LoadTrackerRepository(
 ) {
 
     data class LoadTrackerPreferences(
-        val selectedJobId: Long,
+        val selectedJobId: Long?,
         val driverName: String,
         val companyName: String
     )
@@ -48,15 +49,19 @@ class LoadTrackerRepository(
             }
         }.map { preferences ->
             LoadTrackerPreferences(
-                selectedJobId = preferences[PreferencesKeys.ACTIVE_JOB_SESSION_ID] ?: 0L,
+                selectedJobId = preferences[PreferencesKeys.ACTIVE_JOB_SESSION_ID],
                 driverName = preferences[PreferencesKeys.DRIVER_NAME] ?: "",
                 companyName = preferences[PreferencesKeys.COMPANY_NAME] ?: ""
             )
         }
 
-    val activeJobSessionWithLoads: Flow<JobSessionWithLoads> = preferencesFlow
+    val activeJobSessionWithLoads: Flow<JobSessionWithLoads?> = preferencesFlow
         .map {
-            db.jobSessionDao().getJobSessionWithLoads(it.selectedJobId)
+            if (it.selectedJobId != null) {
+                db.jobSessionDao().getJobSessionWithLoads(it.selectedJobId)
+            } else {
+                null
+            }
         }
 
     suspend fun addLoad(
@@ -83,12 +88,16 @@ class LoadTrackerRepository(
     }
 
     suspend fun addJobSession(jobTitle: String): Long {
-        return db.jobSessionDao().add(
+        val newJobSessionId = db.jobSessionDao().add(
             JobSession(jobTitle = jobTitle)
         )
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.ACTIVE_JOB_SESSION_ID] = newJobSessionId
+        }
+        return newJobSessionId
     }
 
-    fun getAllJobSessions(): LiveData<List<JobSession>> {
+    fun getAllJobSessions(): Flow<List<JobSession>> {
         return db.jobSessionDao().allJobSessions()
     }
 

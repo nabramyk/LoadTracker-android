@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.databinding.FragmentStatisticsBinding
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
+import kotlinx.coroutines.launch
 
 class StatisticsFragment : Fragment() {
 
@@ -27,10 +29,12 @@ class StatisticsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.mainUiModel.observe(viewLifecycleOwner) { model ->
-            model.activeJobSessionWithLoads?.loads?.let {
-                updateTotalLoadsTracked(it)
-                updateAverageRunTime(it)
+        lifecycleScope.launch {
+            viewModel.mainUiModel.collect { model ->
+                model.activeJobSessionWithLoads?.loads?.let {
+                    updateTotalLoadsTracked(it)
+                    updateAverageRunTime(it)
+                }
             }
         }
     }

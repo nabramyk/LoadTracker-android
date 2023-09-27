@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_trackingSessionFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_trackingSessionFragment_to_newJobSessionFragment"
+            app:destination="@id/newJobSessionFragment" />
     </fragment>
     <fragment
         android:id="@+id/exportFragment"
@@ -36,4 +39,9 @@
         android:name="com.example.nathan.loadtracker.ui.activities.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/newJobSessionFragment"
+        android:name="com.example.nathan.loadtracker.ui.activities.NewJobSessionFragment"
+        android:label="NewJobSessionFragment"
+        tools:layout="@layout/fragment_new_job_session" />
 </navigation>
