@@ -63,12 +63,6 @@ class LoadTrackerRepository(
                 null
             }
         }
-    suspend fun getActiveJobSessionWithLoads(): Flow<JobSessionWithLoads?> {
-        return flow {
-            val selectedJobId = preferencesFlow.single().selectedJobId
-            db.jobSessionDao().getJobSessionWithLoads(selectedJobId)
-        }
-    }
 
     suspend fun addLoad(
         driver: String,

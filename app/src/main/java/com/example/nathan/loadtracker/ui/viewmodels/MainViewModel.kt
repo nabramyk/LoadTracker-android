@@ -14,8 +14,9 @@ import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.repository.LoadTrackerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 import java.util.Calendar
@@ -23,7 +24,8 @@ import java.util.Calendar
 class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : ViewModel() {
 
     private val _repository = LoadTrackerRepository(context = context, dataStore = dataStore)
-    private val _mutableJobSession: Flow<JobSessionWithLoads?> = _repository.activeJobSessionWithLoads
+    private val _mutableJobSession: Flow<JobSessionWithLoads?> =
+        _repository.activeJobSessionWithLoads
     private val _allJobSessions: Flow<List<JobSession>> = _repository.getAllJobSessions()
 
     private val _mainUiModelFlow = combine(
@@ -58,16 +60,15 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
     ) {
         val c = Calendar.getInstance()
         viewModelScope.launch(Dispatchers.IO) {
-            _mutableJobSession.collectLatest {
-                _repository.addLoad(
-                    driver,
-                    unitId,
-                    material,
-                    c.time,
-                    companyName,
-                    it!!.jobSession.id
-                )
-            }
+            val jobSessionId = _mutableJobSession.first()?.jobSession?.id
+            _repository.addLoad(
+                driver,
+                unitId,
+                material,
+                c.time,
+                companyName,
+                jobSessionId!!
+            )
         }
     }
 
