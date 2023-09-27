@@ -1,4 +1,4 @@
-package com.example.nathan.loadtracker.ui.activities
+package com.example.nathan.loadtracker.ui.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -43,7 +43,6 @@ class JobSessionsFragment : Fragment() {
             viewModel.allJobSessions.collect { jobs ->
                 val listAdapter =
                     JobSessionAdapter(
-                        requireContext(),
                         jobs as ArrayList<JobSession>
                     ) { selectedJobSession ->
                         viewModel.selectJobSession(selectedJobSession.id)

@@ -1,4 +1,4 @@
-package com.example.nathan.loadtracker.ui.activities
+package com.example.nathan.loadtracker.ui.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,23 +24,5 @@ class SettingsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-//        if (sharedPrefs!!.contains("name")) {
-//            name?.setText(sharedPrefs!!.getString("name", ""))
-//        }
-//
-//        if (sharedPrefs!!.contains("company")) {
-//            company?.setText(sharedPrefs!!.getString("company", ""))
-//        }
-//
-//        binding.saveButton.setOnClickListener {
-//            sharedPrefs!!.edit().putString("name", name!!.text.toString()).apply()
-//            sharedPrefs!!.edit().putString("company", company!!.text.toString()).apply()
-//            finish()
-//        }
     }
 }

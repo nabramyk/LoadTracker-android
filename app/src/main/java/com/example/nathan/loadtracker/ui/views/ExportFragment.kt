@@ -1,4 +1,4 @@
-package com.example.nathan.loadtracker.ui.activities
+package com.example.nathan.loadtracker.ui.views
 
 import android.content.Intent
 import androidx.core.content.FileProvider

@@ -7,41 +7,53 @@
 
     <fragment
         android:id="@+id/jobSessionsFragment"
-        android:name="com.example.nathan.loadtracker.ui.activities.JobSessionsFragment"
+        android:name="com.example.nathan.loadtracker.ui.views.JobSessionsFragment"
         android:label="JobSessionsFragment"
         tools:layout="@layout/fragment_job_sessions" />
 
     <fragment
         android:id="@+id/trackingSessionFragment"
-        android:name="com.example.nathan.loadtracker.ui.activities.TrackingSessionFragment"
+        android:name="com.example.nathan.loadtracker.ui.views.TrackingSessionFragment"
         android:label="TrackingSessionFragment"
         tools:layout="@layout/fragment_tracking_session">
         <action
             android:id="@+id/action_trackingSessionFragment_to_jobSessionsFragment"
-            app:destination="@id/jobSessionsFragment" />
+            app:destination="@id/jobSessionsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_trackingSessionFragment_to_exportFragment"
-            app:destination="@id/exportFragment" />
+            app:destination="@id/exportFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_trackingSessionFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_trackingSessionFragment_to_newJobSessionFragment"
-            app:destination="@id/newJobSessionFragment" />
+            app:destination="@id/newJobSessionFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/exportFragment"
-        android:name="com.example.nathan.loadtracker.ui.activities.ExportFragment"
+        android:name="com.example.nathan.loadtracker.ui.views.ExportFragment"
         android:label="fragment_export"
         tools:layout="@layout/fragment_export" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.nathan.loadtracker.ui.activities.SettingsFragment"
+        android:name="com.example.nathan.loadtracker.ui.views.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/newJobSessionFragment"
-        android:name="com.example.nathan.loadtracker.ui.activities.NewJobSessionFragment"
+        android:name="com.example.nathan.loadtracker.ui.views.NewJobSessionFragment"
         android:label="NewJobSessionFragment"
         tools:layout="@layout/fragment_new_job_session" />
 </navigation>

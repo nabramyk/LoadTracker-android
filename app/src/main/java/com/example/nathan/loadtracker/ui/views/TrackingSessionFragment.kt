@@ -1,14 +1,12 @@
-package com.example.nathan.loadtracker.ui.activities
+package com.example.nathan.loadtracker.ui.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.viewpager.widget.PagerAdapter
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.FragmentTrackingSessionBinding
 
@@ -36,11 +34,13 @@ class TrackingSessionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        vAdapter = TrackingPagerAdapter(childFragmentManager)
+        (activity as MainActivity).supportActionBar?.title = "Tracking"
+
+        vAdapter = TrackingPagerAdapter()
         binding.vPager.adapter = vAdapter
         binding.vPager.currentItem = MainActivity.Tab.TRACKING.ordinal
 
-        binding.vPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        binding.vPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {}
 
             override fun onPageScrolled(
@@ -81,19 +81,14 @@ class TrackingSessionFragment : Fragment() {
         }
     }
 
-    inner class TrackingPagerAdapter(fragmentManager: FragmentManager) :
-        FragmentStatePagerAdapter(fragmentManager) {
-        override fun getItem(position: Int): Fragment = when (position) {
+    inner class TrackingPagerAdapter : FragmentStateAdapter(requireActivity()) {
+        override fun getItemCount(): Int = MainActivity.Tab.values().size
+
+        override fun createFragment(position: Int): Fragment = when (position) {
             MainActivity.Tab.TRACKING.ordinal -> TrackLoadFragment()
             MainActivity.Tab.STATS.ordinal -> StatisticsFragment()
             MainActivity.Tab.HISTORY.ordinal -> TrackingHistoryFragment()
             else -> throw IndexOutOfBoundsException("Fragment not found")
-        }
-
-        override fun getCount(): Int = MainActivity.Tab.values().size
-
-        override fun getItemPosition(`object`: Any): Int {
-            return PagerAdapter.POSITION_NONE
         }
     }
 }

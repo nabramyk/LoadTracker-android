@@ -1,4 +1,4 @@
-package com.example.nathan.loadtracker.ui.activities
+package com.example.nathan.loadtracker.ui.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.example.nathan.loadtracker.databinding.FragmentLoadTrackingBinding
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
 import com.google.android.material.snackbar.Snackbar
