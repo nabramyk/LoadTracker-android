@@ -100,6 +100,10 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
         }
     }
 
+    suspend fun deleteJobSession(jobSession: JobSession) {
+        _repository.deleteJobSession(jobSession)
+    }
+
     class Factory(val context: Application, val dataStore: DataStore<Preferences>) :
         ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

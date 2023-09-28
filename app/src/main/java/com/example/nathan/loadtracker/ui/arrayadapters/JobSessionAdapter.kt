@@ -8,7 +8,8 @@ import com.example.nathan.loadtracker.databinding.CellJobSessionBinding
 
 class JobSessionAdapter(
     private val jobSessions: ArrayList<JobSession>,
-    private var onItemClicked: ((jobSession: JobSession) -> Unit)
+    private var onItemClicked: ((jobSession: JobSession) -> Unit),
+    private var onCloseSession: ((jobSession: JobSession) -> Unit)
 ) : RecyclerView.Adapter<JobSessionAdapter.JobSessionViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobSessionViewHolder {
@@ -32,6 +33,9 @@ class JobSessionAdapter(
 
             binding.apply {
                 root.setOnClickListener { onItemClicked(jobSession) }
+                binding.bClose.setOnClickListener {
+                    onCloseSession(jobSession)
+                }
             }
         }
     }
