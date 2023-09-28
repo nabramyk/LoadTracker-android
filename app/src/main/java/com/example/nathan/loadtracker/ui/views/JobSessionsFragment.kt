@@ -1,9 +1,12 @@
 package com.example.nathan.loadtracker.ui.views
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -45,11 +48,25 @@ class JobSessionsFragment : Fragment() {
             viewModel.allJobSessions.collect { jobs ->
                 val listAdapter =
                     JobSessionAdapter(
-                        jobs as ArrayList<JobSession>
-                    ) { selectedJobSession ->
-                        viewModel.selectJobSession(selectedJobSession.id)
-                        findNavController().popBackStack()
-                    }
+                        jobs as ArrayList<JobSession>,
+                        { selectedJobSession ->
+                            viewModel.selectJobSession(selectedJobSession.id)
+                            findNavController().popBackStack()},
+                        { jobSession ->
+                            AlertDialog
+                                .Builder(requireContext())
+                                .setMessage("Really?")
+                                .setPositiveButton("Yep!") { _, _ ->
+                                    launch {
+                                        viewModel.deleteJobSession(jobSession)
+                                    }
+                                }
+                                .setNegativeButton("Nah") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .show()
+                        }
+                    )
 
                 binding.rvJobSessions.layoutManager = LinearLayoutManager(requireContext())
                 registerForContextMenu(binding.rvJobSessions)

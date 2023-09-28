@@ -13,6 +13,7 @@ import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.database.entities.Load
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -112,5 +113,15 @@ class LoadTrackerRepository(
             preferences[PreferencesKeys.ACTIVE_JOB_SESSION_ID] = jobSessionId
         }
         return getJobSessionById(jobSessionId)
+    }
+
+    suspend fun deleteJobSession(jobSession: JobSession) {
+        if (activeJobSessionWithLoads.first()?.jobSession?.id == jobSession.id) {
+            dataStore.edit { preferences ->
+                preferences.remove(PreferencesKeys.ACTIVE_JOB_SESSION_ID)
+            }
+        }
+        val loads = db.loadDao().getLoadsForJobSession(jobSessionId = jobSession.id)
+        return db.jobSessionDao().deleteJobSessionAndLoads(jobSession, loads)
     }
 }

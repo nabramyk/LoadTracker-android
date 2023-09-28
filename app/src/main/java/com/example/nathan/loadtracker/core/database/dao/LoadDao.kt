@@ -11,5 +11,5 @@ interface LoadDao {
     suspend fun add(load: Load)
 
     @Query("SELECT * FROM load WHERE jobSessionId = :jobSessionId")
-    fun getLoadsForJobSession(jobSessionId: Long): List<Load>
+    suspend fun getLoadsForJobSession(jobSessionId: Long): List<Load>
 }
