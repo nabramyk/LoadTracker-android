@@ -1,0 +1,70 @@
+name: Generate Release APK
+
+on:
+  push:
+    branches: master
+    tags:
+      - v*
+
+  release_build:
+    - uses: actions/checkout@v3
+
+    # Set Repository Name As Env Variable
+    - name: Set current date as env variable
+      run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+    - name: set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Run Gradle tests
+      run: ./gradlew test
+
+    - name: Decode keystore
+      id: decode_keystore
+      uses: timheuer/base64-to-file@v1.2
+      with:
+        fileName: 'keystore.jks'
+        fileDir: 'app/keystore/'
+        encodedString: ${{ secrets.KEYSTORE }}
+
+    # Create APK Release
+    - name: Build apk release project (APK) - ${{ env.main_project_module }} module
+      run: ./gradlew :app:assembleFullRelease -x test
+      env:
+        SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+        SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+
+    # Show information about the APK's signing certificates
+    - name: Verify Signature
+      run: $ANDROID_SDK_ROOT/build-tools/33.0.1/apksigner verify --print-certs app/build/outputs/apk/full/release/LoadTracker-android.apk
+
+    # Upload Artifact Build
+    # Noted For Output [main_project_module]/build/outputs/apk/debug/
+    - name: Upload APK Debug - ${{ env.repository_name }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
+        path: ${{ env.main_project_module }}/build/outputs/apk/demo/debug/
+
+    # Noted For Output [main_project_module]/build/outputs/apk/release/
+    - name: Upload APK Release - ${{ env.repository_name }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) release generated
+        path: ${{ env.main_project_module }}/build/outputs/apk/full/release/
+
+    - name: Create Github Release
+      uses: softprops/action-gh-release@v1
+      with:
+        generate_release_notes: true
+        prerelease: true
+        files: |
+          app/build/outputs/apk/full/release/app-release.apk
