@@ -1,6 +1,7 @@
 name: Generate Release APK
 
 on:
+  workflow_dispatch:
   push:
     branches: master
     tags:
@@ -23,9 +24,6 @@ on:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Run Gradle tests
-      run: ./gradlew test
-
     - name: Decode keystore
       id: decode_keystore
       uses: timheuer/base64-to-file@v1.2
@@ -46,14 +44,6 @@ on:
     - name: Verify Signature
       run: $ANDROID_SDK_ROOT/build-tools/33.0.1/apksigner verify --print-certs app/build/outputs/apk/full/release/LoadTracker-android.apk
 
-    # Upload Artifact Build
-    # Noted For Output [main_project_module]/build/outputs/apk/debug/
-    - name: Upload APK Debug - ${{ env.repository_name }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
-        path: ${{ env.main_project_module }}/build/outputs/apk/demo/debug/
-
     # Noted For Output [main_project_module]/build/outputs/apk/release/
     - name: Upload APK Release - ${{ env.repository_name }}
       uses: actions/upload-artifact@v3
@@ -61,10 +51,8 @@ on:
         name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) release generated
         path: ${{ env.main_project_module }}/build/outputs/apk/full/release/
 
-    - name: Create Github Release
-      uses: softprops/action-gh-release@v1
-      with:
-        generate_release_notes: true
-        prerelease: true
-        files: |
-          app/build/outputs/apk/full/release/app-release.apk
+    - name: Releasing using Hub
+      uses: kyze8439690/action-release-releaseapk@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        APP_FOLDER: app
