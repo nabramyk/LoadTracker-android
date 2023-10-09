@@ -38,8 +38,6 @@ class ExportFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as MainActivity).supportActionBar?.title = "Export"
-
         lifecycleScope.launch {
             viewModel.allJobSessions.collect { jobSessions ->
                 val adapter = ArrayAdapter<Pair<String, Long>>(

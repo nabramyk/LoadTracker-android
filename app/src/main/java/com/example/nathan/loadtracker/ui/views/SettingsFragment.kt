@@ -21,12 +21,6 @@ class SettingsFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        (activity as MainActivity).supportActionBar?.title = "Settings"
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
