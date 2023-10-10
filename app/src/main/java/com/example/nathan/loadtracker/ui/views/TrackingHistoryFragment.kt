@@ -53,8 +53,13 @@ class TrackingHistoryFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.getLoadsForActiveJobSession().collect { loads ->
-                    listAdapter.loads = loads
-                    listAdapter.notifyDataSetChanged()
+                    if (loads.isEmpty()) {
+                        binding.tvEmpty.visibility = View.VISIBLE
+                    } else {
+                        binding.tvEmpty.visibility = View.GONE
+                        listAdapter.loads = loads
+                        listAdapter.notifyDataSetChanged()
+                    }
                 }
             }
         }
