@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
+import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.core.repository.LoadTrackerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -102,6 +103,10 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
 
     suspend fun deleteJobSession(jobSession: JobSession) {
         _repository.deleteJobSession(jobSession)
+    }
+
+    suspend fun getLoadsForActiveJobSession(): Flow<List<Load>> {
+        return _repository.getLoadsForActiveJobSession()
     }
 
     class Factory(val context: Application, val dataStore: DataStore<Preferences>) :

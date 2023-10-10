@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nathan.loadtracker.databinding.FragmentTrackingHistoryBinding
 import com.example.nathan.loadtracker.ui.arrayadapters.TrackingHistoryAdapter
@@ -48,10 +50,10 @@ class TrackingHistoryFragment : Fragment() {
         binding.trackedLoadHistory.layoutManager = LinearLayoutManager(context)
         binding.trackedLoadHistory.adapter = listAdapter
 
-        lifecycleScope.launch {
-            viewModel.mainUiModel.collect { model ->
-                model.activeJobSessionWithLoads?.let {
-                    listAdapter.loads = it.loads
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.getLoadsForActiveJobSession().collect { loads ->
+                    listAdapter.loads = loads
                     listAdapter.notifyDataSetChanged()
                 }
             }

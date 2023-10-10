@@ -14,6 +14,7 @@ import com.example.nathan.loadtracker.core.database.entities.Load
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -94,6 +95,14 @@ class LoadTrackerRepository(
             preferences[PreferencesKeys.ACTIVE_JOB_SESSION_ID] = newJobSessionId
         }
         return newJobSessionId
+    }
+
+    suspend fun getLoadsForActiveJobSession(): Flow<List<Load>> {
+        return flow {
+            preferencesFlow.collect { preferences ->
+                emit(db.loadDao().getLoadsForJobSession(preferences.selectedJobId ?: 0))
+            }
+        }
     }
 
     fun getAllJobSessions(): Flow<List<JobSession>> {
