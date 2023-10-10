@@ -11,7 +11,6 @@ data class Load(
         var unitId: String = "",
         var material: String = "",
         var timeLoaded: Instant,
-        var dateLoaded: Instant,
         var created: Instant,
         var modified: Instant? = null,
         var companyName: String? = null,

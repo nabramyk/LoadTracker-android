@@ -13,6 +13,7 @@ import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.databinding.FragmentStatisticsBinding
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
 
 class StatisticsFragment : Fragment() {
 
@@ -41,7 +42,11 @@ class StatisticsFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -51,7 +56,8 @@ class StatisticsFragment : Fragment() {
 
         for (l in loads) {
             if (!materials.containsKey(l.material)) materials[l.material] = 1
-            else if (materials.containsKey(l.material)) materials[l.material] = materials[l.material]!! + 1
+            else if (materials.containsKey(l.material)) materials[l.material] =
+                materials[l.material]!! + 1
         }
 
         var formattedOutput = materials.toString()
@@ -64,29 +70,19 @@ class StatisticsFragment : Fragment() {
     }
 
     private fun updateAverageRunTime(loads: List<Load>) {
-        if (loads.isEmpty()) {
-            binding.tvAverageRunTime.text = "00:00:00.000"
-            return
-        }
-        var hours = 0
-        var minutes = 0
-        var seconds = 0
-        var milliseconds = 0
-//        for (l in loads) {
-//            var timeLoaded = l.timeLoaded
-//            timeLoaded = timeLoaded.replace(":", " ")
-//            timeLoaded = timeLoaded.replace(".", " ")
-//            val components = timeLoaded.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-//            hours += Integer.parseInt(components[0])
-//            minutes += Integer.parseInt(components[1])
-//            seconds += Integer.parseInt(components[2])
-//            milliseconds += Integer.parseInt(components[3])
-//        }
-        hours /= loads.size
-        minutes /= loads.size
-        seconds /= loads.size
-        milliseconds /= loads.size
+        var averageRunTime: Duration = Duration.ZERO
 
-        binding.tvAverageRunTime.text = "$hours:$minutes:$seconds.$milliseconds"
+        val first = loads.drop(1)
+        val second = loads.dropLast(1)
+
+        if (first.isNotEmpty()) {
+            averageRunTime = first.mapIndexed { index, load ->
+                load.timeLoaded - second[index].timeLoaded
+            }.reduce { current, next ->
+                return@reduce (current + next) / 2
+            }
+        }
+
+        binding.tvAverageRunTime.text = "$averageRunTime"
     }
 }

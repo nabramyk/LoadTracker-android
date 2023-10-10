@@ -78,7 +78,6 @@ class LoadTrackerRepository(
                     unitId = unitId,
                     material = material,
                     timeLoaded = currentDateTime,
-                    dateLoaded = currentDateTime,
                     created = currentDateTime,
                     modified = null,
                     companyName = companyName,

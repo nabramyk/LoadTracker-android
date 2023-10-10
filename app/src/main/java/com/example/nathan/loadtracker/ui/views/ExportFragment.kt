@@ -1,13 +1,19 @@
 package com.example.nathan.loadtracker.ui.views
 
+import android.app.Dialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import androidx.core.content.FileProvider
 import android.os.Bundle
+import android.text.format.DateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TimePicker
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +21,8 @@ import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.FragmentExportBinding
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.toLocalDateTime
 import java.io.File
 import java.io.FileWriter
 
@@ -49,29 +57,32 @@ class ExportFragment : Fragment() {
                 }
                 binding.sSession.adapter = adapter
 
-                binding.sSession.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        adapterView: AdapterView<*>,
-                        view: View,
-                        i: Int,
-                        l: Long
-                    ) {
-                        viewModel.selectJobSessionToExport(jobSessions[i].id)
-                    }
+                binding.sSession.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            adapterView: AdapterView<*>,
+                            view: View,
+                            i: Int,
+                            l: Long
+                        ) {
+                            viewModel.selectJobSessionToExport(jobSessions[i].id)
+                        }
 
-                    override fun onNothingSelected(adapterView: AdapterView<*>) {}
-                }
+                        override fun onNothingSelected(adapterView: AdapterView<*>) {}
+                    }
             }
         }
 
         viewModel.jobSessionToExport.observe(viewLifecycleOwner) { jobSessionWithLoads ->
+            Log.d("exportable job session", jobSessionWithLoads.toString())
             val dateAdapter =
                 ArrayAdapter<String>(
                     requireContext(),
                     android.R.layout.simple_spinner_dropdown_item
                 )
-            jobSessionWithLoads.loads.asSequence().map { it.dateLoaded }.distinct().toList()
-                .forEach { dateAdapter.add(it.toString()) }
+            jobSessionWithLoads.loads.asSequence().map { it.timeLoaded.toString() }.distinct()
+                .toList()
+                .forEach { dateAdapter.add(it) }
 
             binding.sStartDate.adapter = dateAdapter
             binding.sEndDate.adapter = dateAdapter
@@ -81,8 +92,9 @@ class ExportFragment : Fragment() {
                     requireContext(),
                     android.R.layout.simple_spinner_dropdown_item
                 )
-            jobSessionWithLoads.loads.asSequence().map { it.timeLoaded }.distinct().toList()
-                .forEach { timeAdapter.add(it.toString()) }
+            jobSessionWithLoads.loads.asSequence().map { it.timeLoaded.toString() }.distinct()
+                .toList()
+                .forEach { timeAdapter.add(it) }
 
             binding.sStartTime.adapter = timeAdapter
             binding.sEndTime.adapter = timeAdapter
@@ -125,6 +137,28 @@ class ExportFragment : Fragment() {
             binding.sEndDate.isEnabled = !binding.cbCurrentDate.isChecked
             binding.sStartTime.isEnabled = !binding.cbCurrentDate.isChecked
             binding.sEndTime.isEnabled = !binding.cbCurrentDate.isChecked
+        }
+    }
+
+    inner class TimePickerFragment(
+        private val hour: Int,
+        private val minute: Int,
+        val context: Int
+    ) : DialogFragment(),
+        TimePickerDialog.OnTimeSetListener {
+
+        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+            return TimePickerDialog(
+                requireContext(),
+                this,
+                hour,
+                minute,
+                DateFormat.is24HourFormat(requireActivity())
+            )
+        }
+
+        override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
+
         }
     }
 }
