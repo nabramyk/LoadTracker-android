@@ -15,10 +15,8 @@ import com.example.nathan.loadtracker.core.repository.LoadTrackerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
-import java.util.Calendar
 
 class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : ViewModel() {
 
@@ -56,16 +54,12 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
         material: String,
         companyName: String?
     ) {
-        val c = Calendar.getInstance()
         viewModelScope.launch(Dispatchers.IO) {
-            val jobSessionId = _mutableJobSession.first()?.jobSession?.id
             _repository.addLoad(
                 driver,
                 unitId,
                 material,
-                c.time,
-                companyName,
-                jobSessionId!!
+                companyName
             )
         }
     }

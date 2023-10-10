@@ -100,6 +100,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     implementation "androidx.viewpager2:viewpager2:1.0.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.4.1"
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
 

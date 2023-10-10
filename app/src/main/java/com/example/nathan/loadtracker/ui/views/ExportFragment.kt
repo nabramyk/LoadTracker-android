@@ -71,7 +71,7 @@ class ExportFragment : Fragment() {
                     android.R.layout.simple_spinner_dropdown_item
                 )
             jobSessionWithLoads.loads.asSequence().map { it.dateLoaded }.distinct().toList()
-                .forEach { dateAdapter.add(it) }
+                .forEach { dateAdapter.add(it.toString()) }
 
             binding.sStartDate.adapter = dateAdapter
             binding.sEndDate.adapter = dateAdapter
@@ -82,7 +82,7 @@ class ExportFragment : Fragment() {
                     android.R.layout.simple_spinner_dropdown_item
                 )
             jobSessionWithLoads.loads.asSequence().map { it.timeLoaded }.distinct().toList()
-                .forEach { timeAdapter.add(it) }
+                .forEach { timeAdapter.add(it.toString()) }
 
             binding.sStartTime.adapter = timeAdapter
             binding.sEndTime.adapter = timeAdapter

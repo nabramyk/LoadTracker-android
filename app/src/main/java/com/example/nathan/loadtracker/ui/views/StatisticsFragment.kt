@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.databinding.FragmentStatisticsBinding
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
@@ -29,11 +31,11 @@ class StatisticsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launch {
-            viewModel.mainUiModel.collect { model ->
-                model.activeJobSessionWithLoads?.loads?.let {
-                    updateTotalLoadsTracked(it)
-                    updateAverageRunTime(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.getLoadsForActiveJobSession().collect { loads ->
+                    updateTotalLoadsTracked(loads)
+                    updateAverageRunTime(loads)
                 }
             }
         }
@@ -70,21 +72,21 @@ class StatisticsFragment : Fragment() {
         var minutes = 0
         var seconds = 0
         var milliseconds = 0
-        for (l in loads) {
-            var timeLoaded = l.timeLoaded
-            timeLoaded = timeLoaded.replace(":", " ")
-            timeLoaded = timeLoaded.replace(".", " ")
-            val components = timeLoaded.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            hours += Integer.parseInt(components[0])
-            minutes += Integer.parseInt(components[1])
-            seconds += Integer.parseInt(components[2])
-            milliseconds += Integer.parseInt(components[3])
-        }
+//        for (l in loads) {
+//            var timeLoaded = l.timeLoaded
+//            timeLoaded = timeLoaded.replace(":", " ")
+//            timeLoaded = timeLoaded.replace(".", " ")
+//            val components = timeLoaded.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+//            hours += Integer.parseInt(components[0])
+//            minutes += Integer.parseInt(components[1])
+//            seconds += Integer.parseInt(components[2])
+//            milliseconds += Integer.parseInt(components[3])
+//        }
         hours /= loads.size
         minutes /= loads.size
         seconds /= loads.size
         milliseconds /= loads.size
 
-        binding.tvAverageRunTime.text = hours.toString() + ":" + minutes + ":" + seconds + "." + milliseconds
+        binding.tvAverageRunTime.text = "$hours:$minutes:$seconds.$milliseconds"
     }
 }

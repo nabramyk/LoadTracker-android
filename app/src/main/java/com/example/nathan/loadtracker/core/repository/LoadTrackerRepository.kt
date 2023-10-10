@@ -16,9 +16,9 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Date
 
 class LoadTrackerRepository(
     context: Application,
@@ -68,23 +68,24 @@ class LoadTrackerRepository(
         driver: String,
         unitId: String,
         material: String,
-        timestamp: Date,
-        companyName: String?,
-        jobSessionId: Long
+        companyName: String?
     ) {
-        db.loadDao().add(
-            Load(
-                driver = driver,
-                unitId = unitId,
-                material = material,
-                timeLoaded = SimpleDateFormat("HH:mm:ss.SSS").format(timestamp),
-                dateLoaded = SimpleDateFormat("yyyy/MM/dd").format(timestamp),
-                created = SimpleDateFormat("yyyy/MM/dd").format(timestamp),
-                modified = null,
-                companyName = companyName,
-                jobSessionId = jobSessionId
+        val currentDateTime: Instant = Clock.System.now()
+        preferencesFlow.collect { preferences ->
+            db.loadDao().add(
+                Load(
+                    driver = driver,
+                    unitId = unitId,
+                    material = material,
+                    timeLoaded = currentDateTime,
+                    dateLoaded = currentDateTime,
+                    created = currentDateTime,
+                    modified = null,
+                    companyName = companyName,
+                    jobSessionId = preferences.selectedJobId ?: 0
+                )
             )
-        )
+        }
     }
 
     suspend fun addJobSession(jobTitle: String): Long {

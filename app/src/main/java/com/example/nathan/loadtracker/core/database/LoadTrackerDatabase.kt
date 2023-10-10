@@ -4,12 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.nathan.loadtracker.core.database.dao.JobSessionDao
 import com.example.nathan.loadtracker.core.database.dao.LoadDao
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.Load
 
 @Database(entities = [JobSession::class, Load::class], exportSchema = false, version = 1)
+@TypeConverters(Converters::class)
 abstract class LoadTrackerDatabase: RoomDatabase() {
 
     companion object {
