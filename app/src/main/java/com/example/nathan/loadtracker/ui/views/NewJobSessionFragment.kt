@@ -50,7 +50,7 @@ class NewJobSessionFragment: Fragment() {
                 viewModel.addJobSession(
                     jobTitle = binding.sessionTitleEditText.text.toString()
                 )
-                view.findNavController().navigate(R.id.trackingSessionFragment)
+                view.findNavController().navigate(R.id.action_global_trackingSessionFragment)
             }
         }
     }
