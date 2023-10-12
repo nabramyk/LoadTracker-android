@@ -1,6 +1,5 @@
 package com.example.nathan.loadtracker.ui.views
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -40,34 +39,36 @@ class JobSessionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launch {
+        val listAdapter = JobSessionAdapter(
+            arrayListOf(),
+            { selectedJobSession ->
+                viewModel.selectJobSession(selectedJobSession.id)
+                findNavController().popBackStack()
+            },
+            { jobSession ->
+                viewModel.deleteJobSession(jobSession)
+//                            AlertDialog
+//                                .Builder(requireContext())
+//                                .setMessage("Really?")
+//                                .setPositiveButton("Yep!") { dialog, _ ->
+//                                    launch {
+//                                        viewModel.deleteJobSession(jobSession)
+//                                        dialog.dismiss()
+//                                    }
+//                                }
+//                                .setNegativeButton("Nah") { dialog, _ ->
+//                                    dialog.dismiss()
+//                                }
+//                                .show()
+            }
+        )
+        binding.rvJobSessions.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvJobSessions.adapter = listAdapter
+
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.allJobSessions.collect { jobs ->
-                val listAdapter =
-                    JobSessionAdapter(
-                        jobs as ArrayList<JobSession>,
-                        { selectedJobSession ->
-                            viewModel.selectJobSession(selectedJobSession.id)
-                            findNavController().popBackStack()},
-                        { jobSession ->
-                            AlertDialog
-                                .Builder(requireContext())
-                                .setMessage("Really?")
-                                .setPositiveButton("Yep!") { _, _ ->
-                                    launch {
-                                        viewModel.deleteJobSession(jobSession)
-                                    }
-                                }
-                                .setNegativeButton("Nah") { dialog, _ ->
-                                    dialog.dismiss()
-                                }
-                                .show()
-                        }
-                    )
-
-                binding.rvJobSessions.layoutManager = LinearLayoutManager(requireContext())
-                registerForContextMenu(binding.rvJobSessions)
-
-                binding.rvJobSessions.adapter = listAdapter
+                listAdapter.jobSessions = jobs as ArrayList<JobSession>
+                listAdapter.notifyDataSetChanged()
             }
         }
     }

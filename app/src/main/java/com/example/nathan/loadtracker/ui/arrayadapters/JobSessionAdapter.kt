@@ -7,7 +7,7 @@ import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.databinding.CellJobSessionBinding
 
 class JobSessionAdapter(
-    private val jobSessions: ArrayList<JobSession>,
+    var jobSessions: ArrayList<JobSession>,
     private var onItemClicked: ((jobSession: JobSession) -> Unit),
     private var onCloseSession: ((jobSession: JobSession) -> Unit)
 ) : RecyclerView.Adapter<JobSessionAdapter.JobSessionViewHolder>() {
