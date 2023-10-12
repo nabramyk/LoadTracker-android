@@ -1,27 +1,26 @@
 package com.example.nathan.loadtracker.ui.viewmodels
 
-import android.app.Application
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.database.entities.Load
-import com.example.nathan.loadtracker.core.repository.LoadTrackerRepository
+import com.example.nathan.loadtracker.core.repository.DefaultLoadTrackerRepository
 import com.example.nathan.loadtracker.ui.datamodels.MainUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
+import javax.inject.Inject
 
-class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val _repository: DefaultLoadTrackerRepository
+) : ViewModel() {
 
-    private val _repository = LoadTrackerRepository(context = context, dataStore = dataStore)
     private val _mutableJobSession: Flow<JobSessionWithLoads?> =
         _repository.activeJobSessionWithLoads
 
@@ -102,14 +101,14 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
         return _repository.getLoadsForActiveJobSession()
     }
 
-    class Factory(val context: Application, val dataStore: DataStore<Preferences>) :
-        ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return MainViewModel(context = context, dataStore = dataStore) as T
-            }
-            throw IllegalArgumentException("Unable to construct viewmodel")
-        }
-    }
+//    class Factory(val context: Application, val dataStore: DataStore<Preferences>) :
+//        ViewModelProvider.Factory {
+//        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+//                @Suppress("UNCHECKED_CAST")
+//                return MainViewModel(context = context, dataStore = dataStore) as T
+//            }
+//            throw IllegalArgumentException("Unable to construct viewmodel")
+//        }
+//    }
 }
