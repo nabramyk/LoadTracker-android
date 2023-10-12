@@ -12,6 +12,7 @@ import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.core.repository.LoadTrackerRepository
+import com.example.nathan.loadtracker.ui.datamodels.MainUiModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -23,7 +24,6 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
     private val _repository = LoadTrackerRepository(context = context, dataStore = dataStore)
     private val _mutableJobSession: Flow<JobSessionWithLoads?> =
         _repository.activeJobSessionWithLoads
-    private val _allJobSessions: Flow<List<JobSession>> = _repository.getAllJobSessions()
 
     private val _mainUiModelFlow = combine(
         _repository.preferencesFlow,
@@ -35,11 +35,13 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
             activeJobSessionWithLoads = jobSession
         )
     }
+
+    val allJobSessions: Flow<List<JobSession>> = _repository.getAllJobSessions()
     val mainUiModel = _mainUiModelFlow
 
     private val _initializeAppModelFlow = combine(
         _repository.preferencesFlow,
-        _allJobSessions,
+        allJobSessions,
     ) { preferences, allJobSessions ->
         return@combine InitializeAppModel(
             allJobSessions = allJobSessions.isNotEmpty(),
@@ -72,9 +74,6 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
         }
     }
 
-    private val mutableJobSessions = _repository.getAllJobSessions()
-    val allJobSessions: Flow<List<JobSession>> get() = mutableJobSessions
-
     private val mutableJobSessionWithLoads = MutableLiveData<JobSessionWithLoads>()
 
     val jobSessionToExport: LiveData<JobSessionWithLoads> get() = mutableJobSessionWithLoads
@@ -95,7 +94,7 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
         }
     }
 
-    suspend fun deleteJobSession(jobSession: JobSession) {
+    fun deleteJobSession(jobSession: JobSession) = viewModelScope.launch {
         _repository.deleteJobSession(jobSession)
     }
 

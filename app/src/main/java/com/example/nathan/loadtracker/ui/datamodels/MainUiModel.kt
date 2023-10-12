@@ -1,4 +1,4 @@
-package com.example.nathan.loadtracker.ui.viewmodels
+package com.example.nathan.loadtracker.ui.datamodels
 
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 
