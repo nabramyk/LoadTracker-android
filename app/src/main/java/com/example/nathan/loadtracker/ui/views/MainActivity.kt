@@ -32,12 +32,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
 
-        // The viewModel won't be instantiated
-        // before the fragments unless I do it explicitly
-        // Why?! Why God!? Why!?
-        // TODO: Fix this bullshit
-        viewModel
-
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
