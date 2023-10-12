@@ -51,6 +51,10 @@ class StatisticsFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * TODO
+     *  This just doesn't work, could probably be converted to a composable
+     */
     private fun updateTotalLoadsTracked(loads: List<Load>) {
         val materials = HashMap<String, Int>()
 
@@ -69,6 +73,11 @@ class StatisticsFragment : Fragment() {
         binding.tvTotalLoads.text = formattedOutput
     }
 
+    /**
+     * TODO
+     *  Handle the situation when loads span multiple days, i.e. do not calculate the
+     *  difference from the last of one day and the first load of the next day
+     */
     private fun updateAverageRunTime(loads: List<Load>) {
         var averageRunTime: Duration = Duration.ZERO
 
