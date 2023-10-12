@@ -88,8 +88,12 @@ class LoadTrackerRepository(
     }
 
     suspend fun addJobSession(jobTitle: String): Long {
+        val currentDateTime: Instant = Clock.System.now()
         val newJobSessionId = db.jobSessionDao().add(
-            JobSession(jobTitle = jobTitle)
+            JobSession(
+                jobTitle = jobTitle,
+                created = currentDateTime
+            )
         )
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.ACTIVE_JOB_SESSION_ID] = newJobSessionId
@@ -131,6 +135,6 @@ class LoadTrackerRepository(
             }
         }
         val loads = db.loadDao().getLoadsForJobSession(jobSessionId = jobSession.id)
-        return db.jobSessionDao().deleteJobSessionAndLoads(jobSession, loads)
+        db.jobSessionDao().deleteJobSessionAndLoads(jobSession, loads)
     }
 }
