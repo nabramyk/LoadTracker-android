@@ -6,6 +6,10 @@ import com.example.nathan.loadtracker.core.database.entities.Load
 import kotlinx.coroutines.flow.Flow
 
 interface LoadTrackerRepository {
+
+    val preferencesFlow: Flow<DefaultLoadTrackerRepository.LoadTrackerPreferences>
+    val activeJobSessionWithLoads: Flow<JobSessionWithLoads?>
+
     suspend fun addLoad(
         driver: String,
         unitId: String,

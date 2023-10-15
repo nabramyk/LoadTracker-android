@@ -41,7 +41,7 @@ class DefaultLoadTrackerRepository @Inject constructor(
     private val db: LoadTrackerDatabase =
         LoadTrackerDatabase.getInstance(context.applicationContext)
 
-    val preferencesFlow: Flow<LoadTrackerPreferences> = dataStore.data
+    override val preferencesFlow: Flow<LoadTrackerPreferences> = dataStore.data
         .catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
@@ -56,7 +56,7 @@ class DefaultLoadTrackerRepository @Inject constructor(
             )
         }
 
-    val activeJobSessionWithLoads: Flow<JobSessionWithLoads?> = preferencesFlow
+    override val activeJobSessionWithLoads: Flow<JobSessionWithLoads?> = preferencesFlow
         .map {
             if (it.selectedJobId != null) {
                 db.jobSessionDao().getJobSessionWithLoads(it.selectedJobId)

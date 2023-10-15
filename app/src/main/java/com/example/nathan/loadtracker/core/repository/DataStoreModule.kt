@@ -1,5 +1,6 @@
 package com.example.nathan.loadtracker.core.repository
 
+import android.app.Application
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
@@ -36,4 +37,12 @@ object DataStoreModule {
             produceFile = { context.preferencesDataStoreFile(LOADTRACKER_PREFERENCES) }
         )
     }
+
+    @Singleton
+    @Provides
+    fun provideDefaultLoadTrackerRepository(
+        application: Application,
+        dataStore: DataStore<Preferences>
+    ) =
+        DefaultLoadTrackerRepository(application, dataStore) as LoadTrackerRepository
 }
