@@ -4,8 +4,29 @@ import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.database.entities.Load
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.datetime.Clock
 
 class MockLoadTrackerRepository : LoadTrackerRepository {
+    override val preferencesFlow: Flow<DefaultLoadTrackerRepository.LoadTrackerPreferences>
+        get() = flow {
+            DefaultLoadTrackerRepository.LoadTrackerPreferences(
+                companyName = "huey",
+                driverName = "dewey",
+                selectedJobId = 0
+            )
+        }
+    override val activeJobSessionWithLoads: Flow<JobSessionWithLoads?>
+        get() = flow {
+            JobSessionWithLoads(
+                JobSession(
+                    id = 1,
+                    created = Clock.System.now()
+                ),
+                listOf()
+            )
+        }
+
     override suspend fun addLoad(
         driver: String,
         unitId: String,
@@ -24,7 +45,9 @@ class MockLoadTrackerRepository : LoadTrackerRepository {
     }
 
     override fun getAllJobSessions(): Flow<List<JobSession>> {
-        TODO("Not yet implemented")
+        return flow {
+            emptyList<JobSession>()
+        }
     }
 
     override suspend fun getJobSessionById(id: Long): JobSessionWithLoads {

@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.database.entities.Load
-import com.example.nathan.loadtracker.core.repository.DefaultLoadTrackerRepository
+import com.example.nathan.loadtracker.core.repository.LoadTrackerRepository
 import com.example.nathan.loadtracker.ui.datamodels.MainUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val _repository: DefaultLoadTrackerRepository
+    private val _repository: LoadTrackerRepository
 ) : ViewModel() {
 
     private val _mutableJobSession: Flow<JobSessionWithLoads?> =
