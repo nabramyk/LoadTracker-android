@@ -45,8 +45,14 @@ class MockLoadTrackerRepository : LoadTrackerRepository {
     }
 
     override fun getAllJobSessions(): Flow<List<JobSession>> {
+        val createdAt = Clock.System.now()
         return flow {
-            emptyList<JobSession>()
+            emit(
+                arrayListOf(
+                    JobSession(id = 1, created = createdAt, jobTitle = "Test Job 1"),
+                    JobSession(id = 2, created = createdAt, jobTitle = "Test Job 2")
+                )
+            )
         }
     }
 
@@ -59,6 +65,6 @@ class MockLoadTrackerRepository : LoadTrackerRepository {
     }
 
     override suspend fun deleteJobSession(jobSession: JobSession) {
-        TODO("Not yet implemented")
+
     }
 }

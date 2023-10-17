@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -47,19 +48,19 @@ class JobSessionsFragment : Fragment() {
             },
             { jobSession ->
                 viewModel.deleteJobSession(jobSession)
-//                            AlertDialog
-//                                .Builder(requireContext())
-//                                .setMessage("Really?")
-//                                .setPositiveButton("Yep!") { dialog, _ ->
-//                                    launch {
-//                                        viewModel.deleteJobSession(jobSession)
-//                                        dialog.dismiss()
-//                                    }
-//                                }
-//                                .setNegativeButton("Nah") { dialog, _ ->
-//                                    dialog.dismiss()
-//                                }
-//                                .show()
+                            AlertDialog
+                                .Builder(requireContext())
+                                .setMessage("Really?")
+                                .setPositiveButton("Yep!") { dialog, _ ->
+                                    viewLifecycleOwner.lifecycleScope.launch {
+                                        viewModel.deleteJobSession(jobSession)
+                                        dialog.dismiss()
+                                    }
+                                }
+                                .setNegativeButton("Nah") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .show()
             }
         )
         binding.rvJobSessions.layoutManager = LinearLayoutManager(requireContext())
