@@ -16,16 +16,30 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp">
+            android:paddingBottom="8dp">
 
             <TextView
-                android:id="@+id/tvTitleLabel"
+                android:id="@+id/tvJobSessionCurrentlyActiveHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@color/textPrimary"
+                android:text="CURRENTLY ACTIVE"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvJobSessionTitleLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="16dp"
                 android:text="Title: "
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/tvJobSessionCurrentlyActiveHeader" />
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -34,18 +48,19 @@
                 android:layout_margin="4dp"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/tvTitleLabel"
                 app:layout_constraintEnd_toStartOf="@id/bClose"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvJobSessionTitleLabel"
+                app:layout_constraintTop_toBottomOf="@id/tvJobSessionCurrentlyActiveHeader"
                 tools:text="Job Title" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/bClose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="16dp"
                 android:text="Close"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/tvJobSessionCurrentlyActiveHeader" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.appcompat.widget.LinearLayoutCompat>
