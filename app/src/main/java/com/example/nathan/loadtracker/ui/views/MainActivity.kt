@@ -16,6 +16,7 @@ import com.example.nathan.loadtracker.LoadTrackerApplication.Companion.dataStore
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.ActivityMainBinding
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            viewModel.initializeAppModel.collect { model ->
+            viewModel.initializeAppModel.first { model ->
                 val navGraph = _navController.navInflater.inflate(R.navigation.nav_graph)
                 navGraph.setStartDestination(
                     if (model.allJobSessions.not()) {
@@ -106,6 +107,8 @@ class MainActivity : AppCompatActivity() {
                         else -> false
                     }
                 }
+
+                true
             }
         }
     }

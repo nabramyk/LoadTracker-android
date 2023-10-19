@@ -36,8 +36,19 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
         )
     }
 
+    private val _jobSessionModelFlow = combine(
+        _repository.preferencesFlow,
+        _repository.getAllJobSessions()
+    ) { preferences, jobSessions ->
+        return@combine JobSessionsModel(
+            activeJobSessionId = preferences.selectedJobId,
+            allJobSessions = jobSessions
+        )
+    }
+
     val allJobSessions: Flow<List<JobSession>> = _repository.getAllJobSessions()
     val mainUiModel = _mainUiModelFlow
+    val jobSessionModelFlow = _jobSessionModelFlow
 
     private val _initializeAppModelFlow = combine(
         _repository.preferencesFlow,
