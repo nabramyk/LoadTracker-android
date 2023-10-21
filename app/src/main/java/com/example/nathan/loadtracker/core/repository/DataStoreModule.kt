@@ -17,6 +17,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.datetime.Clock
 import javax.inject.Singleton
 
 private const val LOADTRACKER_PREFERENCES = "loadtracker_preferences"
@@ -24,6 +25,12 @@ private const val LOADTRACKER_PREFERENCES = "loadtracker_preferences"
 @InstallIn(SingletonComponent::class)
 @Module
 object DataStoreModule {
+
+    @Singleton
+    @Provides
+    fun provideClock(): Clock {
+        return LoadTrackerClock()
+    }
 
     @Singleton
     @Provides

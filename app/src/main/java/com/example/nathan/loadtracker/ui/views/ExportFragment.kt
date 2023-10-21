@@ -27,15 +27,11 @@ import com.example.nathan.loadtracker.databinding.FragmentExportBinding
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.number
 import java.io.File
 import java.io.FileWriter
-import java.time.format.TextStyle
-import java.util.Locale
 
 class ExportFragment : Fragment() {
 
@@ -90,35 +86,74 @@ class ExportFragment : Fragment() {
             )
         }
 
+        binding.cbCurrentDate.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                val today = viewModel.now()
+                binding.sStartDate.setText("${Month.values()[today.month.number-1]} ${today.dayOfMonth}, ${today.year}")
+                binding.sEndDate.setText("${Month.values()[today.month.number-1]} ${today.dayOfMonth}, ${today.year}")
+                binding.sStartTime.setText("00:00 A.M.")
+                binding.sEndTime.setText("11:59 P.M.")
+            } else {
+                binding.sStartDate.setText("")
+                binding.sEndDate.setText("")
+                binding.sStartTime.setText("")
+                binding.sEndTime.setText("")
+            }
+        }
+
         binding.bExport.setOnClickListener {
-            val file = File(requireContext().cacheDir, "output.csv")
-            FileWriter(file).apply {
-                // Converting the string to CharArrays is so far the only way I've figured out
-                // to get the entries to properly newline in the .csv
-                write("Id, Material, Driver, Title\n".toCharArray())
+            var missingContent = false
+            if (binding.sStartDate.text?.isEmpty() == true) {
+                binding.sStartDate.error = ""
+                missingContent = true
+            }
+            if (binding.sEndDate.text?.isEmpty() == true) {
+                binding.sEndDate.error = ""
+                missingContent = true
+            }
+            if (binding.sStartTime.text?.isEmpty() == true) {
+                binding.sStartTime.error = ""
+                missingContent = true
+            }
+            if (binding.sEndTime.text?.isEmpty() == true) {
+                binding.sEndTime.error = ""
+                missingContent = true
+            }
 
-                viewModel.jobSessionToExport.value!!.loads.forEach { load ->
-                    write("${load.id}, ${load.material}, ${load.driver}, ${viewModel.jobSessionToExport.value!!.jobSession.jobTitle}\n".toCharArray())
-                }
+            if (missingContent) {
+                return@setOnClickListener
+            }
 
-                close()
+            viewModel.jobSessionToExport.value?.let {
+                val file = File(requireContext().cacheDir, "output.csv")
+                FileWriter(file).apply {
+                    // Converting the string to CharArrays is so far the only way I've figured out
+                    // to get the entries to properly newline in the .csv
+                    write("Id, Material, Driver, Title\n".toCharArray())
 
-                // I originally was using `createChooser` but it was throwing some error messages
-                // about file permissions. This could be cleaner but it works for the time being.
-                val intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    type = "text/plain"
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    putExtra(
-                        Intent.EXTRA_STREAM,
-                        FileProvider.getUriForFile(
-                            requireContext(),
-                            getString(R.string.file_provider_authority),
-                            file
+                    it.loads.forEach { load ->
+                        write("${load.id}, ${load.material}, ${load.driver}, ${viewModel.jobSessionToExport.value!!.jobSession.jobTitle}\n".toCharArray())
+                    }
+
+                    close()
+
+                    // I originally was using `createChooser` but it was throwing some error messages
+                    // about file permissions. This could be cleaner but it works for the time being.
+                    val intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        type = "text/plain"
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        putExtra(
+                            Intent.EXTRA_STREAM,
+                            FileProvider.getUriForFile(
+                                requireContext(),
+                                getString(R.string.file_provider_authority),
+                                file
+                            )
                         )
-                    )
+                    }
+                    startActivity(intent)
                 }
-                startActivity(intent)
             }
         }
     }
@@ -193,8 +228,10 @@ class DatePickerFragment(
     val context: TextInputEditText
 ) : DialogFragment(),
     DatePickerDialog.OnDateSetListener {
+
+    private val viewModel: MainViewModel by activityViewModels()
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val currentTime = viewModel.now()
         return DatePickerDialog(
             requireContext(),
             this,
@@ -217,10 +254,7 @@ class DatePickerFragment(
 
         context.setText(
             "${
-                date.month.getDisplayName(
-                    TextStyle.FULL,
-                    Locale.getDefault()
-                )
+                Month.values()[date.month.number]
             } ${date.dayOfMonth}, ${date.year} "
         )
     }

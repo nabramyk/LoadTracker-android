@@ -14,11 +14,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val _repository: LoadTrackerRepository
+    private val _repository: LoadTrackerRepository,
+    private val _clock: Clock
 ) : ViewModel() {
 
     private val _mutableJobSession: Flow<JobSessionWithLoads?> =
@@ -48,6 +53,10 @@ class MainViewModel @Inject constructor(
     val allJobSessions: Flow<List<JobSession>> = _repository.getAllJobSessions()
     val mainUiModel = _mainUiModelFlow
     val jobSessionModelFlow = _jobSessionModelFlow
+
+    fun now(): LocalDateTime {
+        return _clock.now().toLocalDateTime(TimeZone.UTC)
+    }
 
     private val _initializeAppModelFlow = combine(
         _repository.preferencesFlow,
@@ -111,15 +120,4 @@ class MainViewModel @Inject constructor(
     suspend fun getLoadsForActiveJobSession(): Flow<List<Load>> {
         return _repository.getLoadsForActiveJobSession()
     }
-
-//    class Factory(val context: Application, val dataStore: DataStore<Preferences>) :
-//        ViewModelProvider.Factory {
-//        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-//                @Suppress("UNCHECKED_CAST")
-//                return MainViewModel(context = context, dataStore = dataStore) as T
-//            }
-//            throw IllegalArgumentException("Unable to construct viewmodel")
-//        }
-//    }
 }
