@@ -13,7 +13,6 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.nathan.loadtracker.core.repository.MockClock
 import com.example.nathan.loadtracker.core.repository.MockLoadTrackerRepository
 import com.example.nathan.loadtracker.ui.arrayadapters.JobSessionAdapter
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
@@ -40,10 +39,7 @@ class JobSessionsFragmentTests {
 
     @Before
     fun setup() {
-        viewModel = MainViewModel(
-            MockLoadTrackerRepository(),
-            MockClock()
-        )
+        viewModel = MainViewModel(MockLoadTrackerRepository())
     }
 
     @Test

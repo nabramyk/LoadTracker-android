@@ -14,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -22,8 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val _repository: LoadTrackerRepository,
-    private val _clock: Clock
+    private val _repository: LoadTrackerRepository
 ) : ViewModel() {
 
     private val _mutableJobSession: Flow<JobSessionWithLoads?> =
@@ -55,7 +53,8 @@ class MainViewModel @Inject constructor(
     val jobSessionModelFlow = _jobSessionModelFlow
 
     fun now(): LocalDateTime {
-        return _clock.now().toLocalDateTime(TimeZone.UTC)
+        // TODO is using utc here gonna be a problem?
+        return _repository.now().toLocalDateTime(TimeZone.UTC)
     }
 
     private val _initializeAppModelFlow = combine(

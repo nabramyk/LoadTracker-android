@@ -49,7 +49,8 @@ object DataStoreModule {
     @Provides
     fun provideDefaultLoadTrackerRepository(
         application: Application,
-        dataStore: DataStore<Preferences>
+        dataStore: DataStore<Preferences>,
+        clock: Clock
     ) =
-        DefaultLoadTrackerRepository(application, dataStore) as LoadTrackerRepository
+        DefaultLoadTrackerRepository(application, dataStore, clock) as LoadTrackerRepository
 }

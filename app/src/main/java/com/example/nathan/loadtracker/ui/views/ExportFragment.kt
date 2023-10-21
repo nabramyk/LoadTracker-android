@@ -86,7 +86,7 @@ class ExportFragment : Fragment() {
             )
         }
 
-        binding.cbCurrentDate.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.cbCurrentDate.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 val today = viewModel.now()
                 binding.sStartDate.setText("${Month.values()[today.month.number-1]} ${today.dayOfMonth}, ${today.year}")

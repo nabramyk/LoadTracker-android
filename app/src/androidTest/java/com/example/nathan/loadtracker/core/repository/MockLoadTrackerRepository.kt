@@ -6,6 +6,7 @@ import com.example.nathan.loadtracker.core.database.entities.Load
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 class MockLoadTrackerRepository : LoadTrackerRepository {
     override val preferencesFlow: Flow<DefaultLoadTrackerRepository.LoadTrackerPreferences>
@@ -26,6 +27,10 @@ class MockLoadTrackerRepository : LoadTrackerRepository {
                 listOf()
             )
         }
+
+    override fun now(): Instant {
+        return MockClock().now()
+    }
 
     override suspend fun addLoad(
         driver: String,

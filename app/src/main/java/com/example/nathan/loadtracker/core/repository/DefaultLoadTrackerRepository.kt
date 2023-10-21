@@ -23,7 +23,8 @@ import javax.inject.Inject
 
 class DefaultLoadTrackerRepository @Inject constructor(
     context: Application,
-    private val dataStore: DataStore<Preferences>
+    private val _dataStore: DataStore<Preferences>,
+    private val _clock: Clock
 ) : LoadTrackerRepository {
 
     data class LoadTrackerPreferences(
@@ -41,7 +42,7 @@ class DefaultLoadTrackerRepository @Inject constructor(
     private val db: LoadTrackerDatabase =
         LoadTrackerDatabase.getInstance(context.applicationContext)
 
-    override val preferencesFlow: Flow<LoadTrackerPreferences> = dataStore.data
+    override val preferencesFlow: Flow<LoadTrackerPreferences> = _dataStore.data
         .catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
@@ -65,13 +66,17 @@ class DefaultLoadTrackerRepository @Inject constructor(
             }
         }
 
+    override fun now(): Instant {
+        return _clock.now()
+    }
+
     override suspend fun addLoad(
         driver: String,
         unitId: String,
         material: String,
         companyName: String?
     ) {
-        val currentDateTime: Instant = Clock.System.now()
+        val currentDateTime: Instant = _clock.now()
         preferencesFlow.collect { preferences ->
             db.loadDao().add(
                 Load(
@@ -89,14 +94,14 @@ class DefaultLoadTrackerRepository @Inject constructor(
     }
 
     override suspend fun addJobSession(jobTitle: String): Long {
-        val currentDateTime: Instant = Clock.System.now()
+        val currentDateTime: Instant = _clock.now()
         val newJobSessionId = db.jobSessionDao().add(
             JobSession(
                 jobTitle = jobTitle,
                 created = currentDateTime
             )
         )
-        dataStore.edit { preferences ->
+        _dataStore.edit { preferences ->
             preferences[PreferencesKeys.ACTIVE_JOB_SESSION_ID] = newJobSessionId
         }
         return newJobSessionId
@@ -123,7 +128,7 @@ class DefaultLoadTrackerRepository @Inject constructor(
      * so that the session can be automatically restored the next time the app is opened
      */
     override suspend fun selectJobSession(jobSessionId: Long): JobSessionWithLoads {
-        dataStore.edit { preferences ->
+        _dataStore.edit { preferences ->
             preferences[PreferencesKeys.ACTIVE_JOB_SESSION_ID] = jobSessionId
         }
         return getJobSessionById(jobSessionId)
@@ -131,7 +136,7 @@ class DefaultLoadTrackerRepository @Inject constructor(
 
     override suspend fun deleteJobSession(jobSession: JobSession) {
         if (activeJobSessionWithLoads.first()?.jobSession?.id == jobSession.id) {
-            dataStore.edit { preferences ->
+            _dataStore.edit { preferences ->
                 preferences.remove(PreferencesKeys.ACTIVE_JOB_SESSION_ID)
             }
         }

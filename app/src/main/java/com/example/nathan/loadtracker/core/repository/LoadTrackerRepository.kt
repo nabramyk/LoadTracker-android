@@ -4,11 +4,14 @@ import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.database.entities.Load
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Instant
 
 interface LoadTrackerRepository {
 
     val preferencesFlow: Flow<DefaultLoadTrackerRepository.LoadTrackerPreferences>
     val activeJobSessionWithLoads: Flow<JobSessionWithLoads?>
+
+    fun now(): Instant
 
     suspend fun addLoad(
         driver: String,
