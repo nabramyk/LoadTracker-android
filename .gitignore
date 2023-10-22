@@ -5,3 +5,5 @@ text
 /build
 *.iml
 /app/app.iml
+*.jks
+/app/full/
