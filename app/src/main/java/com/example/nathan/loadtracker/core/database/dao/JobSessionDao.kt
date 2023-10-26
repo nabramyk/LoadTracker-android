@@ -22,7 +22,7 @@ interface JobSessionDao {
 
     @Transaction
     @Query("SELECT * FROM jobsession")
-    fun allJobSessions(): Flow<List<JobSession>>
+    suspend fun allJobSessions(): List<JobSession>
 
     @Transaction
     @Query("SELECT * FROM jobsession where id = :jobSessionId")

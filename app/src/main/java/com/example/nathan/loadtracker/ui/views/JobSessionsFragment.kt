@@ -7,13 +7,16 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.nathan.loadtracker.LoadTrackerApplication.Companion.dataStore
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.databinding.FragmentJobSessionsBinding
 import com.example.nathan.loadtracker.ui.arrayadapters.JobSessionAdapter
+import com.example.nathan.loadtracker.ui.viewmodels.JobSessionsViewModel
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
 import kotlinx.coroutines.launch
 
@@ -22,7 +25,12 @@ class JobSessionsFragment : Fragment() {
     private var _binding: FragmentJobSessionsBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: JobSessionsViewModel by viewModels {
+        JobSessionsViewModel.Factory(
+            context = requireActivity().application,
+            dataStore = requireActivity().applicationContext.dataStore
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

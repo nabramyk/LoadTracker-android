@@ -7,6 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
@@ -15,7 +17,9 @@ import com.example.nathan.loadtracker.core.repository.LoadTrackerRepository
 import com.example.nathan.loadtracker.ui.datamodels.MainUiModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
@@ -36,23 +40,12 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
         )
     }
 
-    private val _jobSessionModelFlow = combine(
-        _repository.preferencesFlow,
-        _repository.getAllJobSessions()
-    ) { preferences, jobSessions ->
-        return@combine JobSessionsModel(
-            activeJobSessionId = preferences.selectedJobId,
-            allJobSessions = jobSessions
-        )
-    }
-
-    val allJobSessions: Flow<List<JobSession>> = _repository.getAllJobSessions()
+    val allJobSessions: LiveData<List<JobSession>> = liveData { emit(_repository.getAllJobSessions()) }
     val mainUiModel = _mainUiModelFlow
-    val jobSessionModelFlow = _jobSessionModelFlow
 
     private val _initializeAppModelFlow = combine(
         _repository.preferencesFlow,
-        allJobSessions,
+        allJobSessions.asFlow(),
     ) { preferences, allJobSessions ->
         return@combine InitializeAppModel(
             allJobSessions = allJobSessions.isNotEmpty(),
@@ -83,30 +76,6 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
                 jobTitle = jobTitle
             )
         }
-    }
-
-    private val mutableJobSessionWithLoads = MutableLiveData<JobSessionWithLoads>()
-
-    val jobSessionToExport: LiveData<JobSessionWithLoads> get() = mutableJobSessionWithLoads
-
-    fun selectJobSessionToExport(jobSessionId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            mutableJobSessionWithLoads.postValue(
-                _repository.getJobSessionById(
-                    jobSessionId
-                )
-            )
-        }
-    }
-
-    fun selectJobSession(jobSessionId: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _repository.selectJobSession(jobSessionId)
-        }
-    }
-
-    fun deleteJobSession(jobSession: JobSession) = viewModelScope.launch {
-        _repository.deleteJobSession(jobSession)
     }
 
     suspend fun getLoadsForActiveJobSession(): Flow<List<Load>> {

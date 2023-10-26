@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,10 +21,13 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.example.nathan.loadtracker.LoadTrackerApplication.Companion.dataStore
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.databinding.FragmentExportBinding
+import com.example.nathan.loadtracker.ui.viewmodels.ExportViewModel
 import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
@@ -40,7 +44,12 @@ import java.util.Locale
 class ExportFragment : Fragment() {
 
     private var _binding: FragmentExportBinding? = null
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: ExportViewModel by viewModels {
+        ExportViewModel.Factory(
+            context = requireActivity().application,
+            dataStore = requireActivity().applicationContext.dataStore
+        )
+    }
 
     private val binding get() = _binding!!
 
@@ -57,15 +66,13 @@ class ExportFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launch {
-            viewModel.allJobSessions.collect { jobSessions ->
-                val adapter = SessionArrayAdapter(
-                    requireContext(),
-                    R.layout.list_item_job_session,
-                    jobSessions
-                )
-                binding.sSession.adapter = adapter
-            }
+        viewModel.allJobSessions.observe(viewLifecycleOwner) { jobSessions ->
+            val adapter = SessionArrayAdapter(
+                requireContext(),
+                R.layout.list_item_job_session,
+                jobSessions
+            )
+            binding.sSession.adapter = adapter
         }
 
         binding.sStartDate.setOnClickListener {
@@ -126,7 +133,7 @@ class ExportFragment : Fragment() {
     inner class SessionArrayAdapter(
         context: Context,
         layout: Int,
-        private val jobSessions: List<JobSession>
+        var jobSessions: List<JobSession>
     ) : ArrayAdapter<JobSession>(context, layout, jobSessions), OnItemSelectedListener {
 
         private var inflater: LayoutInflater = LayoutInflater.from(context)
