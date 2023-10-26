@@ -24,6 +24,10 @@ import com.example.nathan.loadtracker.LoadTrackerApplication.Companion.dataStore
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.databinding.FragmentExportBinding
+import com.example.nathan.loadtracker.ui.arrayadapters.SessionArrayAdapter
+import com.example.nathan.loadtracker.ui.utils.CsvExporter
+import com.example.nathan.loadtracker.ui.utils.DatePickerFragment
+import com.example.nathan.loadtracker.ui.utils.TimePickerFragment
 import com.example.nathan.loadtracker.ui.viewmodels.ExportViewModel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -56,6 +60,11 @@ class ExportFragment : Fragment() {
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -66,7 +75,8 @@ class ExportFragment : Fragment() {
             val adapter = SessionArrayAdapter(
                 requireContext(),
                 R.layout.list_item_job_session,
-                jobSessions
+                jobSessions,
+                viewModel::selectJobSessionToExport
             )
             binding.sSession.adapter = adapter
         }
@@ -114,138 +124,7 @@ class ExportFragment : Fragment() {
         }
 
         binding.bExport.setOnClickListener {
-            val file = File(requireContext().cacheDir, "output.csv")
-
-            FileWriter(file).apply {
-                // Converting the string to CharArrays is so far the only way I've figured out
-                // to get the entries to properly newline in the .csv
-                write("Id, Material, Driver, Title\n".toCharArray())
-
-                viewModel.jobSessionToExport.value!!.loads.forEach { load ->
-                    write("${load.id}, ${load.material}, ${load.driver}, ${viewModel.jobSessionToExport.value!!.jobSession.jobTitle}\n".toCharArray())
-                }
-
-                close()
-
-                // I originally was using `createChooser` but it was throwing some error messages
-                // about file permissions. This could be cleaner but it works for the time being.
-                val intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    type = "text/plain"
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    putExtra(
-                        Intent.EXTRA_STREAM,
-                        FileProvider.getUriForFile(
-                            requireContext(),
-                            getString(R.string.file_provider_authority),
-                            file
-                        )
-                    )
-                }
-                startActivity(intent)
-            }
+            CsvExporter.export(requireContext(), viewModel.jobSessionToExport.value!!)
         }
-    }
-
-    inner class SessionArrayAdapter(
-        context: Context,
-        layout: Int,
-        var jobSessions: List<JobSession>
-    ) : ArrayAdapter<JobSession>(context, layout, jobSessions), OnItemSelectedListener {
-
-        private var inflater: LayoutInflater = LayoutInflater.from(context)
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            var view: View? = convertView
-            if (view == null) {
-                view = inflater.inflate(R.layout.list_item_job_session, parent, false)
-            }
-            (view?.findViewById(R.id.tvJobSession) as TextView).text = getItem(position)!!.jobTitle
-            return view
-        }
-
-        override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-            var view: View? = convertView
-            if (view == null) {
-                view = inflater.inflate(R.layout.list_item_job_session, parent, false)
-            }
-            (view?.findViewById(R.id.tvJobSession) as TextView).text = getItem(position)!!.jobTitle
-            return view
-        }
-
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            viewModel.selectJobSessionToExport(jobSessions[position].id)
-        }
-
-        override fun onNothingSelected(parent: AdapterView<*>?) {}
-    }
-}
-
-class TimePickerFragment(
-    private val hour: Int,
-    private val minute: Int,
-    val updater: (String) -> Unit
-) : DialogFragment(),
-    TimePickerDialog.OnTimeSetListener {
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return TimePickerDialog(
-            requireContext(),
-            this,
-            hour,
-            minute,
-            DateFormat.is24HourFormat(requireActivity())
-        )
-    }
-
-    override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        val time = LocalDateTime(
-            year = 0,
-            month = Month(1),
-            dayOfMonth = 1,
-            hour = hourOfDay,
-            minute = minute,
-            second = 0,
-            nanosecond = 0,
-        )
-
-        updater("${time.hour}:${time.minute}")
-    }
-}
-
-class DatePickerFragment(
-    val updater: (String) -> Unit
-) : DialogFragment(),
-    DatePickerDialog.OnDateSetListener {
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        return DatePickerDialog(
-            requireContext(),
-            this,
-            currentTime.year,
-            currentTime.monthNumber - 1,
-            currentTime.dayOfMonth
-        )
-    }
-
-    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        val date = LocalDateTime(
-            year = year,
-            month = Month(month + 1), //The DatePicker numbers months from 1-12
-            dayOfMonth = dayOfMonth,
-            hour = 0,
-            minute = 0,
-            second = 0,
-            nanosecond = 0
-        )
-
-        updater(
-            "${
-                date.month.getDisplayName(
-                    TextStyle.FULL,
-                    Locale.getDefault()
-                )
-            } ${date.dayOfMonth}, ${date.year} "
-        )
     }
 }
