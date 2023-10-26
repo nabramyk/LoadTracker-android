@@ -9,7 +9,6 @@ import androidx.room.Transaction
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.database.entities.Load
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface JobSessionDao {

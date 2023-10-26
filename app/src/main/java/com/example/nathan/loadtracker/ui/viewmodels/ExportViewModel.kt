@@ -12,48 +12,42 @@ import androidx.lifecycle.viewModelScope
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.repository.LoadTrackerRepository
-import com.example.nathan.loadtracker.ui.datamodels.ExportUiModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import java.lang.IllegalArgumentException
 
 class ExportViewModel(context: Application, dataStore: DataStore<Preferences>) : ViewModel() {
     private val _repository = LoadTrackerRepository(context = context, dataStore = dataStore)
 
-    private var _startTime: String = ""
-    private var _endTime: String = ""
-    private var _startDate: String = ""
-    private var _endDate: String = ""
+    private val _startTime = MutableLiveData("")
+    private var _endTime = MutableLiveData("")
+    private var _startDate = MutableLiveData("")
+    private var _endDate = MutableLiveData("")
 
-    private val startTime: Flow<String>
-        get() = flow { _startTime }
-
-//    private val _exportUiModelFlow = combine(
-//        _repository.getAllJobSessions(),
-//        startTime
-//    ) { jobSessions, startTime ->
-//        return@combine ExportUiModel(
-//            startTime = startTime,
-//            jobSessions = jobSessions
-//        )
-//    }
-
+    private var mutableJobSessionWithLoads = MutableLiveData<JobSessionWithLoads>()
     val allJobSessions: LiveData<List<JobSession>> = liveData {
         emit(_repository.getAllJobSessions())
     }
 
-    //val exportUiModel = _exportUiModelFlow
+    init {
+        viewModelScope.launch {
+            selectJobSessionToExport(_repository.getAllJobSessions().first().id)
+        }
+    }
+
+    val startTime: LiveData<String>
+        get() = _startTime
+    val endTime: LiveData<String>
+        get() = _endTime
+    val startDate: LiveData<String>
+        get() = _startDate
+    val endDate: LiveData<String>
+        get() = _endDate
 
     val jobSessionToExport: LiveData<JobSessionWithLoads> get() = mutableJobSessionWithLoads
-    private val mutableJobSessionWithLoads = MutableLiveData<JobSessionWithLoads>()
 
     fun selectJobSessionToExport(jobSessionId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -69,14 +63,10 @@ class ExportViewModel(context: Application, dataStore: DataStore<Preferences>) :
         return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     }
 
-    fun updateStartTime(newTime: String) {
-        _startTime = newTime
-
-    }
-
-    fun updateEndTime(newTime: String) {
-        _endTime = newTime
-    }
+    fun updateStartTime(newTime: String) = _startTime.postValue(newTime)
+    fun updateEndTime(newTime: String) = _endTime.postValue(newTime)
+    fun updateStartDate(newDate: String) = _startDate.postValue(newDate)
+    fun updateEndDate(newDate: String) = _endDate.postValue(newDate)
 
     class Factory(val context: Application, val dataStore: DataStore<Preferences>) :
         ViewModelProvider.Factory {

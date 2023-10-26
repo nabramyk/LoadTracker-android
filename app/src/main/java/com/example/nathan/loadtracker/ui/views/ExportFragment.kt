@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,17 +19,12 @@ import android.widget.TimePicker
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.example.nathan.loadtracker.LoadTrackerApplication.Companion.dataStore
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.databinding.FragmentExportBinding
 import com.example.nathan.loadtracker.ui.viewmodels.ExportViewModel
-import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
-import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
@@ -67,6 +61,8 @@ class ExportFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.allJobSessions.observe(viewLifecycleOwner) { jobSessions ->
+            // I'd rather declare this once outside of the observer, but I think the array adapter
+            // doesn't have the proper notification and update functionality so this should change
             val adapter = SessionArrayAdapter(
                 requireContext(),
                 R.layout.list_item_job_session,
@@ -75,30 +71,51 @@ class ExportFragment : Fragment() {
             binding.sSession.adapter = adapter
         }
 
+        viewModel.startDate.observe(viewLifecycleOwner) {
+            binding.sStartDate.setText(it)
+        }
+
+        viewModel.endDate.observe(viewLifecycleOwner) {
+            binding.sEndDate.setText(it)
+        }
+
+        viewModel.startTime.observe(viewLifecycleOwner) {
+            binding.sStartTime.setText(it)
+        }
+
+        viewModel.endTime.observe(viewLifecycleOwner) {
+            binding.sEndTime.setText(it)
+        }
+
         binding.sStartDate.setOnClickListener {
-            DatePickerFragment(binding.sStartDate).show(parentFragmentManager, "export_start_date")
+            DatePickerFragment(viewModel::updateStartDate).show(parentFragmentManager, "export_start_date")
         }
 
         binding.sEndDate.setOnClickListener {
-            DatePickerFragment(binding.sEndDate).show(parentFragmentManager, "export_end_date")
+            DatePickerFragment(viewModel::updateEndDate).show(parentFragmentManager, "export_end_date")
         }
 
         binding.sStartTime.setOnClickListener {
-            TimePickerFragment(0, 0, binding.sStartTime).show(
+            TimePickerFragment(0, 0, viewModel::updateStartTime).show(
                 parentFragmentManager,
                 "export_start_time"
             )
         }
 
         binding.sEndTime.setOnClickListener {
-            TimePickerFragment(0, 0, binding.sEndTime).show(
+            TimePickerFragment(0, 0, viewModel::updateEndTime).show(
                 parentFragmentManager,
                 "export_end_time"
             )
         }
 
+        binding.cbCurrentDate.setOnCheckedChangeListener { buttonView, isChecked ->
+
+        }
+
         binding.bExport.setOnClickListener {
             val file = File(requireContext().cacheDir, "output.csv")
+
             FileWriter(file).apply {
                 // Converting the string to CharArrays is so far the only way I've figured out
                 // to get the entries to properly newline in the .csv
@@ -167,7 +184,7 @@ class ExportFragment : Fragment() {
 class TimePickerFragment(
     private val hour: Int,
     private val minute: Int,
-    val context: TextInputEditText
+    val updater: (String) -> Unit
 ) : DialogFragment(),
     TimePickerDialog.OnTimeSetListener {
 
@@ -192,12 +209,12 @@ class TimePickerFragment(
             nanosecond = 0,
         )
 
-        context.setText("${time.hour}:${time.minute}")
+        updater("${time.hour}:${time.minute}")
     }
 }
 
 class DatePickerFragment(
-    val context: TextInputEditText
+    val updater: (String) -> Unit
 ) : DialogFragment(),
     DatePickerDialog.OnDateSetListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -222,7 +239,7 @@ class DatePickerFragment(
             nanosecond = 0
         )
 
-        context.setText(
+        updater(
             "${
                 date.month.getDisplayName(
                     TextStyle.FULL,

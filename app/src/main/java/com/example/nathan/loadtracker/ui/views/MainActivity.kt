@@ -15,7 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.nathan.loadtracker.LoadTrackerApplication.Companion.dataStore
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.ActivityMainBinding
-import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
+import com.example.nathan.loadtracker.ui.viewmodels.InitAppViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -26,8 +26,8 @@ class MainActivity : AppCompatActivity() {
         (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
     }
 
-    private val viewModel: MainViewModel by viewModels {
-        MainViewModel.Factory(
+    private val viewModel: InitAppViewModel by viewModels {
+        InitAppViewModel.Factory(
             context = application, dataStore = application.applicationContext.dataStore
         )
     }
