@@ -73,20 +73,19 @@ class LoadTrackerRepository(
         companyName: String?
     ) {
         val currentDateTime: Instant = Clock.System.now()
-        preferencesFlow.collect { preferences ->
-            db.loadDao().add(
-                Load(
-                    driver = driver,
-                    unitId = unitId,
-                    material = material,
-                    timeLoaded = currentDateTime,
-                    created = currentDateTime,
-                    modified = null,
-                    companyName = companyName,
-                    jobSessionId = preferences.selectedJobId ?: 0
-                )
+        val preferences = preferencesFlow.first()
+        db.loadDao().add(
+            Load(
+                driver = driver,
+                unitId = unitId,
+                material = material,
+                timeLoaded = currentDateTime,
+                created = currentDateTime,
+                modified = null,
+                companyName = companyName,
+                jobSessionId = preferences.selectedJobId ?: 0
             )
-        }
+        )
     }
 
     suspend fun addJobSession(jobTitle: String): Long {

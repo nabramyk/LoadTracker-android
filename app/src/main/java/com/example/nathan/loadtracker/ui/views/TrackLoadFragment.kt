@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.nathan.loadtracker.databinding.FragmentLoadTrackingBinding
 import com.example.nathan.loadtracker.ui.viewmodels.TrackingSessionViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -68,20 +70,22 @@ class TrackLoadFragment : Fragment() {
             Snackbar.make(view, "Tracked!", Snackbar.LENGTH_LONG).show()
         }
 
-        lifecycleScope.launch {
-            viewModel.mainUiModel.collect { uiModel ->
-                if (uiModel.activeJobSessionWithLoads?.loads?.isNotEmpty() == true) {
-                    uiModel.activeJobSessionWithLoads.loads.let { loads ->
-                        loads.let {
-                            binding.materialInput.setText(it[it.size - 1].material)
-                            binding.unitIDInput.setText(it[it.size - 1].unitId)
-                            binding.driverNameInput.setText(it[it.size - 1].driver)
-                            binding.companyNameInput.setText(it[it.size - 1].companyName)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.mainUiModel.collect { uiModel ->
+                    if (uiModel.activeJobSessionWithLoads?.loads?.isNotEmpty() == true) {
+                        uiModel.activeJobSessionWithLoads.loads.let { loads ->
+                            loads.let {
+                                binding.materialInput.setText(it[it.size - 1].material)
+                                binding.unitIDInput.setText(it[it.size - 1].unitId)
+                                binding.driverNameInput.setText(it[it.size - 1].driver)
+                                binding.companyNameInput.setText(it[it.size - 1].companyName)
+                            }
                         }
+                    } else {
+                        binding.driverNameInput.setText(uiModel.driverName)
+                        binding.companyNameInput.setText(uiModel.companyName)
                     }
-                } else {
-                    binding.driverNameInput.setText(uiModel.driverName)
-                    binding.companyNameInput.setText(uiModel.companyName)
                 }
             }
         }
