@@ -49,12 +49,12 @@ android {
     }
 
     productFlavors {
-        create("demo") {
+        demo {
             dimension = "version"
             applicationIdSuffix = ".demo"
             versionNameSuffix = "-demo"
         }
-        create("full") {
+        full {
             dimension = "version"
             applicationIdSuffix = ".full"
             versionNameSuffix = "-full"
@@ -118,10 +118,6 @@ dependencies {
         module("org.jetbrains.kotlin:kotlin-stdlib-jdk8") {
             replacedBy("org.jetbrains.kotlin:kotlin-stdlib", "kotlin-stdlib-jdk8 is now part of kotlin-stdlib")
         }
-    }
-
-    configurations {
-        debugImplementation.exclude group: "junit", module: "junit"
     }
 }
 

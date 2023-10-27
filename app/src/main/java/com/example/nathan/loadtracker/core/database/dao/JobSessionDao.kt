@@ -1,5 +1,6 @@
 package com.example.nathan.loadtracker.core.database.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -21,7 +22,7 @@ interface JobSessionDao {
 
     @Transaction
     @Query("SELECT * FROM jobsession")
-    suspend fun allJobSessions(): List<JobSession>
+    fun allJobSessions(): LiveData<List<JobSession>>
 
     @Transaction
     @Query("SELECT * FROM jobsession where id = :jobSessionId")

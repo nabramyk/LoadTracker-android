@@ -1,43 +1,19 @@
 package com.example.nathan.loadtracker.ui.views
 
-import android.app.DatePickerDialog
-import android.app.Dialog
-import android.app.TimePickerDialog
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
-import android.widget.DatePicker
-import android.widget.TextView
-import android.widget.TimePicker
-import androidx.core.content.FileProvider
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.nathan.loadtracker.LoadTrackerApplication.Companion.dataStore
 import com.example.nathan.loadtracker.R
-import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.databinding.FragmentExportBinding
 import com.example.nathan.loadtracker.ui.arrayadapters.SessionArrayAdapter
-import com.example.nathan.loadtracker.ui.utils.CsvExporter
+import com.example.nathan.loadtracker.ui.utils.LoadTrackerCSVExporter
 import com.example.nathan.loadtracker.ui.utils.DatePickerFragment
 import com.example.nathan.loadtracker.ui.utils.TimePickerFragment
 import com.example.nathan.loadtracker.ui.viewmodels.ExportViewModel
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.Month
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import java.io.File
-import java.io.FileWriter
-import java.time.format.TextStyle
-import java.util.Locale
 
 class ExportFragment : Fragment() {
 
@@ -124,7 +100,7 @@ class ExportFragment : Fragment() {
         }
 
         binding.bExport.setOnClickListener {
-            CsvExporter.export(requireContext(), viewModel.jobSessionToExport.value!!)
+            LoadTrackerCSVExporter.export(requireContext(), viewModel.jobSessionToExport.value!!)
         }
     }
 }

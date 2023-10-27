@@ -1,19 +1,19 @@
 package com.example.nathan.loadtracker.ui.views
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.nathan.loadtracker.databinding.FragmentTrackingHistoryBinding
 import com.example.nathan.loadtracker.ui.arrayadapters.TrackingHistoryAdapter
-import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
+import com.example.nathan.loadtracker.ui.viewmodels.TrackingSessionViewModel
 import kotlinx.coroutines.launch
 
 class TrackingHistoryFragment : Fragment() {
@@ -22,7 +22,7 @@ class TrackingHistoryFragment : Fragment() {
     private var _binding: FragmentTrackingHistoryBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: TrackingSessionViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,14 +53,15 @@ class TrackingHistoryFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.getLoadsForActiveJobSession().collect { loads ->
+                viewModel.loadsForActiveJobSession.collect { loads ->
+                    Log.d("something", loads.toString())
                     if (loads.isEmpty()) {
                         binding.tvEmpty.visibility = View.VISIBLE
                     } else {
                         binding.tvEmpty.visibility = View.GONE
-                        listAdapter.loads = loads
-                        listAdapter.notifyDataSetChanged()
                     }
+                    listAdapter.loads = loads
+                    listAdapter.notifyDataSetChanged()
                 }
             }
         }

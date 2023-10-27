@@ -1,6 +1,5 @@
 package com.example.nathan.loadtracker
 
-import com.example.nathan.loadtracker.ui.utils.CsvExporter
 import org.junit.Assert
 import org.junit.Test
 

@@ -1,6 +1,7 @@
 package com.example.nathan.loadtracker.ui.views
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -94,6 +95,10 @@ class JobSessionsFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.jobSessionModelFlow.collect { model ->
+                Log.d("job sessions", model.toString())
+                if (model.allJobSessions.isEmpty()) {
+                    findNavController().navigate(R.id.action_jobSessionsFragment_to_newJobSessionFragment)
+                }
                 listAdapter.jobSessions =
                     model.allJobSessions.map {
                         Pair(it, it.id == model.activeJobSessionId)

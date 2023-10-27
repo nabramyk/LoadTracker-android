@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
-class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : ViewModel() {
+class TrackingSessionViewModel(context: Application, dataStore: DataStore<Preferences>) : ViewModel() {
 
     private val _repository = LoadTrackerRepository(context = context, dataStore = dataStore)
     private val _mutableJobSession: Flow<JobSessionWithLoads?> =
@@ -35,7 +35,6 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
         )
     }
 
-    val allJobSessions: LiveData<List<JobSession>> = liveData { emit(_repository.getAllJobSessions()) }
     val mainUiModel = _mainUiModelFlow
 
     fun addLoad(
@@ -54,24 +53,15 @@ class MainViewModel(context: Application, dataStore: DataStore<Preferences>) : V
         }
     }
 
-    fun addJobSession(jobTitle: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _repository.addJobSession(
-                jobTitle = jobTitle
-            )
-        }
-    }
-
-    suspend fun getLoadsForActiveJobSession(): Flow<List<Load>> {
-        return _repository.getLoadsForActiveJobSession()
-    }
+    val loadsForActiveJobSession: Flow<List<Load>>
+        get() = _repository.getLoadsForActiveJobSession()
 
     class Factory(val context: Application, val dataStore: DataStore<Preferences>) :
         ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(TrackingSessionViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return MainViewModel(context = context, dataStore = dataStore) as T
+                return TrackingSessionViewModel(context = context, dataStore = dataStore) as T
             }
             throw IllegalArgumentException("Unable to construct viewmodel")
         }

@@ -6,14 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.nathan.loadtracker.LoadTrackerApplication.Companion.dataStore
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.FragmentTrackingSessionBinding
-import com.example.nathan.loadtracker.ui.viewmodels.MainViewModel
+import com.example.nathan.loadtracker.ui.viewmodels.TrackingSessionViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -23,8 +22,8 @@ class TrackingSessionFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var vAdapter: TrackingPagerAdapter
-    private val viewModel: MainViewModel by activityViewModels {
-        MainViewModel.Factory(
+    private val viewModel: TrackingSessionViewModel by activityViewModels {
+        TrackingSessionViewModel.Factory(
             context = requireActivity().application,
             dataStore = requireActivity().applicationContext.dataStore
         )

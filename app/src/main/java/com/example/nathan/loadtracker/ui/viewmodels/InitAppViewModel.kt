@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asFlow
-import androidx.lifecycle.liveData
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.repository.LoadTrackerRepository
@@ -19,7 +18,7 @@ import java.lang.IllegalArgumentException
 
 class InitAppViewModel(context: Application, dataStore: DataStore<Preferences>) : ViewModel() {
     private val _repository = LoadTrackerRepository(context = context, dataStore = dataStore)
-    val allJobSessions: LiveData<List<JobSession>> = liveData { emit(_repository.getAllJobSessions()) }
+    val allJobSessions: LiveData<List<JobSession>> = _repository.getAllJobSessions()
     private val _mutableJobSession: Flow<JobSessionWithLoads?> =
         _repository.activeJobSessionWithLoads
 

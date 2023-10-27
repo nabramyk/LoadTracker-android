@@ -19,7 +19,7 @@ import java.lang.IllegalArgumentException
 class JobSessionsViewModel(context: Application, dataStore: DataStore<Preferences>) : ViewModel() {
 
     private val _repository = LoadTrackerRepository(context = context, dataStore = dataStore)
-    val allJobSessions: LiveData<List<JobSession>> = liveData { emit(_repository.getAllJobSessions()) }
+    val allJobSessions: LiveData<List<JobSession>> = _repository.getAllJobSessions()
 
     private val _jobSessionModelFlow = combine(
         _repository.preferencesFlow,

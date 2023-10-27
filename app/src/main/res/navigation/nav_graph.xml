@@ -9,7 +9,11 @@
         android:id="@+id/jobSessionsFragment"
         android:name="com.example.nathan.loadtracker.ui.views.JobSessionsFragment"
         android:label="Open Job Sessions"
-        tools:layout="@layout/fragment_job_sessions" />
+        tools:layout="@layout/fragment_job_sessions" >
+        <action
+            android:id="@+id/action_jobSessionsFragment_to_newJobSessionFragment"
+            app:destination="@id/newJobSessionFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/trackingSessionFragment"

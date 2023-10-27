@@ -1,12 +1,14 @@
 package com.example.nathan.loadtracker.core.repository
 
 import android.app.Application
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.lifecycle.LiveData
 import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
@@ -101,15 +103,16 @@ class LoadTrackerRepository(
         return newJobSessionId
     }
 
-    suspend fun getLoadsForActiveJobSession(): Flow<List<Load>> {
+    fun getLoadsForActiveJobSession(): Flow<List<Load>> {
         return flow {
             preferencesFlow.collect { preferences ->
+                Log.d("Repo selected job id", preferences.selectedJobId.toString())
                 emit(db.loadDao().getLoadsForJobSession(preferences.selectedJobId ?: 0))
             }
         }
     }
 
-    suspend fun getAllJobSessions(): List<JobSession> {
+    fun getAllJobSessions(): LiveData<List<JobSession>> {
         return db.jobSessionDao().allJobSessions()
     }
 
@@ -121,11 +124,10 @@ class LoadTrackerRepository(
      * Retrieve the selected job session from the db, and store the id in the shared preferences
      * so that the session can be automatically restored the next time the app is opened
      */
-    suspend fun selectJobSession(jobSessionId: Long): JobSessionWithLoads {
+    suspend fun selectJobSession(jobSessionId: Long) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.ACTIVE_JOB_SESSION_ID] = jobSessionId
         }
-        return getJobSessionById(jobSessionId)
     }
 
     suspend fun deleteJobSession(jobSession: JobSession) {

@@ -28,13 +28,11 @@ class ExportViewModel(context: Application, dataStore: DataStore<Preferences>) :
     private var _endDate = MutableLiveData("")
 
     private var mutableJobSessionWithLoads = MutableLiveData<JobSessionWithLoads>()
-    val allJobSessions: LiveData<List<JobSession>> = liveData {
-        emit(_repository.getAllJobSessions())
-    }
+    val allJobSessions: LiveData<List<JobSession>> = _repository.getAllJobSessions()
 
     init {
         viewModelScope.launch {
-            selectJobSessionToExport(_repository.getAllJobSessions().first().id)
+            selectJobSessionToExport(_repository.getAllJobSessions().value!!.first().id)
         }
     }
 

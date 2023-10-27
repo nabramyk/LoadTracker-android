@@ -8,7 +8,7 @@ import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import java.io.File
 import java.io.FileWriter
 
-class CsvExporter {
+class LoadTrackerCSVExporter {
     companion object {
         fun export(context: Context, jobSessionWithLoads: JobSessionWithLoads,) {
             val file = File(context.cacheDir, "output.csv")
