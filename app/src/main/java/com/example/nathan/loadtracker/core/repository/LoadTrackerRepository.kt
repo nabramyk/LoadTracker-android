@@ -9,12 +9,15 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
+import com.example.nathan.loadtracker.core.database.groups.LoadMaterialAmalgamation
 import com.example.nathan.loadtracker.core.database.LoadTrackerDatabase
 import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.database.entities.Load
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -105,7 +108,6 @@ class LoadTrackerRepository(
     fun getLoadsForActiveJobSession(): Flow<List<Load>> {
         return flow {
             preferencesFlow.collect { preferences ->
-                Log.d("Repo selected job id", preferences.selectedJobId.toString())
                 emit(db.loadDao().getLoadsForJobSession(preferences.selectedJobId ?: 0))
             }
         }
@@ -118,6 +120,15 @@ class LoadTrackerRepository(
     suspend fun getJobSessionById(id: Long): JobSessionWithLoads {
         return db.jobSessionDao().getJobSessionById(id)
     }
+
+    fun getLoadAmalgamationForSession(): Flow<List<LoadMaterialAmalgamation>> = preferencesFlow
+        .map {
+            if (it.selectedJobId != null) {
+                db.loadDao().getMaterialsSummaryFromLoadsForJobSession(it.selectedJobId)
+            } else {
+                emptyList()
+            }
+        }
 
     /**
      * Retrieve the selected job session from the db, and store the id in the shared preferences

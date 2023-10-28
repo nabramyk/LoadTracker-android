@@ -1,6 +1,7 @@
 package com.example.nathan.loadtracker.ui.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.LiveData
@@ -32,7 +33,9 @@ class ExportViewModel(context: Application, dataStore: DataStore<Preferences>) :
 
     init {
         viewModelScope.launch {
-            selectJobSessionToExport(_repository.getAllJobSessions().value!!.first().id)
+            _repository.getAllJobSessions().value?.let {
+                selectJobSessionToExport(it.first().id)
+            }
         }
     }
 

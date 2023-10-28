@@ -54,7 +54,6 @@ class TrackingHistoryFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.loadsForActiveJobSession.collect { loads ->
-                    Log.d("something", loads.toString())
                     if (loads.isEmpty()) {
                         binding.tvEmpty.visibility = View.VISIBLE
                     } else {

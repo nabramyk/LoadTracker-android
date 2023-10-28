@@ -1,6 +1,7 @@
 package com.example.nathan.loadtracker.ui.views
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.databinding.FragmentStatisticsBinding
 import com.example.nathan.loadtracker.ui.utils.DataFormatter
 import com.example.nathan.loadtracker.ui.viewmodels.TrackingSessionViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 
@@ -36,8 +38,15 @@ class StatisticsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.loadsForActiveJobSession.collect { loads ->
-                    updateTotalLoadsTracked(loads)
                     updateAverageRunTime(loads)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.getLoadsAmalgamation.collect {
+                    binding.tvTotalLoads.text = it.joinToString(separator = "\n") { it.material + it.count }
                 }
             }
         }
@@ -55,28 +64,6 @@ class StatisticsFragment : Fragment() {
     ): View {
         _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    /**
-     * TODO
-     *  This just doesn't work, could probably be converted to a composable
-     */
-    private fun updateTotalLoadsTracked(loads: List<Load>) {
-        val materials = HashMap<String, Int>()
-
-        for (l in loads) {
-            if (!materials.containsKey(l.material)) materials[l.material] = 1
-            else if (materials.containsKey(l.material)) materials[l.material] =
-                materials[l.material]!! + 1
-        }
-
-        var formattedOutput = materials.toString()
-        formattedOutput = formattedOutput.replace("=", ": ")
-        formattedOutput = formattedOutput.replace(",", "\n")
-        formattedOutput = formattedOutput.replace("{", "")
-        formattedOutput = formattedOutput.replace("}", "")
-
-        binding.tvTotalLoads.text = formattedOutput
     }
 
     /**

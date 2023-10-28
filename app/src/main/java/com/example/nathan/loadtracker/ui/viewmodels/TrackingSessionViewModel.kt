@@ -1,14 +1,16 @@
 package com.example.nathan.loadtracker.ui.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import com.example.nathan.loadtracker.core.database.entities.JobSession
+import com.example.nathan.loadtracker.core.database.groups.LoadMaterialAmalgamation
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.core.repository.LoadTrackerRepository
@@ -18,11 +20,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
-class TrackingSessionViewModel(context: Application, dataStore: DataStore<Preferences>) : ViewModel() {
+class TrackingSessionViewModel(context: Application, dataStore: DataStore<Preferences>) :
+    ViewModel() {
 
     private val _repository = LoadTrackerRepository(context = context, dataStore = dataStore)
     private val _mutableJobSession: Flow<JobSessionWithLoads?> =
         _repository.activeJobSessionWithLoads
+    val loadsForActiveJobSession: Flow<List<Load>>
+        get() = _repository.getLoadsForActiveJobSession()
 
     private val _mainUiModelFlow = combine(
         _repository.preferencesFlow,
@@ -53,8 +58,9 @@ class TrackingSessionViewModel(context: Application, dataStore: DataStore<Prefer
         }
     }
 
-    val loadsForActiveJobSession: Flow<List<Load>>
-        get() = _repository.getLoadsForActiveJobSession()
+    val getLoadsAmalgamation: Flow<List<LoadMaterialAmalgamation>>
+        get() = _repository.getLoadAmalgamationForSession()
+
 
     class Factory(val context: Application, val dataStore: DataStore<Preferences>) :
         ViewModelProvider.Factory {
