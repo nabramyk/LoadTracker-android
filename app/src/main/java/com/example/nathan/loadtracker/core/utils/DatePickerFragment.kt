@@ -1,4 +1,4 @@
-package com.example.nathan.loadtracker.ui.utils
+package com.example.nathan.loadtracker.core.utils
 
 import android.app.DatePickerDialog
 import android.app.Dialog
@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
@@ -14,7 +15,7 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 class DatePickerFragment(
-    val updater: (String) -> Unit
+    val updater: (LocalDate) -> Unit
 ) : DialogFragment(),
     DatePickerDialog.OnDateSetListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -29,23 +30,7 @@ class DatePickerFragment(
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        val date = LocalDateTime(
-            year = year,
-            month = Month(month + 1), //The DatePicker numbers months from 1-12
-            dayOfMonth = dayOfMonth,
-            hour = 0,
-            minute = 0,
-            second = 0,
-            nanosecond = 0
-        )
-
-        updater(
-            "${
-                date.month.getDisplayName(
-                    TextStyle.FULL,
-                    Locale.getDefault()
-                )
-            } ${date.dayOfMonth}, ${date.year} "
-        )
+        //The DatePicker numbers months from 1-12
+        updater(LocalDate(year = year, month = Month(month + 1), dayOfMonth = dayOfMonth))
     }
 }

@@ -1,4 +1,4 @@
-package com.example.nathan.loadtracker.ui.utils
+package com.example.nathan.loadtracker.core.utils
 
 import com.example.nathan.loadtracker.core.database.entities.Load
 import kotlin.time.Duration

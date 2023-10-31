@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.nathan.loadtracker.core.database.entities.Load
 import com.example.nathan.loadtracker.databinding.FragmentStatisticsBinding
-import com.example.nathan.loadtracker.ui.utils.DataFormatter
+import com.example.nathan.loadtracker.core.utils.DataFormatter
 import com.example.nathan.loadtracker.ui.viewmodels.TrackingSessionViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

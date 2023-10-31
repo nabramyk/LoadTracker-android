@@ -1,4 +1,4 @@
-package com.example.nathan.loadtracker.ui.utils
+package com.example.nathan.loadtracker.core.utils
 
 import android.app.Dialog
 import android.app.TimePickerDialog
@@ -6,13 +6,12 @@ import android.os.Bundle
 import android.text.format.DateFormat
 import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.Month
+import kotlinx.datetime.LocalTime
 
 class TimePickerFragment(
     private val hour: Int,
     private val minute: Int,
-    val updater: (String) -> Unit
+    val updater: (LocalTime) -> Unit
 ) : DialogFragment(),
     TimePickerDialog.OnTimeSetListener {
 
@@ -27,16 +26,6 @@ class TimePickerFragment(
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        val time = LocalDateTime(
-            year = 0,
-            month = Month(1),
-            dayOfMonth = 1,
-            hour = hourOfDay,
-            minute = minute,
-            second = 0,
-            nanosecond = 0,
-        )
-
-        updater("${time.hour}:${time.minute}")
+        updater(LocalTime.parse("$hourOfDay:$minute"))
     }
 }

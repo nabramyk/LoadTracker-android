@@ -1,4 +1,4 @@
-package com.example.nathan.loadtracker.ui.utils
+package com.example.nathan.loadtracker.core.utils
 
 import android.content.Context
 import android.content.Intent
@@ -10,7 +10,7 @@ import java.io.FileWriter
 
 class LoadTrackerCSVExporter {
     companion object {
-        fun export(context: Context, jobSessionWithLoads: JobSessionWithLoads,) {
+        fun export(context: Context, jobSessionWithLoads: JobSessionWithLoads,): File {
             val file = File(context.cacheDir, "output.csv")
 
             FileWriter(file).apply {
@@ -27,24 +27,9 @@ class LoadTrackerCSVExporter {
                 }
 
                 close()
-
-                // I originally was using `createChooser` but it was throwing some error messages
-                // about file permissions. This could be cleaner but it works for the time being.
-                val intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    type = "text/plain"
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    putExtra(
-                        Intent.EXTRA_STREAM,
-                        FileProvider.getUriForFile(
-                            context,
-                            context.getString(R.string.file_provider_authority),
-                            file
-                        )
-                    )
-                }
-                context.startActivity(intent)
             }
+
+            return file
         }
     }
 }
