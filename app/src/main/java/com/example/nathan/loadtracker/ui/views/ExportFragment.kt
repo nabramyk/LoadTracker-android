@@ -125,22 +125,24 @@ class ExportFragment : Fragment() {
         binding.bExport.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.export()
-                // I originally was using `createChooser` but it was throwing some error messages
-                // about file permissions. This could be cleaner but it works for the time being.
-                val intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    type = "text/plain"
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    putExtra(
-                        Intent.EXTRA_STREAM,
-                        FileProvider.getUriForFile(
-                            requireContext(),
-                            requireContext().getString(R.string.file_provider_authority),
-                            viewModel.file
+                viewModel.file?.let {
+                    // I originally was using `createChooser` but it was throwing some error messages
+                    // about file permissions. This could be cleaner but it works for the time being.
+                    val intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        type = "text/plain"
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        putExtra(
+                            Intent.EXTRA_STREAM,
+                            FileProvider.getUriForFile(
+                                requireContext(),
+                                requireContext().getString(R.string.file_provider_authority),
+                                it
+                            )
                         )
-                    )
+                    }
+                    startActivity(intent)
                 }
-                startActivity(intent)
             }
         }
     }

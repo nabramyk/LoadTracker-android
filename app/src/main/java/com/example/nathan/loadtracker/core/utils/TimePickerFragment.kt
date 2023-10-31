@@ -26,6 +26,6 @@ class TimePickerFragment(
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        updater(LocalTime.parse("$hourOfDay:$minute"))
+        updater(LocalTime.parse("${hourOfDay.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}"))
     }
 }

@@ -14,6 +14,7 @@ import com.example.nathan.loadtracker.core.database.entities.JobSession
 import com.example.nathan.loadtracker.core.database.entities.JobSessionWithLoads
 import com.example.nathan.loadtracker.core.repository.LoadTrackerRepository
 import com.example.nathan.loadtracker.core.utils.LoadTrackerCSVExporter
+import com.example.nathan.loadtracker.core.utils.format
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
@@ -22,11 +23,8 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
-import kotlinx.datetime.toJavaLocalDate
-import kotlinx.datetime.toJavaLocalTime
 import kotlinx.datetime.todayIn
 import java.io.File
-import java.time.format.DateTimeFormatter
 
 class ExportViewModel(val context: Application, dataStore: DataStore<Preferences>) : ViewModel() {
     private val _repository = LoadTrackerRepository(context = context, dataStore = dataStore)
@@ -37,10 +35,10 @@ class ExportViewModel(val context: Application, dataStore: DataStore<Preferences
     private var _endDate = MutableLiveData<LocalDate?>()
     private var _endTime = MutableLiveData<LocalTime?>()
 
-    private var mutableJobSessionWithLoads: Long = 0
+    private var jobSessionId2Export: Long = 0
     val allJobSessions: LiveData<List<JobSession>> = _repository.getAllJobSessions()
 
-    lateinit var file: File
+    var file: File? = null
 
     init {
         viewModelScope.launch {
@@ -53,36 +51,28 @@ class ExportViewModel(val context: Application, dataStore: DataStore<Preferences
     val startTime: LiveData<String?>
         get() {
             return _startTime.map {
-                it?.toJavaLocalTime()?.format(
-                    DateTimeFormatter.ofPattern("HH:mm")
-                )
+                it?.format("HH:mm")
             }
         }
 
     val endTime: LiveData<String?>
         get() {
             return _endTime.map {
-                it?.toJavaLocalTime()?.format(
-                    DateTimeFormatter.ofPattern("HH:mm")
-                )
+                it?.format("HH:mm")
             }
         }
 
     val startDate: LiveData<String?>
         get() {
             return _startDate.map {
-                it?.toJavaLocalDate()?.format(
-                    DateTimeFormatter.ofPattern("MMM. dd, yyyy")
-                )
+                it?.format("MMM. dd, yyyy")
             }
         }
 
     val endDate: LiveData<String?>
         get() {
             return _endDate.map {
-                it?.toJavaLocalDate()?.format(
-                    DateTimeFormatter.ofPattern("MMM. dd, yyyy")
-                )
+                it?.format("MMM. dd, yyyy")
             }
         }
 
@@ -95,7 +85,7 @@ class ExportViewModel(val context: Application, dataStore: DataStore<Preferences
         val start = LocalDateTime(date = startD, time = startT)
         val end = LocalDateTime(date = endD, time = endT)
 
-        _repository.getJobSessionById(mutableJobSessionWithLoads).let { jswl ->
+        _repository.getJobSessionById(jobSessionId2Export).let { jswl ->
             val exportableJobSession = JobSessionWithLoads(
                 jobSession = jswl.jobSession,
                 loads = jswl.loads.filter {
@@ -109,8 +99,8 @@ class ExportViewModel(val context: Application, dataStore: DataStore<Preferences
     }
 
     fun selectJobSessionToExport(jobSessionId: Long) {
-        mutableJobSessionWithLoads = jobSessionId
-        Log.d("this", mutableJobSessionWithLoads.toString())
+        jobSessionId2Export = jobSessionId
+        Log.d("this", jobSessionId2Export.toString())
     }
 
     fun autoFillTimeRange(autofill: Boolean) {
@@ -132,20 +122,38 @@ class ExportViewModel(val context: Application, dataStore: DataStore<Preferences
         }
     }
 
-    fun updateStartTime(time: LocalTime) {
+    fun updateStartTime(time: LocalTime): Boolean {
+        if (_endTime.value != null
+            && _endTime.value!! <= time
+            && _endDate.value != null
+            && _startDate.value != null
+            && _endDate.value!! == _startDate.value!!) return false
         _startTime.postValue(time)
+        return true
     }
 
-    fun updateEndTime(time: LocalTime) {
+    fun updateEndTime(time: LocalTime): Boolean {
+        if (_startTime.value != null
+            && time <= _startTime.value!!
+            && _endDate.value != null
+            && _startDate.value != null
+            && _endDate.value!! == _startDate.value!!) return false
         _endTime.postValue(time)
+        return true
     }
 
-    fun updateStartDate(date: LocalDate) {
+    fun updateStartDate(date: LocalDate): Boolean {
+        if (_endDate.value != null
+            && _endDate.value!! < date) return false
         _startDate.postValue(date)
+        return true
     }
 
-    fun updateEndDate(date: LocalDate) {
+    fun updateEndDate(date: LocalDate): Boolean {
+        if (_startDate.value != null
+            && date < _startDate.value!!) return false
         _endDate.postValue(date)
+        return true
     }
 
     class Factory(val context: Application, val dataStore: DataStore<Preferences>) :
