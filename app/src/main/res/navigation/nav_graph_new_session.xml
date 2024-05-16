@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_new_session"
+    app:startDestination="@id/newJobSessionFragment2">
+
+    <fragment
+        android:id="@+id/newJobSessionFragment2"
+        android:name="com.example.nathan.loadtracker.ui.views.NewJobSessionFragment"
+        android:label="NewJobSessionFragment"
+        tool:layout="@layout/fragment_new_job_session" />
+</navigation>

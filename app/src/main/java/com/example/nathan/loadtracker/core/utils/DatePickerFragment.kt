@@ -15,7 +15,8 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 class DatePickerFragment(
-    val updater: (LocalDate) -> Unit
+    val updater: (LocalDate) -> Boolean,
+    val onError: () -> Unit
 ) : DialogFragment(),
     DatePickerDialog.OnDateSetListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -31,6 +32,8 @@ class DatePickerFragment(
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         //The DatePicker numbers months from 1-12
-        updater(LocalDate(year = year, month = Month(month + 1), dayOfMonth = dayOfMonth))
+        if(!updater(LocalDate(year = year, month = Month(month + 1), dayOfMonth = dayOfMonth))) {
+            onError()
+        }
     }
 }

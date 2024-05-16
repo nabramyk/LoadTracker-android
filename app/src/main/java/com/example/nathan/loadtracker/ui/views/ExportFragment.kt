@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -91,14 +92,18 @@ class ExportFragment : Fragment() {
         }
 
         binding.sStartDate.setOnClickListener {
-            DatePickerFragment(viewModel::updateStartDate).show(
+            DatePickerFragment(viewModel::updateStartDate) {
+                (it as TextView).error = ""
+            }.show(
                 parentFragmentManager,
                 "export_start_date"
             )
         }
 
         binding.sEndDate.setOnClickListener {
-            DatePickerFragment(viewModel::updateEndDate).show(
+            DatePickerFragment(viewModel::updateEndDate) {
+                (it as TextView).error = ""
+            }.show(
                 parentFragmentManager,
                 "export_end_date"
             )

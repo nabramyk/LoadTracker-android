@@ -15,6 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.nathan.loadtracker.LoadTrackerApplication.Companion.dataStore
 import com.example.nathan.loadtracker.R
 import com.example.nathan.loadtracker.databinding.ActivityMainBinding
+import com.example.nathan.loadtracker.ui.datamodels.InitializeAppModel
 import com.example.nathan.loadtracker.ui.viewmodels.InitAppViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -54,19 +55,8 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             viewModel.initializeAppModel.first { model ->
-                val navGraph = _navController.navInflater.inflate(R.navigation.nav_graph)
-                navGraph.setStartDestination(
-                    if (model.allJobSessions.not()) {
-                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                        R.id.newJobSessionFragment
-                    } else if (model.activeJobSession.not()) {
-                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                        R.id.jobSessionsFragment
-                    } else {
-                        R.id.trackingSessionFragment
-                    }
-                )
-                _navController.graph = navGraph
+
+                replaceNavigationGraph(model)
                 binding.nvNavigationView.setupWithNavController(_navController)
                 setupActionBarWithNavController(_navController, binding.drawerLayout)
 
@@ -105,6 +95,18 @@ class MainActivity : AppCompatActivity() {
                 true
             }
         }
+    }
+
+    fun replaceNavigationGraph(model: InitializeAppModel) {
+        val graph = when {
+            model.allJobSessions.not() -> R.navigation.nav_graph_new_session
+            model.activeJobSession.not() -> R.navigation.nav_graph_pick_session
+            else -> R.navigation.nav_graph
+        }
+
+        val navGraph = _navController.navInflater.inflate(graph)
+
+        _navController.graph = navGraph
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
