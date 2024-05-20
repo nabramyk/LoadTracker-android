@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun replaceNavigationGraph(model: InitializeAppModel) {
+    private fun replaceNavigationGraph(model: InitializeAppModel) {
         val graph = when {
             model.allJobSessions.not() -> R.navigation.nav_graph_new_session
             model.activeJobSession.not() -> R.navigation.nav_graph_pick_session
